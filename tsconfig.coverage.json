@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "jsx": "react",
+    "noImplicitAny": true,
+    "baseUrl": "./",
+    "paths": {
+      "*": [
+        "./node_modules/@typeless/*",
+        "./node_modules/*"
+      ]
+    }
+  }
+}

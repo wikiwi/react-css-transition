@@ -1,0 +1,121 @@
+{
+  "name": "react-css-transition",
+  "version": "0.1.0-alpha.2",
+  "description": "CSS transitions",
+  "homepage": "https://github.com/wikiwi/react-css-transition",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wikiwi/react-css-transition.git"
+  },
+  "bugs": {
+    "url": "https://github.com/wikiwi/react-css-transition/issues"
+  },
+  "files": [
+    "lib",
+    "cjs"
+  ],
+  "jsnext:main": "./lib/index.js",
+  "main": "./cjs/index.js",
+  "typings": "./lib/index.d.ts",
+  "scripts": {
+    "build": "gulp",
+    "clean": "rm -r -f dist",
+    "ci:coveralls": "cat coverage/lcov.info | coveralls",
+    "lint": "gulp lint",
+    "test": "cross-env NODE_ENV=test karma start",
+    "test:coverage": "cross-env NODE_ENV=coverage TS_NODE_PROJECT=./tsconfig.coverage.json nyc mocha --opts mocha.opts",
+    "test:watch": "cross-env NODE_ENV=test karma start --single-run=false"
+  },
+  "engines": {
+    "node": ">=4"
+  },
+  "keywords": [
+    "vendor-prefix",
+    "hoc",
+    "context",
+    "react"
+  ],
+  "author": "Chi Vinh Le and contributors (https://github.com/wikiwi/react-css-transition/graphs/contributors)",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": "^0.14.0 || ^15.0.0-0"
+  },
+  "dependencies": {
+    "warning": "^3.0.0"
+  },
+  "devDependencies": {
+    "@typeless/warning": "^3.0.0",
+    "@types/chai": "^3.4.34",
+    "@types/enzyme": "^2.5.37",
+    "@types/jsdom": "^2.0.29",
+    "@types/mocha": "^2.2.32",
+    "@types/react": "^0.14.43",
+    "@types/sinon": "^1.16.31",
+    "awesome-typescript-loader": "^2.2.4",
+    "babel-core": "^6.18.2",
+    "babel-plugin-istanbul": "^2.0.3",
+    "babel-plugin-rewire": "^1.0.0",
+    "babel-plugin-transform-object-assign": "^6.8.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-react": "^6.16.0",
+    "cash-rm": "^0.2.0",
+    "chai": "^3.5.0",
+    "coveralls": "^2.11.14",
+    "cross-env": "^3.1.3",
+    "enzyme": "^2.5.1",
+    "eslint": "^3.8.1",
+    "eslint-config-airbnb-base": "^9.0.0",
+    "eslint-plugin-import": "^2.0.1",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-eslint": "^3.0.1",
+    "gulp-jsonlint": "^1.1.2",
+    "gulp-sourcemaps": "^2.2.0",
+    "gulp-tslint": "^6.1.2",
+    "gulp-typescript": "^3.0.2",
+    "gulp-yaml-validate": "^1.0.2",
+    "istanbul-instrumenter-loader": "^1.0.0",
+    "jsdom": "^9.8.0",
+    "json-loader": "^0.5.4",
+    "karma": "^1.3.0",
+    "karma-chrome-launcher": "^2.0.0",
+    "karma-coverage": "^1.1.1",
+    "karma-mocha": "^1.2.0",
+    "karma-mocha-reporter": "^2.2.0",
+    "karma-remap-coverage": "^0.1.2",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-webpack": "^1.8.0",
+    "merge2": "^1.0.2",
+    "mocha": "^3.1.2",
+    "nyc": "^8.4.0",
+    "react": "^15.3.2",
+    "react-addons-test-utils": "^15.3.2",
+    "react-dom": "^15.3.2",
+    "rewire": "^2.5.2",
+    "sinon": "^2.0.0-pre.2",
+    "ts-babel-node": "git+https://git@github.com/danielmoore/ts-babel-node.git",
+    "ts-node": "~1.2.3",
+    "tslint": "^3.15.1",
+    "typescript": "^2.0.6",
+    "webpack": "^2.1.0-beta.25"
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.ts",
+      "src/**/*.tsx"
+    ],
+    "exclude": [
+      "src/**/*.spec.ts",
+      "src/**/*.spec.tsx"
+    ],
+    "reporter": [
+      "lcov",
+      "text"
+    ],
+    "extension": [
+      ".tsx",
+      ".ts"
+    ],
+    "all": true
+  }
+}
