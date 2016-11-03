@@ -1,6 +1,6 @@
 # react-css-transition
 
-Removes elements from DOM on mount.
+Take back control of CSS Transitions for React!
 
 [![NPM Version Widget]][npm version]
 [![Build Status Widget]][build status]
@@ -12,20 +12,6 @@ Removes elements from DOM on mount.
 npm install react-css-transition --save
 ```
 
-## Usage
-
-```javascript
-import { Remove } from "react-css-transition"
-
-const App = () => (
-  <div>
-    <Remove id="element-id" />
-    <Remove id={["id1", "id2"]} />
-  </diV>
-)
-
-ReactDOM.render(<App />, mountNode)
-```
 
 [npm version]: https://www.npmjs.com/package/react-css-transition
 
