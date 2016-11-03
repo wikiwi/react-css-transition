@@ -1,0 +1,22 @@
+language: node_js
+node_js:
+- 6
+- 4
+before_script:
+- npm prune
+script:
+- npm run test
+after_success:
+- npm run ci:coveralls
+before_deploy:
+- npm run build
+deploy:
+  provider: npm
+  on:
+    repo: wikiwi/react-remove
+    tags: true
+    node: 4
+  skip_cleanup: true
+  email: vinh@wikiwi.io
+  api_key:
+    secure: JbwJ9l5zt5IqQoDDu461xQ1ruXRjccEORGtgVgFj45ayPHHpAVzTczXZo26coxez1BSWmCc6aFlRRkRiOXw29CM56OSFflgX93hU8gYOh4TcYyoLUw+VAtXgTab1ta8HKZbXgI5JZnnYUcPJ3ysHs53BZZOT5ZFoLlC8YBMKCZP0dQR3OjCOLTn/1pl3bg/QensuBCVk5IX+fY5N0fTgvj840QzaIRmglyRfYgucIKRZ6gtgo/GSUNN/hWXycLHukTlTY3oR838yK87CU7GUm6pfsVXI96TRy2JuyxJcWL0Nkb61UM2wuLdtSuEIbInp4U7YjB8oN9utkk3YapRGStKPUiMPQA5CImlk5uJISiWaVwjW1qLyjBy2fkeuoXYV9O2kw81F8lPa6KFY4GbwU3ivff1ycYDPMQUVsYGN/KJJ3+2DSjbqlcz+7fV9IkRTiYWoJAt7NlPY5H1rySPHs7GGFnA9qNpabIthB8EopX6LJFPyRhEKqHHYPNlTfIV55iosZZzH2kg3kWYWbLVOatu0EAV4y7L9LR1CIATXUFen5ELD9J8VOl7g1GHch/ae9sEVI/EsIwrEAABVALe2H02mQkbGNBqlVqJcsuFnj48aamRewc96CPdataZZjIU4W9us+nJ8Iur/dLJ5r+AYWLIL8F1g12yAcU6Sem/d3P0=

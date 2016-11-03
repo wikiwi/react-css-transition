@@ -1,0 +1,21 @@
+extends:
+  - airbnb-base
+env:
+  es6: true
+  node: true
+rules:
+  # sometimes brackets are useful for formatting.
+  arrow-body-style: 0
+
+  # align with typescript.
+  quotes: ["error", "double", {
+    "avoidEscape": true,
+    "allowTemplateLiterals": true
+  }]
+
+  # we use js mainly for non production code.
+  import/no-extraneous-dependencies: ["error", {
+    "devDependencies": true,
+    "optionalDependencies": true,
+    "peerDependencies": true
+  }]
