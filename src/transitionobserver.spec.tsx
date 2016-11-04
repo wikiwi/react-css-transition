@@ -17,7 +17,7 @@ import { TransitionObserver, TransitionObserverProps } from "./transitionobserve
 const isWorkaround = (wrapper: ShallowWrapper<any, {}>) => wrapper.key() === "workaround";
 const isChild = (wrapper: ShallowWrapper<any, {}>) => wrapper.key() === "child";
 
-describe("csstransition.tsx", () => {
+describe("transitionobserver.tsx", () => {
 
   describe("<TransitionObserver>", () => {
     let getWrapper: (props?: TransitionObserverProps) => ShallowWrapper<TransitionObserverProps, {}>;
@@ -53,7 +53,12 @@ describe("csstransition.tsx", () => {
 
       describe("during a transition", () => {
         before(() => {
-          wrapper.setProps({ style: { width: transit("50px", 50), height: transit("20px", 30) } });
+          wrapper.setProps({
+            style: {
+              width: transit("50px", { duration: 50 }),
+              height: transit("20px", { duration: 30 }),
+            },
+          });
         });
 
         it("should perform transition", () => {
@@ -123,8 +128,8 @@ describe("csstransition.tsx", () => {
         before(() => {
           wrapper.setProps({
             style: {
-              width: transit("50px", 50, { delay: 40 }),
-              height: transit("20px", 30, { delay: 30 }),
+              width: transit("50px", { duration: 50, delay: 40 }),
+              height: transit("20px", { duration: 30, delay: 30 }),
             },
           });
         });

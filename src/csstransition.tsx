@@ -10,33 +10,11 @@ import * as React from "react";
 
 import { TransitionObserver, TransitionObserverProps } from "./transitionobserver";
 
-enum State {
-  Active,
-  TransitToDefaultRunning,
-  TransitToDefaultStarted,
-  TransitToActiveAppearing,
-  TransitToActiveRunning,
-  TransitToActiveStarted,
-  Default
-}
-
-enum Action {
-  InitActive,
-  InitDefault,
-  TransitionAppear,
-  TransitionSkip,
-  TransitionRun,
-  TransitionStart,
-  TransitionEnd
-}
-
 const TICK = 17;
 
-export interface CommonAttributes extends
-  React.HTMLAttributes<HTMLElement> {
+export interface CommonAttributes {
   active?: boolean;
   transitionAppear?: boolean;
-  transitionDelay?: number;
   onTransitionComplete?: () => void;
   component?: string | React.ComponentClass<any>;
   children?: React.ReactNode;
@@ -61,6 +39,7 @@ export interface CSSTransitionProps extends
   CSSTransitionAttributes,
   React.ClassAttributes<CSSTransition> {
   vendorPrefixer?: (styles: any) => any;
+  [index: string]: any;
 }
 
 interface CSSTransitionState {
@@ -72,7 +51,6 @@ function getRest(props: CSSTransitionProps): React.HTMLAttributes<HTMLElement> {
   const rest = objectAssign({}, props);
   delete rest.active;
   delete rest.transitionAppear;
-  delete rest.transitionDelay;
   delete rest.onTransitionComplete;
   delete rest.component;
   delete rest.skipTransition;
@@ -84,7 +62,6 @@ function getRest(props: CSSTransitionProps): React.HTMLAttributes<HTMLElement> {
   delete rest.enterInitStyle;
   delete rest.leaveInitStyle;
   delete rest.vendorPrefixer;
-  delete rest.style;
   return rest;
 }
 
@@ -132,6 +109,11 @@ export class CSSTransition extends React.Component<CSSTransitionProps, CSSTransi
         switch (state.id) {
           case State.TransitToActiveAppearing:
             clearTimeout(this.appearTimer);
+            if (props.active) {
+              return this.setState(transitToActiveRunningState(props));
+            }
+            if (props.onTransitionComplete) { props.onTransitionComplete(); }
+            return this.setState(defaultState(props));
           case State.Active:
           case State.TransitToActiveStarted:
             return this.setState(transitToDefaultRunningState(props));
@@ -183,8 +165,7 @@ export class CSSTransition extends React.Component<CSSTransitionProps, CSSTransi
   }
 
   public componentWillReceiveProps(nextProps: CSSTransitionProps): void {
-    const { active } = this.props;
-    if (active === nextProps.active) { return; }
+    if (this.props.active === nextProps.active) { return; }
     this.dispatch(Action.TransitionRun, nextProps);
   }
 
@@ -194,9 +175,9 @@ export class CSSTransition extends React.Component<CSSTransitionProps, CSSTransi
     const Wrapper = this.props.component;
 
     const props: TransitionObserverProps = {
-      style: objectAssign({}, style, this.state.style),
       onTransitionStart: this.handleTransitionStart,
       onTransitionComplete: this.handleTransitionComplete,
+      style,
     };
     const rest = getRest(this.props);
 
@@ -210,6 +191,26 @@ export class CSSTransition extends React.Component<CSSTransitionProps, CSSTransi
 
   private handleTransitionComplete = () => this.dispatch(Action.TransitionEnd);
   private handleTransitionStart = () => this.dispatch(Action.TransitionStart);
+}
+
+enum State {
+  Active,
+  TransitToDefaultRunning,
+  TransitToDefaultStarted,
+  TransitToActiveAppearing,
+  TransitToActiveRunning,
+  TransitToActiveStarted,
+  Default
+}
+
+enum Action {
+  InitActive,
+  InitDefault,
+  TransitionAppear,
+  TransitionSkip,
+  TransitionRun,
+  TransitionStart,
+  TransitionEnd
 }
 
 const activeState = (props: CSSTransitionProps) => ({

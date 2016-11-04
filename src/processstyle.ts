@@ -17,7 +17,7 @@ export interface ProcessResult {
   firstPropertyDelay?: number;
 }
 
-export function processStyle(style: CSSProperties, globalDelay = 0): ProcessResult {
+export function processStyle(style: CSSProperties): ProcessResult {
   let transition = "";
   let processedStyle = objectAssign({}, style);
   let lastProperty: string;
@@ -32,7 +32,7 @@ export function processStyle(style: CSSProperties, globalDelay = 0): ProcessResu
       if (transition !== "") {
         transition += ", ";
       }
-      transition += `${property} ${config.getParameterString(globalDelay)}`;
+      transition += `${property} ${config.getParameterString()}`;
       processedStyle[property] = config.value;
       const duration = config.getTotalDuration();
       const delay = config.params.delay ? config.params.delay : 0;
@@ -53,7 +53,6 @@ export function processStyle(style: CSSProperties, globalDelay = 0): ProcessResu
     style: processedStyle,
     lastProperty,
     firstProperty,
-    firstPropertyDelay: firstProperty ?
-      firstPropertyDelay + globalDelay : undefined,
+    firstPropertyDelay: firstProperty ? firstPropertyDelay : undefined,
   };
 }

@@ -5,63 +5,41 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+import * as warning from "warning";
+
 export class TransitionConfig {
   public value: any;
-  public duration: number;
   public params: TransitionParams;
 
-  constructor(value: any, duration: number, params = {} as TransitionParams) {
+  constructor(value: any, params: TransitionParams) {
     this.value = value;
-    this.duration = duration;
     this.params = params;
   }
 
   public getTotalDuration(): number {
-    let duration = this.duration;
-    let { delay } = this.params;
-    if (delay) {
-      duration += delay;
-    }
+    let { duration, delay } = this.params;
+    if (delay) { duration += delay; }
     return duration;
   }
 
-  public getParameterString(additionalDelay?: number): string {
-    let result = "";
-    let duration = this.duration;
-    let {timing, delay} = this.params;
-    result += duration + "ms";
-    if (timing) {
-      result += " " + timing;
-    } else {
-      result += " ease";
-    }
-    if (!delay) {
-      delay = 0;
-    }
-    if (additionalDelay) {
-      delay += additionalDelay;
-    }
-    result += " " + delay + "ms";
-    return result;
-  }
-
-  public isEqualTo(other: TransitionConfig): boolean {
-    if (this.value !== other.value ||
-      this.duration !== other.duration ||
-      this.params.delay !== other.params.delay ||
-      this.params.timing !== other.params.timing
-    ) {
-      return false;
-    }
-    return true;
+  public getParameterString(): string {
+    const {duration, timing, delay} = this.params;
+    return `${duration}ms ${timing} ${delay}ms`;
   }
 }
 
 export interface TransitionParams {
+  duration: number;
   timing?: string;
   delay?: number;
 }
 
-export function transit(value: any, duration: number, params?: TransitionParams): any {
-  return new TransitionConfig(value, duration, params);
+export function transit(value: any, params: TransitionParams): any {
+  warning(!params, "[react-css-transition] Invalid duration '%s'.", params.duration);
+  warning(typeof params.duration !== "number" || params.duration <= 0,
+    "[react-css-transition] Invalid duration '%s'.", params.duration);
+
+  if (params.delay === undefined) { params.delay = 0; };
+  if (params.timing === undefined) { params.timing = "ease"; };
+  return new TransitionConfig(value, params);
 }

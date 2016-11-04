@@ -4,7 +4,13 @@
     "module": "es6",
     "moduleResolution": "node",
     "jsx": "react",
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "baseUrl": "./",
+    "paths": {
+      "*": [
+        "./node_modules/@typeless/*"
+      ]
+    }
   },
   "include": [
     "./src/**/*.ts",
