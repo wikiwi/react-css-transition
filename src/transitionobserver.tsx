@@ -9,7 +9,6 @@ import * as objectAssign from "object-assign";
 import * as React from "react";
 
 import { processStyle } from "./processstyle";
-import { removeVendorPrefix } from "./utils";
 
 export interface TransitionObserverProps {
   style: React.CSSProperties;
@@ -57,7 +56,7 @@ export class TransitionObserver extends React.Component<TransitionObserverProps,
 
   private handleTransitionEnd = (lastProperty: string, e: React.TransitionEvent) => {
     if (e.target !== e.currentTarget ||
-      removeVendorPrefix(e.propertyName) !== lastProperty) {
+      e.propertyName !== lastProperty) {
       return;
     }
     this.props.onTransitionComplete();

@@ -38,6 +38,7 @@ describe("transitionobserver.tsx", () => {
     describe("child", () => {
       let onTransitionComplete: SinonSpy;
       let wrapper: ShallowWrapper<TransitionObserverProps, {}>;
+
       before(() => {
         onTransitionComplete = spy();
         wrapper = getWrapper({
@@ -74,6 +75,7 @@ describe("transitionobserver.tsx", () => {
           before(() => {
             wrapper.findWhere(isChild).simulate("transitionEnd", { propertyName: "height" });
           });
+
           it("should ignore", () => {
             assert.isFalse(onTransitionComplete.called);
           });
@@ -87,6 +89,7 @@ describe("transitionobserver.tsx", () => {
               currentTarget: {},
             });
           });
+
           it("should ignore", () => {
             assert.isFalse(onTransitionComplete.called);
           });
@@ -97,7 +100,7 @@ describe("transitionobserver.tsx", () => {
             wrapper.findWhere(isChild).simulate("transitionEnd", { propertyName: "width" });
           });
           it("should call onTransitionComplete", () => {
-            assert.isTrue(onTransitionComplete.called);
+            assert.isTrue(onTransitionComplete.calledOnce);
           });
         });
       });
@@ -143,8 +146,9 @@ describe("transitionobserver.tsx", () => {
           before(() => {
             wrapper.findWhere(isWorkaround).simulate("transitionEnd", { propertyName: "transform" });
           });
+
           it("should call onTransitionStart", () => {
-            assert.isTrue(onTransitionStart.called);
+            assert.isTrue(onTransitionStart.calledOnce);
           });
         });
       });

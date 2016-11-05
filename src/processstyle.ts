@@ -9,6 +9,7 @@ import * as objectAssign from "object-assign";
 import { CSSProperties } from "react";
 
 import { TransitionConfig } from "./transit";
+import { convertToCSSPrefix } from "./utils";
 
 export interface ProcessResult {
   style: React.CSSProperties;
@@ -28,21 +29,22 @@ export function processStyle(style: CSSProperties): ProcessResult {
   for (const property in style) {
     const value = style[property];
     if (typeof value === "object") {
+      const cssProperty = convertToCSSPrefix(property);
       const config = value as TransitionConfig;
       if (transition !== "") {
         transition += ", ";
       }
-      transition += `${property} ${config.getParameterString()}`;
+      transition += `${cssProperty} ${config.getParameterString()}`;
       processedStyle[property] = config.value;
       const duration = config.getTotalDuration();
       const delay = config.params.delay ? config.params.delay : 0;
       if (delay < firstPropertyDelay) {
         firstPropertyDelay = delay;
-        firstProperty = property;
+        firstProperty = cssProperty;
       }
       if (duration > lastPropertyDuration) {
         lastPropertyDuration = duration;
-        lastProperty = property;
+        lastProperty = cssProperty;
       }
     }
   }

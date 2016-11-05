@@ -5,8 +5,6 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-/* tslint:disable */
-
 import { assert } from "chai";
 
 import * as Transit from "./transit";
@@ -34,25 +32,31 @@ describe("transit.ts", () => {
   });
 
   describe("transit", () => {
-    it("should parse to a TransitionConfig", () => {
-      const params = { duration: 50, delay: 30, timing: "linear" };
+    it("should parse parameter object", () => {
+      const params = { duration: 50, timing: "linear", delay: 30 };
       const config = transit("100px", params) as TransitionConfig;
       assert.strictEqual(config.value, "100px");
       assert.deepEqual(config.params, params);
+    });
+
+    it("should parse shorthand order", () => {
+      const config = transit("100px", 50, "linear", 30) as TransitionConfig;
+      assert.strictEqual(config.value, "100px");
+      assert.deepEqual(config.params, { duration: 50, timing: "linear", delay: 30 });
     });
 
     it("should use defaults", () => {
       const params = { duration: 30 };
       const config = transit("100px", params) as TransitionConfig;
       assert.strictEqual(config.value, "100px");
-      assert.deepEqual(config.params, { duration: 30, delay: 0, timing: "ease" });
+      assert.deepEqual(config.params, { duration: 30, timing: "ease", delay: 0 });
     });
 
-    describe("when providing an invalid duration", () => {
+    describe("when providing duration of invalid type", () => {
       it("should log warning", () => {
-        for (const val of [0, undefined, "invalid"]) {
-          transit("100px", { duration: val as any });
-          assert.strictEqual(warning, "[react-css-transition] Invalid duration '%s'.");
+        for (const val of [undefined, "invalid"]) {
+          transit("100px", val as any);
+          assert.strictEqual(warning, "[react-css-transition] Invalid parameter '%s'.");
           warning = undefined;
         }
       });

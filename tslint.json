@@ -4,6 +4,7 @@
     "interface-name": [true, "never-prefix"],
     "object-literal-sort-keys": false,
     "forin": false,
+    "no-string-literal": false,
     "file-header": [
       true,
       "Copyright \\(C\\) \\d{4}"

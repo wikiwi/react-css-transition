@@ -8,3 +8,12 @@
 export function removeVendorPrefix(val: string): string {
   return val.replace(/^-(webkit|moz|ms|o)-/, "");
 }
+
+export function convertToCSSPrefix(property: string): string {
+  return property
+    .replace(/^Moz/, "-moz-")
+    .replace(/^ms/, "-ms-")
+    .replace(/^O/, "-o-")
+    .replace(/^Webkit/, "-webkit-")
+    .toLowerCase();
+}

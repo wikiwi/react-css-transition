@@ -34,11 +34,18 @@ export interface TransitionParams {
   delay?: number;
 }
 
-export function transit(value: any, params: TransitionParams): any {
-  warning(!params, "[react-css-transition] Invalid duration '%s'.", params.duration);
-  warning(typeof params.duration !== "number" || params.duration <= 0,
-    "[react-css-transition] Invalid duration '%s'.", params.duration);
-
+export function transit(value: any, params: TransitionParams): any;
+export function transit(value: any, duration: number, timing?: string, delay?: number): any;
+export function transit(value: any, paramsOrDuration: TransitionParams | number, timing?: string, delay?: number): any {
+  let params: TransitionParams;
+  if (typeof paramsOrDuration === "object") {
+    params = paramsOrDuration as TransitionParams;
+  } else if (typeof paramsOrDuration === "number") {
+    params = { duration: paramsOrDuration as number, timing, delay };
+  } else {
+    warning(false, "[react-css-transition] Invalid parameter '%s'.", paramsOrDuration);
+    params = { duration: 0 };
+  }
   if (params.delay === undefined) { params.delay = 0; };
   if (params.timing === undefined) { params.timing = "ease"; };
   return new TransitionConfig(value, params);
