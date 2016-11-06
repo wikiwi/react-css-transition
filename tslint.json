@@ -5,6 +5,7 @@
     "object-literal-sort-keys": false,
     "forin": false,
     "no-string-literal": false,
+    "ordered-imports": false,
     "file-header": [
       true,
       "Copyright \\(C\\) \\d{4}"

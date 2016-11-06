@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6",
     "module": "commonjs",
     "moduleResolution": "node",
     "jsx": "react",
@@ -8,16 +8,9 @@
     "baseUrl": "./",
     "paths": {
       "*": [
-        "../node_modules/@typeless/*"
+        "./node_modules/@typeless/*",
+        "./node_modules/*"
       ]
     }
-  },
-  "include": [
-    "./**/*.ts",
-    "./**/*.d.ts",
-    "./**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  }
 }

@@ -1,4 +1,4 @@
---compilers tsx:ts-node/register,ts:ts-node/register
+--compilers tsx:ts-babel-node/register,ts:ts-babel-node/register
 --reporter dot
 src/**/*.spec.tsx
 src/**/*.spec.ts

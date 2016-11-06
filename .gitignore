@@ -2,3 +2,5 @@
 /coverage/
 /npm-debug.log
 /dist/
+/.awcache/
+/.nyc_output/

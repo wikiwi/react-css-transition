@@ -5,21 +5,20 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+/* tslint:disable: variable-name */
+
+declare module "./transit" {
+  export const __RewireAPI__: any;
+}
+
 import { assert } from "chai";
-
-import * as Transit from "./transit";
-import { TransitionConfig } from "./transit";
-import * as rewire from "rewire";
-
-const transitModule = rewire("./transit");
-const { transit } = transitModule as any as typeof Transit;
+import { TransitionConfig, transit, __RewireAPI__ as transitRewireAPI } from "./transit";
 
 describe("transit.ts", () => {
   let warning: string;
-  let resetRewire: Function;
 
   beforeEach(() => {
-    resetRewire = transitModule.__set__("warning", (condition: any, message: string) => {
+    transitRewireAPI.__Rewire__("warning", (condition: any, message: string) => {
       if (!condition) {
         warning = message;
       }
@@ -27,7 +26,7 @@ describe("transit.ts", () => {
   });
 
   afterEach(() => {
-    resetRewire();
+    transitRewireAPI.__ResetDependency__("warning");
     warning = undefined;
   });
 

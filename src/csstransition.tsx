@@ -5,7 +5,6 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import * as objectAssign from "object-assign";
 import * as React from "react";
 
 import { TransitionObserver, TransitionObserverProps } from "./transitionobserver";
@@ -48,7 +47,7 @@ interface CSSTransitionState {
 }
 
 function getRest(props: CSSTransitionProps): React.HTMLAttributes<HTMLElement> {
-  const rest = objectAssign({}, props);
+  const rest = Object.assign({}, props);
   delete rest.active;
   delete rest.transitionAppear;
   delete rest.onTransitionComplete;
@@ -75,8 +74,6 @@ export class CSSTransition extends React.Component<CSSTransitionProps, CSSTransi
   };
 
   private appearTimer: NodeJS.Timer;
-
-  private get needWorkaround(): boolean { return true; }
 
   constructor(props: CSSTransitionProps) {
     super(props);

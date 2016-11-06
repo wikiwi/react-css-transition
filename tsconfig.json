@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6",
     "module": "es6",
     "moduleResolution": "node",
     "jsx": "react",
@@ -15,7 +15,9 @@
   "include": [
     "./src/**/*.ts",
     "./src/**/*.tsx",
-    "./src/**/*.d.ts"
+    "./src/**/*.d.ts",
+    "./test/**/*.ts",
+    "./test/**/*.tsx"
   ],
   "exclude": [
     "node_modules"

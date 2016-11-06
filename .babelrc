@@ -1,0 +1,17 @@
+{
+  "presets": [["es2015", { "modules": false }]],
+  "env": {
+    "karma": {
+      "presets": ["es2015"],
+      "plugins": [
+        "rewire"
+      ]
+    },
+    "mocha": {
+      "presets": ["es2015"],
+      "plugins": [
+        "istanbul", "rewire"
+      ]
+    }
+  }
+}

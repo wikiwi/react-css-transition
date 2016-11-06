@@ -5,7 +5,6 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import * as objectAssign from "object-assign";
 import * as React from "react";
 
 import { processStyle } from "./processstyle";
@@ -18,7 +17,7 @@ export interface TransitionObserverProps {
 }
 
 function getRest(props: TransitionObserverProps): any {
-  const rest = objectAssign({}, props);
+  const rest = Object.assign({}, props);
   delete rest.style;
   delete rest.onTransitionStart;
   delete rest.onTransitionComplete;
