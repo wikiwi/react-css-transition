@@ -1,2 +1,5 @@
-const context = require.context("./src", true, /\.tsx?$/);
-context.keys().forEach(context);
+const unitContext = require.context("./src", true, /\.tsx?$/);
+unitContext.keys().forEach(unitContext);
+
+const integrationContext = require.context("./test", true, /\.tsx?$/);
+integrationContext.keys().forEach(integrationContext);

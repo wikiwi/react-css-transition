@@ -1,4 +1,5 @@
-/*
+/**
+ * @license
  * Copyright (C) 2016 Chi Vinh Le and contributors.
  *
  * This software may be modified and distributed under the terms
@@ -8,10 +9,11 @@
 import * as React from "react";
 
 import { processStyle } from "./processstyle";
+import { matchTransitionProperty } from "./utils";
 
 export interface TransitionObserverProps {
   style: React.CSSProperties;
-  onTransitionStart?: () => void;
+  onTransitionBegin?: () => void;
   onTransitionComplete?: () => void;
   [index: string]: any;
 }
@@ -19,7 +21,7 @@ export interface TransitionObserverProps {
 function getRest(props: TransitionObserverProps): any {
   const rest = Object.assign({}, props);
   delete rest.style;
-  delete rest.onTransitionStart;
+  delete rest.onTransitionBegin;
   delete rest.onTransitionComplete;
   return rest;
 }
@@ -41,7 +43,7 @@ export class TransitionObserver extends React.Component<TransitionObserverProps,
       if (this.props.onTransitionComplete) {
         childProps.onTransitionEnd = this.handleTransitionEnd.bind(this, lastProperty);
       }
-      workaroundProps.onTransitionEnd = this.props.onTransitionStart;
+      workaroundProps.onTransitionEnd = this.props.onTransitionBegin;
       workaroundProps.style = { transform: "scale(1.0)", transition: `transform 1ms linear ${firstPropertyDelay}ms` };
     } else {
       workaroundProps.style = { transform: "scale(0.99)" };
@@ -55,7 +57,7 @@ export class TransitionObserver extends React.Component<TransitionObserverProps,
 
   private handleTransitionEnd = (lastProperty: string, e: React.TransitionEvent) => {
     if (e.target !== e.currentTarget ||
-      e.propertyName !== lastProperty) {
+      !matchTransitionProperty(e.propertyName, lastProperty)) {
       return;
     }
     this.props.onTransitionComplete();

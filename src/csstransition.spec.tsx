@@ -1,4 +1,5 @@
-/*
+/**
+ * @license
  * Copyright (C) 2016 Chi Vinh Le and contributors.
  *
  * This software may be modified and distributed under the terms
@@ -61,7 +62,7 @@ describe("csstransition.tsx", () => {
 
         describe("when transition starts", () => {
           before(() => {
-            wrapper.simulate("transitionStart");
+            wrapper.simulate("transitionBegin");
           });
 
           it("should ignore", () => {
@@ -118,7 +119,7 @@ describe("csstransition.tsx", () => {
 
         describe("when transition starts", () => {
           before(() => {
-            wrapper.simulate("transitionStart");
+            wrapper.simulate("transitionBegin");
           });
 
           it("should ignore", () => {
@@ -267,7 +268,7 @@ describe("csstransition.tsx", () => {
 
         describe("when transition starts", () => {
           before(() => {
-            wrapper.simulate("transitionStart");
+            wrapper.simulate("transitionBegin");
           });
 
           it("should ignore", () => {
@@ -288,7 +289,7 @@ describe("csstransition.tsx", () => {
 
           describe("when transition starts", () => {
             before(() => {
-              wrapper.simulate("transitionStart");
+              wrapper.simulate("transitionBegin");
             });
 
             it("should ignore", () => {
@@ -346,7 +347,7 @@ describe("csstransition.tsx", () => {
 
         describe("when transition starts", () => {
           before(() => {
-            wrapper.simulate("transitionStart");
+            wrapper.simulate("transitionBegin");
           });
 
           it("should ignore", () => {
@@ -367,7 +368,7 @@ describe("csstransition.tsx", () => {
 
           describe("when transition starts", () => {
             before(() => {
-              wrapper.simulate("transitionStart");
+              wrapper.simulate("transitionBegin");
             });
 
             it("should ignore", () => {
@@ -429,7 +430,7 @@ describe("csstransition.tsx", () => {
 
         describe("when transition starts", () => {
           before(() => {
-            wrapper.simulate("transitionStart");
+            wrapper.simulate("transitionBegin");
           });
 
           it("should ignore", () => {
@@ -494,7 +495,7 @@ describe("csstransition.tsx", () => {
             assert.deepEqual(style, defaultStyle);
           });
 
-          it("should continue to remain in default after TICK", (done) => {
+          it("should continue to remain in default", (done) => {
             setTimeout(() => {
               const style = wrapper.update().props().style;
               assert.deepEqual(style, defaultStyle);

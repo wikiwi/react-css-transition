@@ -27,6 +27,7 @@ module.exports = (config) => {
       resolve: {
         extensions: [".tsx", ".ts", ".js", ".json"],
       },
+      // as required by sinon: https://github.com/airbnb/enzyme/blob/master/docs/guides/webpack.md.
       externals: {
         "react/addons": true,
         "react/lib/ExecutionEnvironment": true,
@@ -46,6 +47,7 @@ module.exports = (config) => {
               sourceMap: true,
               useBabel: true,
               useCache: false,
+              module: "commonjs",
             },
           },
           {

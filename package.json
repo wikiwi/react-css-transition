@@ -11,20 +11,20 @@
     "url": "https://github.com/wikiwi/react-css-transition/issues"
   },
   "files": [
-    "dist"
+    "lib",
+    "cjs"
   ],
-  "jsnext:main": "./dist/esm/index.js",
-  "main": "./dist/commonjs/index.js",
-  "typings": "./dist/typings/index.d.ts",
+  "jsnext:main": "./lib/index.js",
+  "main": "./cjs/index.js",
+  "typings": "./lib/index.d.ts",
   "scripts": {
     "build": "gulp",
     "clean": "rm -r -f dist",
     "ci:coveralls": "cat coverage/lcov.info | coveralls",
-    "test": "npm run test:lint && npm run test:coverage",
-    "test:coverage": "cross-env NODE_ENV=mocha nyc npm run test:run",
-    "test:lint": "gulp lint",
-    "test:run": "cross-env NODE_ENV=mocha TS_NODE_PROJECT=./tsconfig.mocha.json mocha --opts mocha.opts",
-    "test:watch": "cross-env NODE_ENV=mocha TS_NODE_PROJECT=./tsconfig.mocha.json mocha --opts mocha.opts --watch"
+    "lint": "gulp lint",
+    "test": "cross-env NODE_ENV=test karma start",
+    "test:coverage": "cross-env NODE_ENV=coverage TS_NODE_PROJECT=./tsconfig.coverage.json nyc mocha --opts mocha.opts",
+    "test:watch": "cross-env NODE_ENV=test karma start --single-run=false"
   },
   "engines": {
     "node": ">=4"
@@ -55,7 +55,9 @@
     "babel-core": "^6.18.2",
     "babel-plugin-istanbul": "^2.0.3",
     "babel-plugin-rewire": "^1.0.0",
+    "babel-plugin-transform-object-assign": "^6.8.0",
     "babel-preset-es2015": "^6.18.0",
+    "babel-preset-react": "^6.16.0",
     "cash-rm": "^0.2.0",
     "chai": "^3.5.0",
     "coveralls": "^2.11.14",
@@ -65,9 +67,10 @@
     "eslint-config-airbnb-base": "^9.0.0",
     "eslint-plugin-import": "^2.0.1",
     "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
     "gulp-eslint": "^3.0.1",
-    "gulp-ignore": "^2.0.1",
     "gulp-jsonlint": "^1.1.2",
+    "gulp-sourcemaps": "^2.2.0",
     "gulp-tslint": "^6.1.2",
     "gulp-typescript": "^3.0.2",
     "gulp-yaml-validate": "^1.0.2",
@@ -114,5 +117,4 @@
     ],
     "all": true
   }
-
 }

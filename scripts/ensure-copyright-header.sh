@@ -8,7 +8,8 @@
 shopt -s globstar
 
 read -d '' ASTERISK_HEADER <<EOL
-/*
+/**
+ * @license
  * Copyright (C) $(date +%Y) Chi Vinh Le and contributors.
  *
  * This software may be modified and distributed under the terms

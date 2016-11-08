@@ -3,7 +3,7 @@
     "target": "es6",
     "module": "es6",
     "moduleResolution": "node",
-    "jsx": "react",
+    "jsx": "preserve",
     "noImplicitAny": true,
     "baseUrl": "./",
     "paths": {

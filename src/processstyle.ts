@@ -1,4 +1,5 @@
-/*
+/**
+ * @license
  * Copyright (C) 2016 Chi Vinh Le and contributors.
  *
  * This software may be modified and distributed under the terms
@@ -11,7 +12,7 @@ import { TransitionConfig } from "./transit";
 import { convertToCSSPrefix } from "./utils";
 
 export interface ProcessResult {
-  style: React.CSSProperties;
+  style: CSSProperties;
   lastProperty?: string;
   firstProperty?: string;
   firstPropertyDelay?: number;

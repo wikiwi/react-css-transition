@@ -1,4 +1,5 @@
-/*
+/**
+ * @license
  * Copyright (C) 2016 Chi Vinh Le and contributors.
  *
  * This software may be modified and distributed under the terms
@@ -102,18 +103,25 @@ describe("transitionobserver.tsx", () => {
           it("should call onTransitionComplete", () => {
             assert.isTrue(onTransitionComplete.calledOnce);
           });
+
+          /* TODO:
+          it("should ignore another transitionend", () => {
+            wrapper.findWhere(isChild).simulate("transitionEnd", { propertyName: "width" });
+            assert.isTrue(onTransitionComplete.calledOnce);
+          });
+         */
         });
       });
     });
 
     describe("workaround", () => {
-      let onTransitionStart: SinonSpy;
+      let onTransitionBegin: SinonSpy;
       let wrapper: ShallowWrapper<TransitionObserverProps, {}>;
       before(() => {
-        onTransitionStart = spy();
+        onTransitionBegin = spy();
         wrapper = getWrapper({
           style: { width: "20px", height: "10px" },
-          onTransitionStart,
+          onTransitionBegin,
         });
       });
 
@@ -147,8 +155,8 @@ describe("transitionobserver.tsx", () => {
             wrapper.findWhere(isWorkaround).simulate("transitionEnd", { propertyName: "transform" });
           });
 
-          it("should call onTransitionStart", () => {
-            assert.isTrue(onTransitionStart.calledOnce);
+          it("should call onTransitionBegin", () => {
+            assert.isTrue(onTransitionBegin.calledOnce);
           });
         });
       });

@@ -1,4 +1,5 @@
-/*
+/**
+ * @license
  * Copyright (C) 2016 Chi Vinh Le and contributors.
  *
  * This software may be modified and distributed under the terms
@@ -7,7 +8,7 @@
 
 import { assert } from "chai";
 
-import { convertToCSSPrefix, removeVendorPrefix } from "./utils";
+import { convertToCSSPrefix, removeVendorPrefix, matchTransitionProperty } from "./utils";
 
 describe("utils.ts", () => {
   describe("removeVendorPrefix", () => {
@@ -66,6 +67,35 @@ describe("utils.ts", () => {
       assert.strictEqual(
         convertToCSSPrefix("MozTransform"),
         "-moz-transform"
+      );
+    });
+  });
+
+  describe("matchTransitionProperty", () => {
+    it("should match properties", () => {
+      assert.isTrue(
+        matchTransitionProperty("background-color", "background"),
+      );
+      assert.isTrue(
+        matchTransitionProperty("background", "background"),
+      );
+      assert.isFalse(
+        matchTransitionProperty("background", "background-color"),
+      );
+      assert.isFalse(
+        matchTransitionProperty("background", "width"),
+      );
+    });
+
+    it("should ignore prefixed properties", () => {
+      assert.isTrue(
+        matchTransitionProperty("-webkit-background-color", "background"),
+      );
+      assert.isTrue(
+        matchTransitionProperty("background", "-ms-background"),
+      );
+      assert.isFalse(
+        matchTransitionProperty("-o-background", "-moz-background-color"),
       );
     });
   });

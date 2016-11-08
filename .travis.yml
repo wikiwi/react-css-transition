@@ -1,11 +1,26 @@
+sudo: required
+dist: trusty
 language: node_js
 node_js:
 - 6
 - 4
+addons:
+  apt:
+    sources:
+    - google-chrome
+    packages:
+    - google-chrome-stable
+    - google-chrome-beta
+before_install:
+- export CHROME_BIN=chromium-browser
+- export DISPLAY=:99.0
+- sh -e /etc/init.d/xvfb start
 before_script:
 - npm prune
 script:
+- npm run lint
 - npm run test
+- npm run test:coverage
 after_success:
 - npm run ci:coveralls
 before_deploy:
@@ -13,10 +28,10 @@ before_deploy:
 deploy:
   provider: npm
   on:
-    repo: wikiwi/react-remove
+    repo: wikiwi/react-css-transition
     tags: true
     node: 4
   skip_cleanup: true
   email: vinh@wikiwi.io
   api_key:
-    secure: JbwJ9l5zt5IqQoDDu461xQ1ruXRjccEORGtgVgFj45ayPHHpAVzTczXZo26coxez1BSWmCc6aFlRRkRiOXw29CM56OSFflgX93hU8gYOh4TcYyoLUw+VAtXgTab1ta8HKZbXgI5JZnnYUcPJ3ysHs53BZZOT5ZFoLlC8YBMKCZP0dQR3OjCOLTn/1pl3bg/QensuBCVk5IX+fY5N0fTgvj840QzaIRmglyRfYgucIKRZ6gtgo/GSUNN/hWXycLHukTlTY3oR838yK87CU7GUm6pfsVXI96TRy2JuyxJcWL0Nkb61UM2wuLdtSuEIbInp4U7YjB8oN9utkk3YapRGStKPUiMPQA5CImlk5uJISiWaVwjW1qLyjBy2fkeuoXYV9O2kw81F8lPa6KFY4GbwU3ivff1ycYDPMQUVsYGN/KJJ3+2DSjbqlcz+7fV9IkRTiYWoJAt7NlPY5H1rySPHs7GGFnA9qNpabIthB8EopX6LJFPyRhEKqHHYPNlTfIV55iosZZzH2kg3kWYWbLVOatu0EAV4y7L9LR1CIATXUFen5ELD9J8VOl7g1GHch/ae9sEVI/EsIwrEAABVALe2H02mQkbGNBqlVqJcsuFnj48aamRewc96CPdataZZjIU4W9us+nJ8Iur/dLJ5r+AYWLIL8F1g12yAcU6Sem/d3P0=
+    secure: ROnp0q0AUa+2Vm2b4MNgnzT4hmyS6fjDAPfwaeERecZC8grY0HnCdwbKgtXw20rC89O9TyhL1oPsliJJA2zu2jNwb04hVze437cBWKamboez1GlhnpC8WPPogbkEQtkPjykFgL2RzsVDY0IPiyqsmwKPtxOJ+TCAIlflWSucLw0ibZUpLr/G7MUe6nNk/a3UlbmdrLvp+j8xu3SLgJ4tYbTNhnQKtRTC2EpCV8M0vcRanCfzOjajBLRf9vdVhf56FLbnUvj3wDQFzTLZj23hq0TniX4JXGoB91KnPKZ92EY6kXM2y1c980smq12K1O2LONOm7YgZsuz3B1/esg4hhU1Ev0IzB1YBE+8wO/2w+cbmnfdldCYJPAKGvL14ZeD5DZEu/SnlLYzs6ltzpJGHtgdw7d1Hg1jMaSdnLZ6DejBd5ywFeXbs0RIjal3Ae2QpmbbM6aqZJooTC6G9KoCzKYs3EI/cMT733JgyfWlY751yKPlYnIYoxez7ad0YNOWo5yjjWEzS2X0ZOdqH0c1OhJGhWuT0kS5RqjUo+LPd11btR1aKbwAkYRz9OfSbOQAD2cI58Xcn9JfaPbL3CEx7zBXwGZ4xvViw7emzG/g0gRXmLgZNxdUG0VjPLb9MgH2Uh66k0o9Ab1/zZum8jHkDRXWPDXxK+GRTp+WukOrz9Oc=

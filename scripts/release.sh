@@ -12,6 +12,9 @@ if [[ $# != 1 ]]; then
   exit 1
 fi
 
-npm version "$1" -m "react-css-transition release %s"
+package=$(grep -oP '(?<="name": ").*(?=")' package.json | head -n1) || (echo "Failed determine package name" && exit 1)
+echo "Detected package name: ${package}."
+
+npm version "$1" -m "${package} release %s"
 
 echo "Please check your changes with 'git log' and finally execute 'git push --follow-tags'"
