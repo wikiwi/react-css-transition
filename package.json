@@ -94,6 +94,7 @@
     "rewire": "^2.5.2",
     "sinon": "^2.0.0-pre.2",
     "ts-babel-node": "git+https://git@github.com/danielmoore/ts-babel-node.git",
+    "ts-node": "^1.7.0",
     "tslint": "^3.15.1",
     "typescript": "^2.0.6",
     "webpack": "^2.1.0-beta.25"
