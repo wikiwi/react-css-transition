@@ -3,7 +3,6 @@ dist: trusty
 language: node_js
 node_js:
 - 6
-- 4
 addons:
   apt:
     sources:
@@ -30,7 +29,7 @@ deploy:
   on:
     repo: wikiwi/react-css-transition
     tags: true
-    node: 4
+    node: 6
   skip_cleanup: true
   email: vinh@wikiwi.io
   api_key:
