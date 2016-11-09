@@ -1,14 +1,17 @@
 {
-  "extends": "tslint:latest",
+  "extends": "tslint:recommended",
   "rules": {
     "interface-name": [true, "never-prefix"],
     "object-literal-sort-keys": false,
     "forin": false,
     "no-string-literal": false,
-    "ordered-imports": false,
-    "file-header": [
-      true,
-      "Copyright \\(C\\) \\d{4}"
-    ]
+    "file-header": [true, "@license"],
+
+    "adjacent-overload-signatures": true,
+    "no-unsafe-finally": true,
+    "object-literal-key-quotes": [true, "as-needed"],
+    "object-literal-shorthand": true,
+    "only-arrow-functions": [true, "allow-declarations"],
+    "ordered-imports": false
   }
 }

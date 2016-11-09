@@ -11,6 +11,7 @@
     "url": "https://github.com/wikiwi/react-css-transition/issues"
   },
   "files": [
+    "dist",
     "lib",
     "cjs"
   ],
@@ -18,16 +19,17 @@
   "main": "./cjs/index.js",
   "typings": "./lib/index.d.ts",
   "scripts": {
-    "build": "gulp",
-    "clean": "rm -r -f dist",
+    "build": "gulp && webpack",
+    "clean": "rm -r -f dist lib cjs coverage",
     "ci:coveralls": "cat coverage/lcov.info | coveralls",
+    "release": "npm version -m 'react-css-transition release %s'",
     "lint": "gulp lint",
     "test": "npm run test:unit && npm run test:integration",
+    "test:coverage": "cross-env TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' istanbul cover node_modules/.bin/_mocha -- --opts mocha.opts",
     "test:unit": "cross-env TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' mocha --opts mocha.opts",
-    "test:unit:watch": "cross-env TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' mocha --opts mocha.opts --watch",
-    "test:integration": "cross-env NODE_ENV=test karma start",
-    "test:integration:watch": "cross-env NODE_ENV=test karma start --single-run=false",
-    "test:coverage": "cross-env NODE_ENV=test TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' nyc --instrument mocha --opts mocha.opts"
+    "test:unit:watch": "npm run test:unit -- --watch",
+    "test:integration": "karma start",
+    "test:integration:watch": "karma start --single-run=false"
   },
   "engines": {
     "node": ">=4"
@@ -86,7 +88,6 @@
     "karma-webpack": "^1.8.0",
     "merge2": "^1.0.2",
     "mocha": "^3.1.2",
-    "nyc": "^8.4.0",
     "object-assign": "^4.1.0",
     "react": "^15.3.2",
     "react-addons-test-utils": "^15.3.2",
@@ -97,24 +98,5 @@
     "tslint": "^3.15.1",
     "typescript": "^2.0.6",
     "webpack": "^2.1.0-beta.25"
-  },
-  "nyc": {
-    "include": [
-      "src/**/*.ts",
-      "src/**/*.tsx"
-    ],
-    "exclude": [
-      "src/**/*.spec.ts",
-      "src/**/*.spec.tsx"
-    ],
-    "reporter": [
-      "lcov",
-      "text"
-    ],
-    "extension": [
-      ".tsx",
-      ".ts"
-    ],
-    "all": true
   }
 }

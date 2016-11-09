@@ -10,8 +10,8 @@ const sourcemaps = require("gulp-sourcemaps");
 const files = {
   tsWithoutTest: ["./src/**/*.ts", "./src/**/*.tsx", "!./src/**/*.spec.tsx", "!./src/**/*.spec.ts"],
   tsWithTest: ["./src/**/*.ts", "./src/**/*.tsx", "test/**/*.ts", "test/**/*.tsx"],
-  json: ["./*.json"],
-  yml: ["./*.yml"],
+  json: ["./*.json", "./.nycrc"],
+  yaml: ["./*.yml"],
   js: ["./*.js"],
 };
 
@@ -40,8 +40,8 @@ function build(dest, module) {
   };
 }
 
-gulp.task("lib", ["lint"], build("lib", "es6"));
-gulp.task("commonjs", ["lint"], build("cjs", "commonjs"));
+gulp.task("lib", build("lib", "es6"));
+gulp.task("commonjs", build("cjs", "commonjs"));
 
 gulp.task("tslint", () => {
   return gulp.src(files.tsWithTest)
@@ -65,9 +65,9 @@ gulp.task("jsonlint", () => {
 });
 
 gulp.task("yamllint", () => {
-  return gulp.src(files.yml, { dot: true })
+  return gulp.src(files.yaml, { dot: true })
     .pipe(yamllint());
 });
 
 gulp.task("lint", ["jsonlint", "eslint", "tslint", "yamllint"]);
-gulp.task("default", ["lint", "lib", "commonjs"]);
+gulp.task("default", ["lib", "commonjs"]);
