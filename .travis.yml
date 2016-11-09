@@ -20,10 +20,9 @@ script:
 - npm run lint
 - npm run test
 - npm run test:coverage
+- npm run build
 after_success:
 - npm run ci:coveralls
-before_deploy:
-- npm run build
 deploy:
   provider: npm
   on:

@@ -7,6 +7,7 @@
  */
 
 import * as React from "react";
+import * as objectAssign from "object-assign";
 
 import { processStyle } from "./processstyle";
 import { matchTransitionProperty } from "./utils";
@@ -19,7 +20,7 @@ export interface TransitionObserverProps {
 }
 
 function getRest(props: TransitionObserverProps): any {
-  const rest = Object.assign({}, props);
+  const rest = objectAssign({}, props);
   delete rest.style;
   delete rest.onTransitionBegin;
   delete rest.onTransitionComplete;

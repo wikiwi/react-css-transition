@@ -7,6 +7,7 @@
  */
 
 import * as React from "react";
+import * as objectAssign from "object-assign";
 
 import { TransitionObserver, TransitionObserverProps } from "./transitionobserver";
 
@@ -41,7 +42,7 @@ export interface CSSTransitionState {
 }
 
 function getRest(props: CSSTransitionProps): any {
-  const rest = Object.assign({}, props);
+  const rest = objectAssign({}, props);
   delete rest.active;
   delete rest.transitionAppear;
   delete rest.onTransitionComplete;

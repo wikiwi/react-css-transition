@@ -2,14 +2,14 @@ const path = require("path");
 
 module.exports = (config) => {
   config.set({
-    browsers: ["Chrome"], // run in Chrome
-    singleRun: true, // just run once by default
-    frameworks: ["mocha"], // use the mocha test framework
+    browsers: ["Chrome"],
+    singleRun: true,
+    frameworks: ["mocha"],
     files: [
-      "tests.webpack.js", // just load this file
+      "tests.webpack.js",
     ],
     preprocessors: {
-      "tests.webpack.js": ["webpack", "sourcemap"], // preprocess with webpack and our sourcemap loader
+      "tests.webpack.js": ["webpack", "sourcemap"],
     },
     remapCoverageReporter: {
       "text-summary": null,
@@ -23,7 +23,7 @@ module.exports = (config) => {
     },
     // TODO: enable coverage after https://github.com/deepsweet/istanbul-instrumenter-loader/pull/29.
     reporters: ["dots"], // , "coverage", "remap-coverage"], // report results in this format
-    webpack: { // kind of a copy of your webpack config
+    webpack: {
       resolve: {
         extensions: [".tsx", ".ts", ".js", ".json"],
       },
@@ -33,7 +33,7 @@ module.exports = (config) => {
         "react/lib/ExecutionEnvironment": true,
         "react/lib/ReactContext": true,
       },
-      devtool: "inline-source-map", // just do inline source maps instead of the default
+      devtool: "inline-source-map",
       module: {
         rules: [
           {
@@ -45,8 +45,6 @@ module.exports = (config) => {
             loader: "awesome-typescript",
             query: {
               sourceMap: true,
-              useBabel: true,
-              useCache: false,
               module: "commonjs",
             },
           },

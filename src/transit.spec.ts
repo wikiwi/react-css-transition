@@ -8,18 +8,21 @@
 
 /* tslint:disable: variable-name */
 
-declare module "./transit" {
-  export const __RewireAPI__: any;
-}
-
+import * as rewire from "rewire";
 import { assert } from "chai";
-import { TransitionConfig, transit, __RewireAPI__ as transitRewireAPI } from "./transit";
+
+import * as transitModule from "./transit";
+import { TransitionConfig } from "./transit";
+
+const rewireModule = rewire("./transit");
+const { transit } = rewireModule as any as typeof transitModule;
 
 describe("transit.ts", () => {
   let warning: string;
+  let resetRewire: Function;
 
   beforeEach(() => {
-    transitRewireAPI.__Rewire__("warning", (condition: any, message: string) => {
+    resetRewire = rewireModule.__set__("warning", (condition: any, message: string) => {
       if (!condition) {
         warning = message;
       }
@@ -27,7 +30,7 @@ describe("transit.ts", () => {
   });
 
   afterEach(() => {
-    transitRewireAPI.__ResetDependency__("warning");
+    resetRewire();
     warning = undefined;
   });
 

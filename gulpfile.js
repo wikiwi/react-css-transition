@@ -5,16 +5,12 @@ const jsonlint = require("gulp-jsonlint");
 const eslint = require("gulp-eslint");
 const merge = require("merge2");
 const yamllint = require("gulp-yaml-validate");
-const babel = require("gulp-babel");
 const sourcemaps = require("gulp-sourcemaps");
-const fs = require("fs");
-
-const babelConfig = JSON.parse(fs.readFileSync("./.babelrc", "utf8"));
 
 const files = {
   tsWithoutTest: ["./src/**/*.ts", "./src/**/*.tsx", "!./src/**/*.spec.tsx", "!./src/**/*.spec.ts"],
   tsWithTest: ["./src/**/*.ts", "./src/**/*.tsx", "test/**/*.ts", "test/**/*.tsx"],
-  json: ["./*.json", "./.babelrc"],
+  json: ["./*.json"],
   yml: ["./*.yml"],
   js: ["./*.js"],
 };
@@ -23,30 +19,29 @@ function onBuildError() {
   this.once("finish", () => process.exit(1));
 }
 
-function build(type) {
+function build(dest, module) {
   return () => {
     const tsProject = ts.createProject("tsconfig.json", {
       noEmitOnError: true,
-      declaration: type === "lib",
-      target: "es6",
-      module: "es6",
+      declaration: dest === "lib",
+      target: "es5",
+      module,
     });
     const tsResult = gulp.src(files.tsWithoutTest)
       .pipe(sourcemaps.init())
       .pipe(tsProject())
       .once("error", onBuildError);
     return merge([
-      tsResult.dts.pipe(gulp.dest(type)),
+      tsResult.dts.pipe(gulp.dest(dest)),
       tsResult.js
-        .pipe(babel(babelConfig.env[`build-${type}`]))
         .pipe(sourcemaps.write("."))
-        .pipe(gulp.dest(type)),
+        .pipe(gulp.dest(dest)),
     ]);
   };
 }
 
-gulp.task("lib", ["lint"], build("lib"));
-gulp.task("commonjs", ["lint"], build("cjs"));
+gulp.task("lib", ["lint"], build("lib", "es6"));
+gulp.task("commonjs", ["lint"], build("cjs", "commonjs"));
 
 gulp.task("tslint", () => {
   return gulp.src(files.tsWithTest)

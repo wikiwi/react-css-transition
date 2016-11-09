@@ -6,6 +6,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+import * as objectAssign from "object-assign";
+
 import { CSSProperties } from "react";
 
 import { TransitionConfig } from "./transit";
@@ -20,7 +22,7 @@ export interface ProcessResult {
 
 export function processStyle(style: CSSProperties): ProcessResult {
   let transition = "";
-  let processedStyle = Object.assign({}, style);
+  let processedStyle = objectAssign({}, style);
   let lastProperty: string;
   let lastPropertyDuration = -1;
   let firstPropertyDelay = 9999999999;
