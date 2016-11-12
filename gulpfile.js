@@ -1,3 +1,5 @@
+"use strict";
+
 const gulp = require("gulp");
 const ts = require("gulp-typescript");
 const tslint = require("gulp-tslint");

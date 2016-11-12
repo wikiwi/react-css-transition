@@ -1,8 +1,9 @@
 extends:
   - airbnb-base
 env:
-  es6: true
   node: true
+parserOptions:
+  sourceType: script
 rules:
   # sometimes brackets are useful for formatting.
   arrow-body-style: 0
