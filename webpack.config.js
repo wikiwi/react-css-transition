@@ -7,7 +7,7 @@ const packageName = JSON.parse(fs.readFileSync("package.json", "utf8")).name;
 const libraryName = packageName.replace(/(^|-)(.)/g, (match, _, c) => (c ? c.toUpperCase() : ""));
 
 const config = {
-  entry: "./src/index",
+  entry: "./src/index.ts",
   devtool: "sourcemap",
   resolve: { extensions: [".ts", ".tsx", ".js"] },
   module: {
