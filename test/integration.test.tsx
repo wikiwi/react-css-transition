@@ -24,6 +24,7 @@ describe("integration test", () => {
     const leaveStyle: React.CSSProperties = { width: transit("50px", 150, "ease", 25) };
     const enterStyleProcessed: React.CSSProperties = { width: "100px", transition: "width 150ms ease 25ms" };
     const leaveStyleProcessed: React.CSSProperties = { width: "50px", transition: "width 150ms ease 25ms" };
+    let onTransitionBegin: SinonSpy;
     let onTransitionComplete: SinonSpy;
     let getWrapper: (props?: CSSTransitionProps) => ReactWrapper<any, {}>;
     let getWrapperAttached: (props?: CSSTransitionProps) => ReactWrapper<any, {}>;
@@ -59,8 +60,16 @@ describe("integration test", () => {
       let target: ReactWrapper<any, {}>;
 
       before(() => {
+        onTransitionBegin = spy();
         onTransitionComplete = spy();
-        wrapper = getWrapperAttached({ activeStyle, enterStyle, leaveStyle, defaultStyle, onTransitionComplete });
+        wrapper = getWrapperAttached({
+          activeStyle,
+          enterStyle,
+          leaveStyle,
+          defaultStyle,
+          onTransitionBegin,
+          onTransitionComplete,
+        });
         target = wrapper.find("div");
       });
 
@@ -86,6 +95,10 @@ describe("integration test", () => {
         it("should begin transition", () => {
           const style = target.props().style;
           assert.deepEqual(style, enterStyleProcessed);
+        });
+
+        it("should call onTransitionBegin", () => {
+          assert.isTrue(onTransitionBegin.calledOnce);
         });
 
         describe("when transition starts", () => {
@@ -117,6 +130,10 @@ describe("integration test", () => {
             assert.deepEqual(style, activeStyle);
           });
 
+          it("should have called onTransitionBegin only once", () => {
+            assert.isTrue(onTransitionBegin.calledOnce);
+          });
+
           it("should call onTransitionComplete", () => {
             assert.isTrue(onTransitionComplete.calledOnce);
           });
@@ -129,9 +146,10 @@ describe("integration test", () => {
       let target: ReactWrapper<any, {}>;
 
       before(() => {
+        onTransitionBegin = spy();
         onTransitionComplete = spy();
         wrapper = getWrapperAttached({
-          activeStyle, enterStyle, leaveStyle, defaultStyle, onTransitionComplete,
+          activeStyle, enterStyle, leaveStyle, defaultStyle, onTransitionBegin, onTransitionComplete,
           active: true,
         });
         target = wrapper.find("div");
@@ -159,6 +177,10 @@ describe("integration test", () => {
         it("should begin transition", () => {
           const style = target.props().style;
           assert.deepEqual(style, leaveStyleProcessed);
+        });
+
+        it("should call onTransitionBegin", () => {
+          assert.isTrue(onTransitionBegin.calledOnce);
         });
 
         describe("when transition starts", () => {
@@ -190,6 +212,10 @@ describe("integration test", () => {
             assert.deepEqual(style, defaultStyle);
           });
 
+          it("should have called onTransitionBegin only once", () => {
+            assert.isTrue(onTransitionBegin.calledOnce);
+          });
+
           it("should call onTransitionComplete", () => {
             assert.isTrue(onTransitionComplete.calledOnce);
           });
@@ -202,9 +228,11 @@ describe("integration test", () => {
       let target: ReactWrapper<any, {}>;
 
       before(() => {
+        onTransitionBegin = spy();
         onTransitionComplete = spy();
         wrapper = getWrapperAttached({
           activeStyle, enterStyle, leaveStyle, defaultStyle,
+          onTransitionBegin,
           onTransitionComplete,
           active: false,
         });
@@ -230,6 +258,10 @@ describe("integration test", () => {
           assert.deepEqual(style, enterStyleProcessed);
         });
 
+        it("should call onTransitionBegin", () => {
+          assert.isTrue(onTransitionBegin.calledOnce);
+        });
+
         it("should not call onTransitionComplete yet", () => {
           assert.isTrue(onTransitionComplete.notCalled);
         });
@@ -244,6 +276,10 @@ describe("integration test", () => {
             assert.deepEqual(style, defaultStyle);
           });
 
+          it("should have called onTransitionBegin only once", () => {
+            assert.isTrue(onTransitionBegin.calledOnce);
+          });
+
           it("should call onTransitionComplete", () => {
             assert.isTrue(onTransitionComplete.calledOnce);
           });
@@ -256,9 +292,11 @@ describe("integration test", () => {
       let target: ReactWrapper<any, {}>;
 
       before(() => {
+        onTransitionBegin = spy();
         onTransitionComplete = spy();
         wrapper = getWrapperAttached({
           activeStyle, enterStyle, leaveStyle, defaultStyle,
+          onTransitionBegin,
           onTransitionComplete,
           active: true,
         });
@@ -284,6 +322,10 @@ describe("integration test", () => {
           assert.deepEqual(style, leaveStyleProcessed);
         });
 
+        it("should call onTransitionBegin", () => {
+          assert.isTrue(onTransitionBegin.calledOnce);
+        });
+
         it("should not call onTransitionComplete yet", () => {
           assert.isTrue(onTransitionComplete.notCalled);
         });
@@ -298,6 +340,10 @@ describe("integration test", () => {
             assert.deepEqual(style, activeStyle);
           });
 
+          it("should have called onTransitionBegin only once", () => {
+            assert.isTrue(onTransitionBegin.calledOnce);
+          });
+
           it("should call onTransitionComplete", () => {
             assert.isTrue(onTransitionComplete.calledOnce);
           });
@@ -310,9 +356,11 @@ describe("integration test", () => {
       let target: ReactWrapper<any, {}>;
 
       before(() => {
+        onTransitionBegin = spy();
         onTransitionComplete = spy();
         wrapper = getWrapperAttached({
           activeStyle, enterStyle, leaveStyle, defaultStyle,
+          onTransitionBegin,
           onTransitionComplete,
           active: false,
         });
@@ -341,6 +389,10 @@ describe("integration test", () => {
         it("should begin transition", () => {
           const style = target.props().style;
           assert.deepEqual(style, enterStyleProcessed);
+        });
+
+        it("should call onTransitionBegin", () => {
+          assert.isTrue(onTransitionBegin.calledOnce);
         });
 
         describe("when transition starts", () => {
@@ -395,6 +447,10 @@ describe("integration test", () => {
               assert.deepEqual(style, defaultStyle);
             });
 
+            it("should have called onTransitionBegin only once", () => {
+              assert.isTrue(onTransitionBegin.calledOnce);
+            });
+
             it("should call onTransitionComplete", () => {
               assert.isTrue(onTransitionComplete.calledOnce);
             });
@@ -408,9 +464,11 @@ describe("integration test", () => {
       let target: ReactWrapper<any, {}>;
 
       before(() => {
+        onTransitionBegin = spy();
         onTransitionComplete = spy();
         wrapper = getWrapperAttached({
           activeStyle, enterStyle, leaveStyle, defaultStyle,
+          onTransitionBegin,
           onTransitionComplete,
           active: true,
         });
@@ -439,6 +497,10 @@ describe("integration test", () => {
         it("should begin transition", () => {
           const style = target.props().style;
           assert.deepEqual(style, leaveStyleProcessed);
+        });
+
+        it("should call onTransitionBegin", () => {
+          assert.isTrue(onTransitionBegin.calledOnce);
         });
 
         describe("when transition starts", () => {
@@ -493,6 +555,10 @@ describe("integration test", () => {
               assert.deepEqual(style, activeStyle);
             });
 
+            it("should have called onTransitionBegin only once", () => {
+              assert.isTrue(onTransitionBegin.calledOnce);
+            });
+
             it("should call onTransitionComplete", () => {
               assert.isTrue(onTransitionComplete.calledOnce);
             });
@@ -506,9 +572,11 @@ describe("integration test", () => {
       let target: ReactWrapper<any, {}>;
 
       before(() => {
+        onTransitionBegin = spy();
         onTransitionComplete = spy();
         wrapper = getWrapperAttached({
           activeStyle, enterStyle, leaveStyle, defaultStyle,
+          onTransitionBegin,
           onTransitionComplete,
           active: true,
           transitionAppear: true,
@@ -544,6 +612,10 @@ describe("integration test", () => {
             }, 100);
           });
 
+          it("should call onTransitionBegin", () => {
+            assert.isTrue(onTransitionBegin.calledOnce);
+          });
+
           it("should ignore", () => {
             const style = target.props().style;
             assert.deepEqual(style, enterStyleProcessed);
@@ -566,6 +638,10 @@ describe("integration test", () => {
             assert.deepEqual(style, activeStyle);
           });
 
+          it("should have called onTransitionBegin only once", () => {
+            assert.isTrue(onTransitionBegin.calledOnce);
+          });
+
           it("should call onTransitionComplete", () => {
             assert.isTrue(onTransitionComplete.calledOnce);
           });
@@ -578,9 +654,11 @@ describe("integration test", () => {
       let target: ReactWrapper<any, {}>;
 
       before(() => {
+        onTransitionBegin = spy();
         onTransitionComplete = spy();
         wrapper = getWrapperAttached({
           activeStyle, enterStyle, leaveStyle, defaultStyle,
+          onTransitionBegin,
           onTransitionComplete,
           active: true,
           transitionAppear: true,
@@ -602,6 +680,10 @@ describe("integration test", () => {
           assert.isTrue(onTransitionComplete.notCalled);
         });
 
+        it("should call onTransitionBegin", () => {
+          assert.isTrue(onTransitionBegin.calledOnce);
+        });
+
         describe("when transition was interrupted", () => {
           before(() => {
             wrapper.setProps({ active: false });
@@ -618,6 +700,10 @@ describe("integration test", () => {
               assert.deepEqual(style, defaultStyle);
               done();
             }, 100);
+          });
+
+          it("should have called onTransitionBegin only once", () => {
+            assert.isTrue(onTransitionBegin.calledOnce);
           });
 
           it("should call onTransitionComplete", () => {

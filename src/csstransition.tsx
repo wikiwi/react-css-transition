@@ -16,6 +16,8 @@ const TICK = 17;
 export interface CSSTransitionAttributes {
   active?: boolean;
   transitionAppear?: boolean;
+  onTransitionBegin?: () => void;
+  // TODO: onTransitionRevert
   onTransitionComplete?: () => void;
   component?: string | React.ComponentClass<any>;
   children?: React.ReactNode;
@@ -106,8 +108,8 @@ export class CSSTransition extends React.Component<CSSTransitionProps, CSSTransi
     );
   }
 
-  private handleTransitionComplete = () => this.dispatch(Action.TransitionComplete);
-  private handleTransitionBegin = () => this.dispatch(Action.TransitionBegin);
+  private handleTransitionComplete = () => this.dispatch(Action.TransitionComplete)
+  private handleTransitionBegin = () => this.dispatch(Action.TransitionStart)
 
   private dispatch(action: Action, props = this.props, state = this.state): void {
     switch (action) {
@@ -126,6 +128,7 @@ export class CSSTransition extends React.Component<CSSTransitionProps, CSSTransi
         this.appearTimer = setTimeout(() => {
           this.dispatch(Action.TransitionRun, props);
         }, TICK);
+        if (props.onTransitionBegin) { props.onTransitionBegin(); }
         return this.setState(transitToActiveAppearingState(props));
       case Action.TransitionRun:
         switch (state.id) {
@@ -137,9 +140,11 @@ export class CSSTransition extends React.Component<CSSTransitionProps, CSSTransi
             if (props.onTransitionComplete) { props.onTransitionComplete(); }
             return this.setState(defaultState(props));
           case State.Active:
+            if (props.onTransitionBegin) { props.onTransitionBegin(); }
           case State.TransitToActiveStarted:
             return this.setState(transitToDefaultRunningState(props));
           case State.Default:
+            if (props.onTransitionBegin) { props.onTransitionBegin(); }
           case State.TransitToDefaultStarted:
             return this.setState(transitToActiveRunningState(props));
           case State.TransitToActiveRunning:
@@ -151,7 +156,7 @@ export class CSSTransition extends React.Component<CSSTransitionProps, CSSTransi
           default:
             throw new Error("invalid state transition");
         }
-      case Action.TransitionBegin:
+      case Action.TransitionStart:
         switch (state.id) {
           case State.TransitToActiveRunning:
             return this.setState(transitToActiveStartedState(props));
@@ -188,7 +193,7 @@ export enum State {
   TransitToActiveAppearing,
   TransitToActiveRunning,
   TransitToActiveStarted,
-  Default
+  Default,
 }
 
 enum Action {
@@ -197,8 +202,8 @@ enum Action {
   TransitionAppear,
   TransitionSkip,
   TransitionRun,
-  TransitionBegin,
-  TransitionComplete
+  TransitionStart,
+  TransitionComplete,
 }
 
 const activeState = (props: CSSTransitionProps) => ({
