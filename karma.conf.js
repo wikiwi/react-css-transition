@@ -31,20 +31,20 @@ module.exports = (config) => {
       },
       // as required by sinon: https://github.com/airbnb/enzyme/blob/master/docs/guides/webpack.md.
       externals: {
-        "react/addons": true,
-        "react/lib/ExecutionEnvironment": true,
-        "react/lib/ReactContext": true,
+        "react/addons": "react",
+        "react/lib/ExecutionEnvironment": "react",
+        "react/lib/ReactContext": "react",
       },
       devtool: "inline-source-map",
       module: {
         rules: [
           {
             test: /\.json$/,
-            loader: "json",
+            loader: "json-loader",
           },
           {
             test: /\.tsx?$/,
-            loader: "awesome-typescript",
+            loader: "awesome-typescript-loader",
             query: {
               sourceMap: true,
               module: "commonjs",
@@ -54,7 +54,7 @@ module.exports = (config) => {
             enforce: "post",
             test: /\.tsx?$/,
             include: path.resolve("src"),
-            loader: "istanbul-instrumenter",
+            loader: "istanbul-instrumenter-loader",
             exclude: [
               /\.spec\.tsx?$/,
               /node_modules/,
