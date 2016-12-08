@@ -23,6 +23,8 @@ export interface CSSTransitionAttributes {
   activeStyle?: React.CSSProperties;
   enterStyle?: React.CSSProperties;
   leaveStyle?: React.CSSProperties;
+  // TODO: test style attr.
+  style?: React.CSSProperties;
   // TODO:
   // prepareForTransition?: boolean;
   // enterInitStyle?: React.CSSProperties;
@@ -51,6 +53,7 @@ function getRest(props: CSSTransitionProps): any {
   delete rest.activeStyle;
   delete rest.enterStyle;
   delete rest.leaveStyle;
+  delete rest.style;
   delete rest.vendorPrefixer;
   return rest;
 }
@@ -62,6 +65,7 @@ export class CSSTransition extends React.Component<CSSTransitionProps, CSSTransi
     activeStyle: undefined,
     enterStyle: undefined,
     leaveStyle: undefined,
+    style: {},
   };
 
   private appearTimer: NodeJS.Timer;
@@ -203,35 +207,35 @@ enum Action {
 
 const activeState = (props: CSSTransitionProps) => ({
   id: State.Active,
-  style: props.activeStyle,
+  style: objectAssign({}, props.style, props.activeStyle),
 });
 
 const defaultState = (props: CSSTransitionProps) => ({
   id: State.Default,
-  style: props.defaultStyle,
+  style: objectAssign({}, props.style, props.defaultStyle),
 });
 
 const transitToActiveAppearingState = (props: CSSTransitionProps) => ({
   id: State.TransitToActiveAppearing,
-  style: props.defaultStyle,
+  style: objectAssign({}, props.style, props.defaultStyle),
 });
 
 const transitToActiveRunningState = (props: CSSTransitionProps) => ({
   id: State.TransitToActiveRunning,
-  style: props.enterStyle,
+  style: objectAssign({}, props.style, props.enterStyle),
 });
 
 const transitToActiveStartedState = (props: CSSTransitionProps) => ({
   id: State.TransitToActiveStarted,
-  style: props.enterStyle,
+  style: objectAssign({}, props.style, props.enterStyle),
 });
 
 const transitToDefaultRunningState = (props: CSSTransitionProps) => ({
   id: State.TransitToDefaultRunning,
-  style: props.leaveStyle,
+  style: objectAssign({}, props.style, props.leaveStyle),
 });
 
 const transitToDefaultStartedState = (props: CSSTransitionProps) => ({
   id: State.TransitToDefaultStarted,
-  style: props.leaveStyle,
+  style: objectAssign({}, props.style, props.leaveStyle),
 });
