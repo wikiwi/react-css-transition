@@ -14,7 +14,8 @@ module.exports = (config) => {
       "tests.webpack.js": ["webpack", "sourcemap"],
     },
     remapCoverageReporter: {
-      "text-summary": null,
+      text: null,
+      lcovonly: "./coverage/lcov-integration.info",
 //      json: './coverage/coverage.json',
 //      html: './coverage/html'
     },
@@ -23,8 +24,7 @@ module.exports = (config) => {
         { type: "in-memory" },
       ],
     },
-    // TODO: enable coverage after https://github.com/deepsweet/istanbul-instrumenter-loader/pull/29.
-    reporters: ["dots"], // , "coverage", "remap-coverage"], // report results in this format
+    reporters: ["dots", "coverage", "remap-coverage"],
     webpack: {
       resolve: {
         extensions: [".tsx", ".ts", ".js", ".json"],

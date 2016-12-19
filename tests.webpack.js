@@ -1,4 +1,7 @@
 "use strict";
 
-const integrationContext = require.context("./test", true, /\.tsx?$/);
-integrationContext.keys().forEach(integrationContext);
+const srcContext = require.context("./src", true, /^(?!.*\.spec\.).*\.tsx?$/);
+srcContext.keys().forEach(srcContext);
+
+const testContext = require.context("./test", true, /\.tsx?$/);
+testContext.keys().forEach(testContext);
