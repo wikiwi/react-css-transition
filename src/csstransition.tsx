@@ -9,6 +9,10 @@
 /* tslint:disable: variable-name */
 
 import * as React from "react";
+import {
+  CSSProperties, Component, ComponentClass, ReactNode,
+  StatelessComponent, ReactElement, HTMLAttributes,
+} from "react";
 
 import { resolveTransit } from "./transit";
 import { TransitionObserver, TransitionObserverProps } from "./transitionobserver";
@@ -16,29 +20,29 @@ import { TransitionObserver, TransitionObserverProps } from "./transitionobserve
 const TICK = 17;
 
 export interface CSSTransitionProps
-  extends React.HTMLAttributes<any> {
+  extends HTMLAttributes<any> {
   active?: boolean;
   transitionAppear?: boolean;
   transitionDelay?: number;
   onTransitionComplete?: () => void;
-  component?: string | React.ComponentClass<any>;
-  children?: React.ReactNode;
-  defaultStyle?: React.CSSProperties;
-  activeStyle?: React.CSSProperties;
-  enterStyle?: React.CSSProperties;
-  leaveStyle?: React.CSSProperties;
-  style?: React.CSSProperties;
+  component?: string | ComponentClass<any> | StatelessComponent<any>;
+  children?: ReactNode;
+  defaultStyle?: CSSProperties;
+  activeStyle?: CSSProperties;
+  enterStyle?: CSSProperties;
+  leaveStyle?: CSSProperties;
+  style?: CSSProperties;
   // TODO:
   // prepareForTransition?: boolean;
-  // appearStyle?: React.CSSProperties;
-  // appearInitStyle?: React.CSSProperty;
-  // enterInitStyle?: React.CSSProperties;
-  // leaveInitStyle?: React.CSSProperties;
+  // appearStyle?: CSSProperties;
+  // appearInitStyle?: CSSProperty;
+  // enterInitStyle?: CSSProperties;
+  // leaveInitStyle?: CSSProperties;
 }
 
 export interface CSSTransitionState {
   id?: StateID;
-  style?: React.CSSProperties;
+  style?: CSSProperties;
 }
 
 export enum StateID {
@@ -96,7 +100,7 @@ const transitToDefaultStartedState = (props: CSSTransitionProps) => ({
   style: { ...props.style, ...resolveTransit(props.leaveStyle, props.transitionDelay) },
 });
 
-export class CSSTransition extends React.Component<CSSTransitionProps, CSSTransitionState> {
+export class CSSTransition extends Component<CSSTransitionProps, CSSTransitionState> {
   public static defaultProps: any = {
     component: "div",
   };
@@ -127,7 +131,7 @@ export class CSSTransition extends React.Component<CSSTransitionProps, CSSTransi
     this.dispatch(Action.TransitionRun, nextProps);
   }
 
-  public render(): React.ReactElement<any> {
+  public render(): ReactElement<any> {
     const {
       children,
       component,
