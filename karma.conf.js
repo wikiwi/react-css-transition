@@ -11,13 +11,11 @@ module.exports = (config) => {
       "tests.webpack.js",
     ],
     preprocessors: {
-      "tests.webpack.js": ["webpack", "sourcemap"],
+      "tests.webpack.js": ["webpack"],
     },
     remapCoverageReporter: {
       text: null,
       lcovonly: "./coverage/lcov-integration.info",
-//      json: './coverage/coverage.json',
-//      html: './coverage/html'
     },
     coverageReporter: {
       reporters: [
