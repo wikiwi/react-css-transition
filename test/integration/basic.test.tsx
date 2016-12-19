@@ -7,23 +7,24 @@
  */
 
 import * as React from "react";
-
+import { CSSProperties } from "react";
 import { ReactWrapper, mount } from "enzyme";
 import { assert } from "chai";
 import { SinonSpy, spy } from "sinon";
 
-import { CSSTransitionProps, CSSTransition, transit } from "../src";
+import { createTestDiv } from "../utils";
+import { CSSTransitionProps, CSSTransition, transit } from "../../src";
 
 const TICK = 17;
 
-describe("integration test", () => {
+describe("basic integration test", () => {
   describe("<CSSTransition>", () => {
-    const activeStyle: React.CSSProperties = { width: "100px" };
-    const defaultStyle: React.CSSProperties = { width: "50px" };
-    const enterStyle: React.CSSProperties = { width: transit("100px", 150, "ease", 25) };
-    const leaveStyle: React.CSSProperties = { width: transit("50px", 150, "ease", 25) };
-    const enterStyleProcessed: React.CSSProperties = { width: "100px", transition: "width 150ms ease 25ms" };
-    const leaveStyleProcessed: React.CSSProperties = { width: "50px", transition: "width 150ms ease 25ms" };
+    const activeStyle: CSSProperties = { width: "100px" };
+    const defaultStyle: CSSProperties = { width: "50px" };
+    const enterStyle: CSSProperties = { width: transit("100px", 150, "ease", 25) };
+    const leaveStyle: CSSProperties = { width: transit("50px", 150, "ease", 25) };
+    const enterStyleProcessed: CSSProperties = { width: "100px", transition: "width 150ms ease 25ms" };
+    const leaveStyleProcessed: CSSProperties = { width: "50px", transition: "width 150ms ease 25ms" };
     let onTransitionComplete: SinonSpy;
     let getWrapper: (props?: CSSTransitionProps) => ReactWrapper<any, {}>;
     let getWrapperAttached: (props?: CSSTransitionProps) => ReactWrapper<any, {}>;
@@ -35,7 +36,7 @@ describe("integration test", () => {
         </CSSTransition>
       );
       getWrapper = (props?: CSSTransitionProps) => mount(render(props));
-      getWrapperAttached = (props?: CSSTransitionProps) => mount(render(props), { attachTo: document.body });
+      getWrapperAttached = (props?: CSSTransitionProps) => mount(render(props), { attachTo: createTestDiv() });
     });
 
     it("should render dummy text", () => {
@@ -47,11 +48,10 @@ describe("integration test", () => {
     });
 
     it("should pass down unknown props", () => {
-      const wrapper = getWrapper({ id: "abc", "data-test": "test" });
+      const wrapper = getWrapper({ id: "abc" });
       const div = wrapper.find("#abc");
       assert.lengthOf(div, 1);
       assert.strictEqual(div.type(), "div");
-      assert.strictEqual((div.props() as any)["data-test"], "test");
     });
 
     describe("transition default -> active", () => {
@@ -506,132 +506,5 @@ describe("integration test", () => {
         });
       });
     });
-
-    describe("transition appear", () => {
-      let wrapper: ReactWrapper<any, {}>;
-      let target: ReactWrapper<any, {}>;
-
-      before(() => {
-        onTransitionComplete = spy();
-        wrapper = getWrapperAttached({
-          activeStyle, enterStyle, leaveStyle, defaultStyle,
-          onTransitionComplete,
-          active: true,
-          transitionAppear: true,
-        });
-        target = wrapper.find("div");
-      });
-
-      after(() => {
-        wrapper.detach();
-      });
-
-      it("should start with default style", () => {
-        const style = target.props().style;
-        assert.deepEqual(style, defaultStyle);
-      });
-
-      describe("after mount", () => {
-        before((done) => {
-          setTimeout(() => {
-            done();
-          }, TICK + 5);
-        });
-
-        it("should automatically trigger transition", () => {
-          const style = target.props().style;
-          assert.deepEqual(style, enterStyleProcessed);
-        });
-
-        describe("when transition starts", () => {
-          before((done) => {
-            setTimeout(() => {
-              done();
-            }, 100);
-          });
-
-          it("should ignore", () => {
-            const style = target.props().style;
-            assert.deepEqual(style, enterStyleProcessed);
-          });
-
-          it("should not call onTransitionComplete yet", () => {
-            assert.isTrue(onTransitionComplete.notCalled);
-          });
-        });
-
-        describe("when transition ends", () => {
-          before((done) => {
-            setTimeout(() => {
-              done();
-            }, 100);
-          });
-
-          it("should become default", () => {
-            const style = target.props().style;
-            assert.deepEqual(style, activeStyle);
-          });
-
-          it("should call onTransitionComplete", () => {
-            assert.isTrue(onTransitionComplete.calledOnce);
-          });
-        });
-      });
-    });
-
-    describe("transition appear interrupted", () => {
-      let wrapper: ReactWrapper<any, {}>;
-      let target: ReactWrapper<any, {}>;
-
-      before(() => {
-        onTransitionComplete = spy();
-        wrapper = getWrapperAttached({
-          activeStyle, enterStyle, leaveStyle, defaultStyle,
-          onTransitionComplete,
-          active: true,
-          transitionAppear: true,
-        });
-        target = wrapper.find("div");
-      });
-
-      after(() => {
-        wrapper.detach();
-      });
-
-      it("should start with default style", () => {
-        const style = target.props().style;
-        assert.deepEqual(style, defaultStyle);
-      });
-
-      describe("after mount", () => {
-        it("should not call onTransitionComplete yet", () => {
-          assert.isTrue(onTransitionComplete.notCalled);
-        });
-
-        describe("when transition was interrupted", () => {
-          before(() => {
-            wrapper.setProps({ active: false });
-          });
-
-          it("should remain in default", () => {
-            const style = target.props().style;
-            assert.deepEqual(style, defaultStyle);
-          });
-
-          it("should continue to remain in default", (done) => {
-            setTimeout(() => {
-              const style = target.props().style;
-              assert.deepEqual(style, defaultStyle);
-              done();
-            }, 100);
-          });
-
-          it("should call onTransitionComplete", () => {
-            assert.isTrue(onTransitionComplete.calledOnce);
-          });
-        });
-      });
-    });
-
   });
 });
