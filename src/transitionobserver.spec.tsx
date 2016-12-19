@@ -27,12 +27,14 @@ describe("transitionobserver.tsx", () => {
       getWrapper = (props?) => shallow(
         <TransitionObserver {...props}>
           <span key="child">dummy</span>
-        </TransitionObserver>
+        </TransitionObserver>,
       );
     });
 
     it("should pass down unknown props", () => {
-      const { id } = getWrapper({ style: {}, id: "abc" }).findWhere(isChild).props();
+      const { id } = getWrapper(
+        { style: {}, id: "abc" },
+      ).findWhere(isChild).props();
       assert.strictEqual(id, "abc");
     });
 
@@ -57,10 +59,10 @@ describe("transitionobserver.tsx", () => {
         before(() => {
           wrapper.setProps({
             style: {
-              width: transit("50px", { duration: 50 }),
-              height: transit("20px", { duration: 30 }),
+              width: "50px", height: "20px",
+              transition: "width 50ms ease 0ms, height 30ms ease 0ms",
             },
-          });
+          } as any);
         });
 
         it("should perform transition", () => {
@@ -103,13 +105,6 @@ describe("transitionobserver.tsx", () => {
           it("should call onTransitionComplete", () => {
             assert.isTrue(onTransitionComplete.calledOnce);
           });
-
-          /* TODO:
-          it("should ignore another transitionend", () => {
-            wrapper.findWhere(isChild).simulate("transitionEnd", { propertyName: "width" });
-            assert.isTrue(onTransitionComplete.calledOnce);
-          });
-         */
         });
       });
     });
@@ -139,8 +134,8 @@ describe("transitionobserver.tsx", () => {
         before(() => {
           wrapper.setProps({
             style: {
-              width: transit("50px", { duration: 50, delay: 40 }),
-              height: transit("20px", { duration: 30, delay: 30 }),
+              width: "50px", height: "20px",
+              transition: "width 50ms ease 40ms, height 30ms ease 30ms",
             },
           });
         });

@@ -7,10 +7,9 @@
  */
 
 import * as React from "react";
-import * as objectAssign from "object-assign";
+import { Children, TransitionEventHandler, TransitionEvent } from "react";
 
-import { processStyle } from "./processstyle";
-import { matchTransitionProperty } from "./utils";
+import { matchTransitionProperty, parseTransition } from "./utils";
 
 export interface TransitionObserverProps {
   style: React.CSSProperties;
@@ -19,48 +18,46 @@ export interface TransitionObserverProps {
   [index: string]: any;
 }
 
-function getRest(props: TransitionObserverProps): any {
-  const rest = objectAssign({}, props);
-  delete rest.style;
-  delete rest.onTransitionBegin;
-  delete rest.onTransitionComplete;
-  return rest;
-}
-
-export class TransitionObserver extends React.Component<TransitionObserverProps, {}> {
-  constructor(props: any) {
-    super(props);
-  }
-
-  public render(): React.ReactElement<any> {
-    const { children } = this.props;
-    const { style, lastProperty, firstPropertyDelay } = processStyle(this.props.style);
-
-    const workaroundProps: React.HTMLProps<HTMLSpanElement> = { key: "workaround" };
-    const childProps = getRest(this.props);
-    childProps.style = style;
-
-    if (style.transition) {
-      if (this.props.onTransitionComplete) {
-        childProps.onTransitionEnd = this.handleTransitionEnd.bind(this, lastProperty);
-      }
-      workaroundProps.onTransitionEnd = this.props.onTransitionBegin;
-      workaroundProps.style = { transform: "scale(1.0)", transition: `transform 1ms linear ${firstPropertyDelay}ms` };
-    } else {
-      workaroundProps.style = { transform: "scale(0.99)" };
-    }
-
-    const workaround = <span {...workaroundProps } />;
-
-    const child = React.Children.only(children);
-    return React.cloneElement(child, childProps, workaround, child.props.children);
-  }
-
-  private handleTransitionEnd = (lastProperty: string, e: React.TransitionEvent) => {
+const createTransitionEndHandler = (
+  onTransitionComplete: () => void,
+  lastProperty: string,
+  onTransitionEnd?: TransitionEventHandler,
+) => {
+  return (e: TransitionEvent) => {
+    if (onTransitionEnd) { onTransitionEnd(e); }
     if (e.target !== e.currentTarget ||
       !matchTransitionProperty(e.propertyName, lastProperty)) {
       return;
     }
-    this.props.onTransitionComplete();
-  }
-}
+    onTransitionComplete();
+  };
+};
+
+export const TransitionObserver: React.StatelessComponent<TransitionObserverProps> =
+  ({ style = {}, onTransitionComplete, onTransitionBegin, onTransitionEnd, children, ...rest }) => {
+    const child = Children.only(children);
+    const workaroundProps: React.HTMLProps<HTMLSpanElement> = {
+      key: "workaround",
+      style: { transform: "scale(0.99)" },
+    };
+
+    if (style.transition) {
+      const [{delay: firstPropertyDelay}, {property: lastProperty}] = parseTransition(style.transition);
+      if (onTransitionComplete) {
+        onTransitionEnd = createTransitionEndHandler(onTransitionComplete, lastProperty, onTransitionEnd);
+      }
+      workaroundProps.onTransitionEnd = onTransitionBegin;
+      workaroundProps.style = { transform: "scale(1.0)", transition: `transform 1ms linear ${firstPropertyDelay}ms` };
+    }
+
+    return React.cloneElement(
+      child,
+      {
+        style,
+        onTransitionEnd,
+        ...rest,
+      },
+      <span {...workaroundProps } />,
+      child.props.children,
+    );
+  };
