@@ -6,9 +6,17 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import * as warning from "warning";
+import { CSSProperties } from "react";
 
-export class TransitionConfig {
+import { convertToCSSPrefix } from "./utils";
+
+interface TransitionParams {
+  duration: number;
+  timing?: string;
+  delay?: number;
+}
+
+class TransitionConfig {
   public value: any;
   public params: TransitionParams;
 
@@ -17,37 +25,34 @@ export class TransitionConfig {
     this.params = params;
   }
 
-  public getTotalDuration(): number {
-    let { duration, delay } = this.params;
-    if (delay) { duration += delay; }
-    return duration;
-  }
-
-  public getParameterString(): string {
+  public getParameterString(extraDelay: number): string {
     const {duration, timing, delay} = this.params;
-    return `${duration}ms ${timing} ${delay}ms`;
+    return `${duration}ms ${timing} ${delay + extraDelay}ms`;
   }
 }
 
-export interface TransitionParams {
-  duration: number;
-  timing?: string;
-  delay?: number;
+export function transit(value: any, duration: number, timing?: string, delay?: number): any {
+  return new TransitionConfig(value, {
+    duration,
+    timing: timing || "ease",
+    delay: delay !== undefined ? delay : 0,
+  });
 }
 
-export function transit(value: any, params: TransitionParams): any;
-export function transit(value: any, duration: number, timing?: string, delay?: number): any;
-export function transit(value: any, paramsOrDuration: TransitionParams | number, timing?: string, delay?: number): any {
-  let params: TransitionParams;
-  if (typeof paramsOrDuration === "object") {
-    params = paramsOrDuration as TransitionParams;
-  } else if (typeof paramsOrDuration === "number") {
-    params = { duration: paramsOrDuration as number, timing, delay };
-  } else {
-    warning(false, "[react-css-transition] Invalid parameter '%s'.", paramsOrDuration);
-    params = { duration: 0 };
+export function resolveTransit(style: CSSProperties, extraDelay = 0): CSSProperties {
+  let transition = "";
+  let processedStyle = { ...style };
+  for (const property in style) {
+    const value = style[property];
+    if (typeof value === "object") {
+      const config = value as TransitionConfig;
+      if (transition !== "") { transition += ", "; }
+      transition += `${convertToCSSPrefix(property)} ${config.getParameterString(extraDelay)}`;
+      processedStyle[property] = config.value;
+    }
   }
-  if (params.delay === undefined) { params.delay = 0; };
-  if (params.timing === undefined) { params.timing = "ease"; };
-  return new TransitionConfig(value, params);
+  if (transition) {
+    processedStyle.transition = transition;
+  }
+  return processedStyle;
 }
