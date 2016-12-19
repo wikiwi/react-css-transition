@@ -6,16 +6,20 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import * as React from "react";
-import * as objectAssign from "object-assign";
+/* tslint:disable: variable-name */
 
+import * as React from "react";
+
+import { resolveTransit } from "./transit";
 import { TransitionObserver, TransitionObserverProps } from "./transitionobserver";
 
 const TICK = 17;
 
-export interface CSSTransitionAttributes {
+export interface CSSTransitionProps
+  extends React.HTMLAttributes<any> {
   active?: boolean;
   transitionAppear?: boolean;
+  transitionDelay?: number;
   onTransitionComplete?: () => void;
   component?: string | React.ComponentClass<any>;
   children?: React.ReactNode;
@@ -23,169 +27,21 @@ export interface CSSTransitionAttributes {
   activeStyle?: React.CSSProperties;
   enterStyle?: React.CSSProperties;
   leaveStyle?: React.CSSProperties;
-  // TODO: test style attr.
   style?: React.CSSProperties;
   // TODO:
   // prepareForTransition?: boolean;
+  // appearStyle?: React.CSSProperties;
+  // appearInitStyle?: React.CSSProperty;
   // enterInitStyle?: React.CSSProperties;
   // leaveInitStyle?: React.CSSProperties;
 }
 
-export interface CSSTransitionProps extends
-  CSSTransitionAttributes,
-  React.ClassAttributes<CSSTransition> {
-  vendorPrefixer?: (styles: any) => any;
-  [index: string]: any;
-}
-
 export interface CSSTransitionState {
-  id?: State;
+  id?: StateID;
   style?: React.CSSProperties;
 }
 
-function getRest(props: CSSTransitionProps): any {
-  const rest = objectAssign({}, props);
-  delete rest.active;
-  delete rest.transitionAppear;
-  delete rest.onTransitionComplete;
-  delete rest.component;
-  delete rest.defaultStyle;
-  delete rest.activeStyle;
-  delete rest.enterStyle;
-  delete rest.leaveStyle;
-  delete rest.style;
-  delete rest.vendorPrefixer;
-  return rest;
-}
-
-export class CSSTransition extends React.Component<CSSTransitionProps, CSSTransitionState> {
-  // Better support for default Props when this lands: https://github.com/Microsoft/TypeScript/issues/11233.
-  public static defaultProps: CSSTransitionProps = {
-    component: "div",
-    activeStyle: undefined,
-    enterStyle: undefined,
-    leaveStyle: undefined,
-    style: {},
-  };
-
-  private appearTimer: NodeJS.Timer;
-
-  constructor(props: CSSTransitionProps) {
-    super(props);
-    let stateAction = Action.InitDefault;
-    if (!props.transitionAppear && props.active) {
-      stateAction = Action.InitActive;
-    }
-    this.dispatch(stateAction, props);
-  }
-
-  public componentDidMount(): void {
-    if (this.props.transitionAppear && this.props.active) {
-      this.dispatch(Action.TransitionAppear);
-    }
-  }
-
-  public componentWillReceiveProps(nextProps: CSSTransitionProps): void {
-    if (this.props.active === nextProps.active) { return; }
-    this.dispatch(Action.TransitionRun, nextProps);
-  }
-
-  public render(): React.ReactElement<any> {
-    const { children } = this.props;
-    const { style } = this.state;
-    const Wrapper = this.props.component;
-
-    const props: TransitionObserverProps = {
-      onTransitionBegin: this.handleTransitionBegin,
-      onTransitionComplete: this.handleTransitionComplete,
-      style,
-    };
-    const rest = getRest(this.props);
-
-    const inner = Wrapper ? <Wrapper children={children} /> : children;
-    return (
-      <TransitionObserver {...rest} {...props} >
-        {inner}
-      </TransitionObserver>
-    );
-  }
-
-  private handleTransitionComplete = () => this.dispatch(Action.TransitionComplete)
-  private handleTransitionBegin = () => this.dispatch(Action.TransitionStart)
-
-  private dispatch(action: Action, props = this.props, state = this.state): void {
-    switch (action) {
-      case Action.InitActive:
-        if (state !== undefined) { throw new Error("invalid state transition"); }
-        this.state = activeState(props);
-        return;
-      case Action.InitDefault:
-        if (state !== undefined) { throw new Error("invalid state transition"); }
-        this.state = defaultState(props);
-        return;
-      case Action.TransitionAppear:
-        if (state.id !== State.Default) {
-          throw new Error("invalid state transition");
-        }
-        this.appearTimer = setTimeout(() => {
-          this.dispatch(Action.TransitionRun, props);
-        }, TICK);
-        return this.setState(transitToActiveAppearingState(props));
-      case Action.TransitionRun:
-        switch (state.id) {
-          case State.TransitToActiveAppearing:
-            clearTimeout(this.appearTimer);
-            if (props.active) {
-              return this.setState(transitToActiveRunningState(props));
-            }
-            if (props.onTransitionComplete) { props.onTransitionComplete(); }
-            return this.setState(defaultState(props));
-          case State.Active:
-          case State.TransitToActiveStarted:
-            return this.setState(transitToDefaultRunningState(props));
-          case State.Default:
-          case State.TransitToDefaultStarted:
-            return this.setState(transitToActiveRunningState(props));
-          case State.TransitToActiveRunning:
-            if (props.onTransitionComplete) { props.onTransitionComplete(); }
-            return this.setState(defaultState(props));
-          case State.TransitToDefaultRunning:
-            if (props.onTransitionComplete) { props.onTransitionComplete(); }
-            return this.setState(activeState(props));
-          default:
-            throw new Error("invalid state transition");
-        }
-      case Action.TransitionStart:
-        switch (state.id) {
-          case State.TransitToActiveRunning:
-            return this.setState(transitToActiveStartedState(props));
-          case State.TransitToDefaultRunning:
-            return this.setState(transitToDefaultStartedState(props));
-          default:
-            // We don't error out, because the workaround for transitionstart
-            // could happen after transitionend.
-            return;
-        }
-      case Action.TransitionComplete:
-        switch (state.id) {
-          case State.TransitToActiveRunning:
-          case State.TransitToActiveStarted:
-            if (props.onTransitionComplete) { props.onTransitionComplete(); }
-            return this.setState(activeState(props));
-          case State.TransitToDefaultRunning:
-          case State.TransitToDefaultStarted:
-            if (props.onTransitionComplete) { props.onTransitionComplete(); }
-            return this.setState(defaultState(props));
-          default:
-            throw new Error("invalid state transition");
-        }
-      default:
-    }
-    throw new Error("unexpected error");
-  }
-}
-
-export enum State {
+export enum StateID {
   Active,
   TransitToDefaultRunning,
   TransitToDefaultStarted,
@@ -206,36 +62,172 @@ enum Action {
 }
 
 const activeState = (props: CSSTransitionProps) => ({
-  id: State.Active,
-  style: objectAssign({}, props.style, props.activeStyle),
+  id: StateID.Active,
+  style: { ...props.style, ...props.activeStyle },
 });
 
 const defaultState = (props: CSSTransitionProps) => ({
-  id: State.Default,
-  style: objectAssign({}, props.style, props.defaultStyle),
+  id: StateID.Default,
+  style: { ...props.style, ...props.defaultStyle },
 });
 
 const transitToActiveAppearingState = (props: CSSTransitionProps) => ({
-  id: State.TransitToActiveAppearing,
-  style: objectAssign({}, props.style, props.defaultStyle),
+  id: StateID.TransitToActiveAppearing,
+  style: { ...props.style, ...props.defaultStyle },
 });
 
 const transitToActiveRunningState = (props: CSSTransitionProps) => ({
-  id: State.TransitToActiveRunning,
-  style: objectAssign({}, props.style, props.enterStyle),
+  id: StateID.TransitToActiveRunning,
+  style: { ...props.style, ...resolveTransit(props.enterStyle, props.transitionDelay) },
 });
 
 const transitToActiveStartedState = (props: CSSTransitionProps) => ({
-  id: State.TransitToActiveStarted,
-  style: objectAssign({}, props.style, props.enterStyle),
+  id: StateID.TransitToActiveStarted,
+  style: { ...props.style, ...resolveTransit(props.enterStyle, props.transitionDelay) },
 });
 
 const transitToDefaultRunningState = (props: CSSTransitionProps) => ({
-  id: State.TransitToDefaultRunning,
-  style: objectAssign({}, props.style, props.leaveStyle),
+  id: StateID.TransitToDefaultRunning,
+  style: { ...props.style, ...resolveTransit(props.leaveStyle, props.transitionDelay) },
 });
 
 const transitToDefaultStartedState = (props: CSSTransitionProps) => ({
-  id: State.TransitToDefaultStarted,
-  style: objectAssign({}, props.style, props.leaveStyle),
+  id: StateID.TransitToDefaultStarted,
+  style: { ...props.style, ...resolveTransit(props.leaveStyle, props.transitionDelay) },
 });
+
+export class CSSTransition extends React.Component<CSSTransitionProps, CSSTransitionState> {
+  public static defaultProps: any = {
+    component: "div",
+  };
+
+  private appearTimer: any;
+
+  constructor(props: CSSTransitionProps) {
+    super(props);
+    let stateAction = Action.InitDefault;
+    if (!props.transitionAppear && props.active) {
+      stateAction = Action.InitActive;
+    }
+    this.dispatch(stateAction, props);
+  }
+
+  public componentDidMount(): void {
+    if (this.props.transitionAppear && this.props.active) {
+      this.dispatch(Action.TransitionAppear);
+    }
+  }
+
+  public componentWillUnmount(): void {
+    clearTimeout(this.appearTimer);
+  }
+
+  public componentWillReceiveProps(nextProps: CSSTransitionProps): void {
+    if (this.props.active === nextProps.active) { return; }
+    this.dispatch(Action.TransitionRun, nextProps);
+  }
+
+  public render(): React.ReactElement<any> {
+    const {
+      children,
+      component,
+      active: _a,
+      transitionAppear: _b,
+      onTransitionComplete: _c,
+      defaultStyle: _d,
+      activeStyle: _e,
+      enterStyle: _f,
+      leaveStyle: _g,
+      transitionDelay: _l,
+      ...rest,
+    } = this.props;
+
+    const { style } = this.state;
+    const Wrapper = component;
+    const inner = Wrapper ? <Wrapper children={children} /> : children;
+    return (
+      <TransitionObserver
+        {...rest}
+        onTransitionBegin={this.handleTransitionBegin}
+        onTransitionComplete={this.handleTransitionComplete}
+        style={style}
+        >
+        {inner}
+      </TransitionObserver>
+    );
+  }
+
+  private handleTransitionComplete = () => this.dispatch(Action.TransitionComplete);
+  private handleTransitionBegin = () => this.dispatch(Action.TransitionStart);
+
+  private dispatch(action: Action, props = this.props, state = this.state): void {
+    switch (action) {
+      case Action.InitActive:
+        if (state !== undefined) { throw new Error("invalid state transition"); }
+        this.state = activeState(props);
+        return;
+      case Action.InitDefault:
+        if (state !== undefined) { throw new Error("invalid state transition"); }
+        this.state = defaultState(props);
+        return;
+      case Action.TransitionAppear:
+        if (state.id !== StateID.Default) {
+          throw new Error("invalid state transition");
+        }
+        this.appearTimer = setTimeout(() => {
+          this.dispatch(Action.TransitionRun, props);
+        }, TICK);
+        return this.setState(transitToActiveAppearingState(props));
+      case Action.TransitionRun:
+        switch (state.id) {
+          case StateID.TransitToActiveAppearing:
+            clearTimeout(this.appearTimer);
+            if (props.active) {
+              return this.setState(transitToActiveRunningState(props));
+            }
+            if (props.onTransitionComplete) { props.onTransitionComplete(); }
+            return this.setState(defaultState(props));
+          case StateID.Active:
+          case StateID.TransitToActiveStarted:
+            return this.setState(transitToDefaultRunningState(props));
+          case StateID.Default:
+          case StateID.TransitToDefaultStarted:
+            return this.setState(transitToActiveRunningState(props));
+          case StateID.TransitToActiveRunning:
+            if (props.onTransitionComplete) { props.onTransitionComplete(); }
+            return this.setState(defaultState(props));
+          case StateID.TransitToDefaultRunning:
+            if (props.onTransitionComplete) { props.onTransitionComplete(); }
+            return this.setState(activeState(props));
+          default:
+            throw new Error("invalid state transition");
+        }
+      case Action.TransitionStart:
+        switch (state.id) {
+          case StateID.TransitToActiveRunning:
+            return this.setState(transitToActiveStartedState(props));
+          case StateID.TransitToDefaultRunning:
+            return this.setState(transitToDefaultStartedState(props));
+          default:
+            // We don't error out, because the workaround for transitionstart
+            // could happen after transitionend.
+            return;
+        }
+      case Action.TransitionComplete:
+        switch (state.id) {
+          case StateID.TransitToActiveRunning:
+          case StateID.TransitToActiveStarted:
+            if (props.onTransitionComplete) { props.onTransitionComplete(); }
+            return this.setState(activeState(props));
+          case StateID.TransitToDefaultRunning:
+          case StateID.TransitToDefaultStarted:
+            if (props.onTransitionComplete) { props.onTransitionComplete(); }
+            return this.setState(defaultState(props));
+          default:
+            throw new Error("invalid state transition");
+        }
+      default:
+    }
+    throw new Error("unexpected error");
+  }
+}
