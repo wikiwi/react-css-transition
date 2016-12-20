@@ -6,12 +6,16 @@
     "forin": false,
     "no-string-literal": false,
     "file-header": [true, "@license"],
-
-    "adjacent-overload-signatures": true,
-    "no-unsafe-finally": true,
+    "no-switch-case-fall-through": true,
+    "max-classes-per-file": false,
     "object-literal-key-quotes": [true, "as-needed"],
-    "object-literal-shorthand": true,
-    "only-arrow-functions": [true, "allow-declarations"],
-    "ordered-imports": false
+    "ordered-imports": false,
+    "max-classes-per-file": false,
+    "no-unused-variable": [true, "react", {
+      "ignore-pattern": "^_"
+    }],
+    "variable-name": [true,
+      "ban-keywords", "check-format", "allow-leading-underscore", "allow-pascal-case"
+    ]
   }
 }

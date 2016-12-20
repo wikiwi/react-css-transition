@@ -6,7 +6,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-/* tslint:disable: variable-name */
+/* tslint:disable: variable-name no-switch-case-fall-through */
 
 import * as React from "react";
 import {
@@ -15,7 +15,7 @@ import {
 } from "react";
 
 import { resolveTransit } from "./transit";
-import { TransitionObserver, TransitionObserverProps } from "./transitionobserver";
+import { TransitionObserver } from "./transitionobserver";
 
 const TICK = 17;
 

@@ -12,14 +12,12 @@ import { assert } from "chai";
 import { ShallowWrapper, shallow } from "enzyme";
 import { SinonSpy, spy } from "sinon";
 
-import { transit } from "./transit";
 import { TransitionObserver, TransitionObserverProps } from "./transitionobserver";
 
 const isWorkaround = (wrapper: ShallowWrapper<any, {}>) => wrapper.key() === "workaround";
 const isChild = (wrapper: ShallowWrapper<any, {}>) => wrapper.key() === "child";
 
 describe("transitionobserver.tsx", () => {
-
   describe("<TransitionObserver>", () => {
     let getWrapper: (props?: TransitionObserverProps) => ShallowWrapper<TransitionObserverProps, {}>;
 
