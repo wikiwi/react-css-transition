@@ -52,6 +52,7 @@
     "@types/enzyme": "^2.5.37",
     "@types/mocha": "^2.2.32",
     "@types/react": "^0.14.43",
+    "@types/react-addons-transition-group": "^0.14.17",
     "@types/sinon": "^1.16.31",
     "awesome-typescript-loader": "^3.0.0-beta.17",
     "cash-rm": "^0.2.0",
@@ -91,5 +92,8 @@
     "tslint": "^4.1.1",
     "typescript": "^2.1.4",
     "webpack": "^2.2.0-rc.1"
+  },
+  "dependencies": {
+    "react-addons-transition-group": "^15.4.1"
   }
 }

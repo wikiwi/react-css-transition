@@ -6,5 +6,6 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-export * from "./csstransition";
-export * from "./transit";
+export { CSSTransition, CSSTransitionProps } from "./csstransition";
+export { CSSTransitionGroup, CSSTransitionGroupProps } from "./csstransitiongroup";
+export { transit } from "./transit";
