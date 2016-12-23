@@ -19,12 +19,14 @@ import { TransitionObserver } from "./transitionobserver";
 
 const TICK = 17;
 
+export type CSSTransitionEventHandler = () => void;
+
 export interface CSSTransitionProps
   extends HTMLAttributes<any> {
   active?: boolean;
   transitionAppear?: boolean;
   transitionDelay?: number;
-  onTransitionComplete?: () => void;
+  onTransitionComplete?: CSSTransitionEventHandler;
   component?: string | ComponentClass<any> | StatelessComponent<any>;
   children?: ReactNode;
   defaultStyle?: CSSProperties;
