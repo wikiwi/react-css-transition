@@ -24,11 +24,6 @@ class TransitionConfig {
     this.value = value;
     this.params = params;
   }
-
-  public getParameterString(extraDelay: number): string {
-    const {duration, timing, delay} = this.params;
-    return `${duration}ms ${timing} ${delay + extraDelay}ms`;
-  }
 }
 
 export function transit(value: any, duration: number, timing?: string, delay?: number): any {
@@ -43,12 +38,12 @@ export function resolveTransit(style: CSSProperties, extraDelay = 0): CSSPropert
   let transition = "";
   let processedStyle = { ...style };
   for (const property in style) {
-    const value = style[property];
-    if (typeof value === "object") {
-      const config = value as TransitionConfig;
+    const val = style[property];
+    if (typeof val === "object") {
+      const {value, params: {duration, timing, delay}} = val as TransitionConfig;
       if (transition !== "") { transition += ", "; }
-      transition += `${convertToCSSPrefix(property)} ${config.getParameterString(extraDelay)}`;
-      processedStyle[property] = config.value;
+      transition += `${convertToCSSPrefix(property)} ${duration}ms ${timing} ${delay + extraDelay}ms`;
+      processedStyle[property] = value;
     }
   }
   if (transition) {
