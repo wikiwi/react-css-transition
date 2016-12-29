@@ -67,3 +67,21 @@ export function parseTransition(transition: string): [TransitionEntry, Transitio
   );
   return [firstProperty, lastProperty];
 }
+
+export type TransitionDelay = number | { enter?: number; leave?: number };
+
+export function getEnterDelay(delay: TransitionDelay): number {
+  if (!delay) { return 0; }
+  if (typeof delay === "number") {
+    return delay as number;
+  }
+  return delay.enter;
+}
+
+export function getLeaveDelay(delay: TransitionDelay): number {
+  if (!delay) { return 0; }
+  if (typeof delay === "number") {
+    return delay as number;
+  }
+  return delay.leave;
+}

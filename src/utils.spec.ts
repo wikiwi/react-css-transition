@@ -12,6 +12,7 @@ import {
   convertToCSSPrefix, removeVendorPrefix,
   matchTransitionProperty, parseDuration,
   parseTransition,
+  getEnterDelay, getLeaveDelay,
 } from "./utils";
 
 describe("utils.ts", () => {
@@ -137,6 +138,26 @@ describe("utils.ts", () => {
         ],
       ];
       cases.forEach((c) => assert.deepEqual(parseTransition(c[0] as string), c[1]));
+    });
+  });
+
+  describe("getEnterDelay", () => {
+    it("should process number", () => {
+      assert.strictEqual(getEnterDelay(200), 200);
+    });
+
+    it("should process object", () => {
+      assert.strictEqual(getEnterDelay({ enter: 100 }), 100);
+    });
+  });
+
+  describe("getLeaveDelay", () => {
+    it("should process number", () => {
+      assert.strictEqual(getLeaveDelay(200), 200);
+    });
+
+    it("should process object", () => {
+      assert.strictEqual(getLeaveDelay({ leave: 100 }), 100);
     });
   });
 });

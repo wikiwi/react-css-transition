@@ -18,14 +18,14 @@ const TICK = 17;
 
 describe("delay integration test", () => {
   describe("<CSSTransition>", () => {
-    const transitionDelay = 30;
+    const transitionDelay = { enter: 30, leave: 20 };
 
     const activeStyle: CSSProperties = { width: "100px" };
     const defaultStyle: CSSProperties = { width: "50px" };
     const enterStyle: CSSProperties = { width: transit("100px", 150, "ease", 25) };
     const leaveStyle: CSSProperties = { width: transit("50px", 150, "ease", 25) };
     const enterStyleProcessed: CSSProperties = { width: "100px", transition: "width 150ms ease 55ms" };
-    const leaveStyleProcessed: CSSProperties = { width: "50px", transition: "width 150ms ease 55ms" };
+    const leaveStyleProcessed: CSSProperties = { width: "50px", transition: "width 150ms ease 45ms" };
     let getWrapper: (props?: CSSTransitionProps) => ReactWrapper<any, {}>;
     let wrapper: ReactWrapper<any, {}>;
     let target: ReactWrapper<any, {}>;

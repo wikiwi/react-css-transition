@@ -16,16 +16,18 @@ import {
 
 import { resolveTransit } from "./transit";
 import { TransitionObserver } from "./transitionobserver";
+import { TransitionDelay, getEnterDelay, getLeaveDelay } from "./utils";
 
 const TICK = 17;
 
+export type CSSTransitionDelay = TransitionDelay;
 export type CSSTransitionEventHandler = () => void;
 
 export interface CSSTransitionProps
   extends HTMLAttributes<any> {
   active?: boolean;
   transitionAppear?: boolean;
-  transitionDelay?: number;
+  transitionDelay?: CSSTransitionDelay;
   onTransitionComplete?: CSSTransitionEventHandler;
   component?: string | ComponentClass<any> | StatelessComponent<any>;
   children?: ReactNode;
@@ -84,22 +86,22 @@ const transitToActiveAppearingState = (props: CSSTransitionProps) => ({
 
 const transitToActiveRunningState = (props: CSSTransitionProps) => ({
   id: StateID.TransitToActiveRunning,
-  style: { ...props.style, ...resolveTransit(props.enterStyle, props.transitionDelay) },
+  style: { ...props.style, ...resolveTransit(props.enterStyle, getEnterDelay(props.transitionDelay)) },
 });
 
 const transitToActiveStartedState = (props: CSSTransitionProps) => ({
   id: StateID.TransitToActiveStarted,
-  style: { ...props.style, ...resolveTransit(props.enterStyle, props.transitionDelay) },
+  style: { ...props.style, ...resolveTransit(props.enterStyle, getEnterDelay(props.transitionDelay)) },
 });
 
 const transitToDefaultRunningState = (props: CSSTransitionProps) => ({
   id: StateID.TransitToDefaultRunning,
-  style: { ...props.style, ...resolveTransit(props.leaveStyle, props.transitionDelay) },
+  style: { ...props.style, ...resolveTransit(props.leaveStyle, getLeaveDelay(props.transitionDelay)) },
 });
 
 const transitToDefaultStartedState = (props: CSSTransitionProps) => ({
   id: StateID.TransitToDefaultStarted,
-  style: { ...props.style, ...resolveTransit(props.leaveStyle, props.transitionDelay) },
+  style: { ...props.style, ...resolveTransit(props.leaveStyle, getLeaveDelay(props.transitionDelay)) },
 });
 
 export class CSSTransition extends Component<CSSTransitionProps, CSSTransitionState> {
