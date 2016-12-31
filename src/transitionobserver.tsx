@@ -61,3 +61,4 @@ export const TransitionObserver: React.StatelessComponent<TransitionObserverProp
       child.props.children,
     );
   };
+TransitionObserver.displayName = "TransitionObserver";
