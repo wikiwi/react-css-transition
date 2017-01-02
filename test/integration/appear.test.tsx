@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright (C) 2016 Chi Vinh Le and contributors.
+ * Copyright (C) 2016-present Chi Vinh Le and contributors.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -12,10 +12,8 @@ import { ReactWrapper, mount } from "enzyme";
 import { assert } from "chai";
 import { SinonSpy, spy } from "sinon";
 
-import { createTestDiv } from "../utils";
+import { createTestDiv, runInFrame } from "../utils";
 import { CSSTransitionProps, CSSTransition, transit } from "../../src";
-
-const TICK = 17;
 
 describe("appear integration test", () => {
   describe("<CSSTransition>", () => {
@@ -61,11 +59,7 @@ describe("appear integration test", () => {
       });
 
       describe("after mount", () => {
-        before((done) => {
-          setTimeout(() => {
-            done();
-          }, TICK + 5);
-        });
+        before((done) => runInFrame(1, () => done()));
 
         it("should automatically trigger transition", () => {
           const style = target.props().style;
@@ -73,11 +67,7 @@ describe("appear integration test", () => {
         });
 
         describe("when transition starts", () => {
-          before((done) => {
-            setTimeout(() => {
-              done();
-            }, 100);
-          });
+          before((done) => setTimeout(() => done(), 100));
 
           it("should ignore", () => {
             const style = target.props().style;
@@ -90,11 +80,7 @@ describe("appear integration test", () => {
         });
 
         describe("when transition ends", () => {
-          before((done) => {
-            setTimeout(() => {
-              done();
-            }, 100);
-          });
+          before((done) => setTimeout(() => done(), 100));
 
           it("should become default", () => {
             const style = target.props().style;

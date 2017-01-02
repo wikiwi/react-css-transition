@@ -6,6 +6,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+export { runInFrame } from "../src/utils";
+
 export function createTestDiv() {
   const element = document.createElement("div");
   document.body.appendChild(element);

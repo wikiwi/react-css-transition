@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright (C) 2016 Chi Vinh Le and contributors.
+ * Copyright (C) 2016-present Chi Vinh Le and contributors.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -12,10 +12,8 @@ import { ReactWrapper, mount } from "enzyme";
 import { assert } from "chai";
 import { SinonSpy, spy } from "sinon";
 
-import { createTestDiv } from "../utils";
+import { createTestDiv, runInFrame } from "../utils";
 import { CSSTransitionProps, CSSTransition, transit } from "../../src";
-
-const TICK = 17;
 
 describe("basic integration test", () => {
   describe("<CSSTransition>", () => {
@@ -80,26 +78,25 @@ describe("basic integration test", () => {
       });
 
       describe("when transition was triggered", () => {
-        before((done) => {
-          // Trigger after a small delay to allow component
-          // to be properly mounted into DOM.
-          setTimeout(() => {
-            wrapper.setProps({ active: true });
-            done();
-          }, TICK);
+        before(() => {
+          wrapper.setProps({ active: true });
         });
 
-        it("should begin transition", () => {
+        it("should remain in default style", () => {
           const style = target.props().style;
-          assert.deepEqual(style, enterStyleProcessed);
+          assert.deepEqual(style, defaultStyle);
+        });
+
+        it("should begin transition after 2nd render", (done) => {
+          runInFrame(1, () => {
+            const style = target.props().style;
+            assert.deepEqual(style, enterStyleProcessed);
+            done();
+          });
         });
 
         describe("when transition starts", () => {
-          before((done) => {
-            setTimeout(() => {
-              done();
-            }, 100);
-          });
+          before((done) => setTimeout(() => done(), 100));
 
           it("should ignore", () => {
             const style = target.props().style;
@@ -112,11 +109,7 @@ describe("basic integration test", () => {
         });
 
         describe("when transition ends", () => {
-          before((done) => {
-            setTimeout(() => {
-              done();
-            }, 100);
-          });
+          before((done) => setTimeout(() => done(), 100));
 
           it("should become active", () => {
             const style = target.props().style;
@@ -153,26 +146,25 @@ describe("basic integration test", () => {
       });
 
       describe("when transition was triggered", () => {
-        before((done) => {
-          // Trigger after a small delay to allow component
-          // to be properly mounted into DOM.
-          setTimeout(() => {
-            wrapper.setProps({ active: false });
-            done();
-          }, TICK);
+        before(() => {
+          wrapper.setProps({ active: false });
         });
 
-        it("should begin transition", () => {
+        it("should remain in active style", () => {
           const style = target.props().style;
-          assert.deepEqual(style, leaveStyleProcessed);
+          assert.deepEqual(style, activeStyle);
+        });
+
+        it("should begin transition after 2nd render", (done) => {
+          runInFrame(1, () => {
+            const style = target.props().style;
+            assert.deepEqual(style, leaveStyleProcessed);
+            done();
+          });
         });
 
         describe("when transition starts", () => {
-          before((done) => {
-            setTimeout(() => {
-              done();
-            }, 100);
-          });
+          before((done) => setTimeout(() => done(), 100));
 
           it("should ignore", () => {
             const style = target.props().style;
@@ -185,11 +177,7 @@ describe("basic integration test", () => {
         });
 
         describe("when transition ends", () => {
-          before((done) => {
-            setTimeout(() => {
-              done();
-            }, 100);
-          });
+          before((done) => setTimeout(() => done(), 100));
 
           it("should become default", () => {
             const style = target.props().style;
@@ -227,8 +215,9 @@ describe("basic integration test", () => {
       });
 
       describe("when transition was triggered", () => {
-        before(() => {
+        before((done) => {
           wrapper.setProps({ active: true });
+          runInFrame(1, done);
         });
 
         it("should begin transition", () => {
@@ -281,8 +270,9 @@ describe("basic integration test", () => {
       });
 
       describe("when transition was triggered", () => {
-        before(() => {
+        before((done) => {
           wrapper.setProps({ active: false });
+          runInFrame(1, done);
         });
 
         it("should begin transition", () => {
@@ -336,12 +326,8 @@ describe("basic integration test", () => {
 
       describe("when transition was triggered", () => {
         before((done) => {
-          // Trigger after a small delay to allow component
-          // to be properly mounted into DOM.
-          setTimeout(() => {
-            wrapper.setProps({ active: true });
-            done();
-          }, TICK);
+          wrapper.setProps({ active: true });
+          runInFrame(1, done);
         });
 
         it("should begin transition", () => {
@@ -350,11 +336,7 @@ describe("basic integration test", () => {
         });
 
         describe("when transition starts", () => {
-          before((done) => {
-            setTimeout(() => {
-              done();
-            }, 100);
-          });
+          before((done) => setTimeout(() => done(), 100));
 
           it("should ignore", () => {
             const style = target.props().style;
@@ -373,11 +355,7 @@ describe("basic integration test", () => {
           });
 
           describe("when transition starts", () => {
-            before((done) => {
-              setTimeout(() => {
-                done();
-              }, 100);
-            });
+            before((done) => setTimeout(() => done(), 100));
 
             it("should ignore", () => {
               const style = target.props().style;
@@ -390,11 +368,7 @@ describe("basic integration test", () => {
           });
 
           describe("when transition ends", () => {
-            before((done) => {
-              setTimeout(() => {
-                done();
-              }, 100);
-            });
+            before((done) => setTimeout(() => done(), 100));
 
             it("should become default", () => {
               const style = target.props().style;
@@ -434,12 +408,8 @@ describe("basic integration test", () => {
 
       describe("when transition was triggered", () => {
         before((done) => {
-          // Trigger after a small delay to allow component
-          // to be properly mounted into DOM.
-          setTimeout(() => {
-            wrapper.setProps({ active: false });
-            done();
-          }, TICK);
+          wrapper.setProps({ active: false });
+          runInFrame(1, done);
         });
 
         it("should begin transition", () => {
@@ -448,11 +418,7 @@ describe("basic integration test", () => {
         });
 
         describe("when transition starts", () => {
-          before((done) => {
-            setTimeout(() => {
-              done();
-            }, 100);
-          });
+          before((done) => setTimeout(() => done(), 100));
 
           it("should ignore", () => {
             const style = target.props().style;
@@ -471,11 +437,7 @@ describe("basic integration test", () => {
           });
 
           describe("when transition starts", () => {
-            before((done) => {
-              setTimeout(() => {
-                done();
-              }, 100);
-            });
+            before((done) => setTimeout(() => done(), 100));
 
             it("should ignore", () => {
               const style = target.props().style;
@@ -488,11 +450,7 @@ describe("basic integration test", () => {
           });
 
           describe("when transition ends", () => {
-            before((done) => {
-              setTimeout(() => {
-                done();
-              }, 100);
-            });
+            before((done) => setTimeout(() => done(), 100));
 
             it("should become active", () => {
               const style = target.props().style;

@@ -85,3 +85,21 @@ export function getLeaveDelay(delay: TransitionDelay): number {
   }
   return delay.leave;
 }
+
+export const runInFrame = (no: number, callback: Function) => {
+  let cur = 0;
+  let canceled = false;
+  const loop = () => {
+    if (canceled) {
+      return;
+    }
+    if (cur <= no) {
+      cur++;
+      requestAnimationFrame(loop);
+      return;
+    }
+    callback();
+  };
+  loop();
+  return () => { canceled = true; };
+};
