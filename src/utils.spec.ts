@@ -7,12 +7,14 @@
  */
 
 import { assert } from "chai";
+import { spy } from "sinon";
 
 import {
   convertToCSSPrefix, removeVendorPrefix,
   matchTransitionProperty, parseDuration,
   parseTransition,
   getAppearDelay, getEnterDelay, getLeaveDelay,
+  runInFrame,
 } from "./utils";
 
 describe("utils.ts", () => {
@@ -172,6 +174,28 @@ describe("utils.ts", () => {
 
     it("should process object", () => {
       assert.strictEqual(getLeaveDelay({ leave: 100 }), 100);
+    });
+  });
+
+  describe("runInFrame", () => {
+    it("should call callback", (done) => {
+      const cb = spy();
+      runInFrame(1, cb);
+      assert.isTrue(cb.notCalled);
+      setTimeout(() => {
+        assert.isTrue(cb.called);
+        done();
+      }, 50);
+    });
+    it("should cancel", (done) => {
+      const cb = spy();
+      const cancel = runInFrame(1, cb);
+      assert.isTrue(cb.notCalled);
+      cancel();
+      setTimeout(() => {
+        assert.isTrue(cb.notCalled);
+        done();
+      }, 50);
     });
   });
 });

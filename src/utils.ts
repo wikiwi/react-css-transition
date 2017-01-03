@@ -96,6 +96,10 @@ export function getLeaveDelay(delay: TransitionDelay): number {
   return delay.leave;
 }
 
+const raf = typeof requestAnimationFrame === "undefined"
+  ? (callback: Function) => setTimeout(callback, 17)
+  : requestAnimationFrame;
+
 export const runInFrame = (no: number, callback: Function) => {
   let cur = 0;
   let canceled = false;
@@ -105,7 +109,7 @@ export const runInFrame = (no: number, callback: Function) => {
     }
     if (cur <= no) {
       cur++;
-      requestAnimationFrame(loop);
+      raf(loop);
       return;
     }
     callback();
