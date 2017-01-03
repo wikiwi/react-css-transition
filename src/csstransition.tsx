@@ -38,81 +38,85 @@ export interface CSSTransitionProps
   style?: CSSProperties;
 }
 
-export class CSSTransition extends Component<CSSTransitionProps, CSSTransitionState> {
-  public static defaultProps: any = {
-    component: "div",
+export function createCSSTransition(reducer: typeof reduce) {
+  return class CSSTransition extends Component<CSSTransitionProps, CSSTransitionState> {
+    public static defaultProps: any = {
+      component: "div",
+    };
+
+    private cancelPending: any;
+
+    constructor(props: CSSTransitionProps) {
+      super(props);
+      this.dispatch(ActionID.Init, props);
+    }
+
+    public componentDidMount(): void {
+      if (this.props.transitionAppear && this.props.active) {
+        this.dispatch(ActionID.TransitionTrigger);
+      }
+    }
+
+    public componentWillUnmount(): void {
+      if (this.cancelPending) { this.cancelPending(); this.cancelPending = null; }
+    }
+
+    public componentWillReceiveProps(nextProps: CSSTransitionProps): void {
+      if (this.props.active === nextProps.active) { return; }
+      this.dispatch(ActionID.TransitionTrigger, nextProps);
+    }
+
+    public render(): ReactElement<any> {
+      const {
+        children,
+        component,
+        active: _a,
+        transitionAppear: _b,
+        onTransitionComplete: _c,
+        defaultStyle: _d,
+        activeStyle: _e,
+        appearStyle: _f,
+        enterStyle: _g,
+        leaveStyle: _h,
+        appearInitStyle: _i,
+        enterInitStyle: _j,
+        leaveInitStyle: _k,
+        transitionDelay: _l,
+        ...rest,
+      } = this.props;
+
+      const { style } = this.state;
+      const Wrapper = component;
+      const inner = Wrapper ? <Wrapper children={children} /> : children;
+      return (
+        <TransitionObserver
+          {...rest}
+          onTransitionBegin={this.handleTransitionBegin}
+          onTransitionComplete={this.handleTransitionComplete}
+          style={style}
+          >
+          {inner}
+        </TransitionObserver>
+      );
+    }
+
+    private handleTransitionComplete = () => this.dispatch(ActionID.TransitionComplete);
+    private handleTransitionBegin = () => this.dispatch(ActionID.TransitionStart);
+
+    private dispatch(action: ActionID, props = this.props): void {
+      const result = reducer(this.state, action, props);
+      if (!result) { return; }
+      const {state, pending} = result;
+      let callback: any = undefined;
+      if (this.cancelPending) { this.cancelPending(); this.cancelPending = null; }
+      if (pending) { callback = () => { this.cancelPending = runInFrame(1, () => this.dispatch(pending)); }; }
+      if (this.state === undefined) {
+        this.state = state;
+        return;
+      }
+      this.setState(state, callback);
+    }
   };
+};
 
-  private cancelPending: any;
-
-  constructor(props: CSSTransitionProps) {
-    super(props);
-    this.dispatch(ActionID.Init, props);
-  }
-
-  public componentDidMount(): void {
-    if (this.props.transitionAppear && this.props.active) {
-      this.dispatch(ActionID.TransitionTrigger);
-    }
-  }
-
-  public componentWillUnmount(): void {
-    if (this.cancelPending) { this.cancelPending(); this.cancelPending = null; }
-  }
-
-  public componentWillReceiveProps(nextProps: CSSTransitionProps): void {
-    if (this.props.active === nextProps.active) { return; }
-    this.dispatch(ActionID.TransitionTrigger, nextProps);
-  }
-
-  public render(): ReactElement<any> {
-    const {
-      children,
-      component,
-      active: _a,
-      transitionAppear: _b,
-      onTransitionComplete: _c,
-      defaultStyle: _d,
-      activeStyle: _e,
-      appearStyle: _f,
-      enterStyle: _g,
-      leaveStyle: _h,
-      appearInitStyle: _i,
-      enterInitStyle: _j,
-      leaveInitStyle: _k,
-      transitionDelay: _l,
-      ...rest,
-    } = this.props;
-
-    const { style } = this.state;
-    const Wrapper = component;
-    const inner = Wrapper ? <Wrapper children={children} /> : children;
-    return (
-      <TransitionObserver
-        {...rest}
-        onTransitionBegin={this.handleTransitionBegin}
-        onTransitionComplete={this.handleTransitionComplete}
-        style={style}
-        >
-        {inner}
-      </TransitionObserver>
-    );
-  }
-
-  private handleTransitionComplete = () => this.dispatch(ActionID.TransitionComplete);
-  private handleTransitionBegin = () => this.dispatch(ActionID.TransitionStart);
-
-  private dispatch(action: ActionID, props = this.props): void {
-    const result = reduce(this.state, action, props);
-    if (!result) { return; }
-    const {state, pending} = result;
-    let callback: any = undefined;
-    if (this.cancelPending) { this.cancelPending(); this.cancelPending = null; }
-    if (pending) { callback = () => { this.cancelPending = runInFrame(1, () => this.dispatch(pending)); }; }
-    if (this.state === undefined) {
-      this.state = state;
-      return;
-    }
-    this.setState(state, callback);
-  }
-}
+export const CSSTransition = createCSSTransition(reduce);
