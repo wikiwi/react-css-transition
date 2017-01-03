@@ -47,7 +47,6 @@ export const StateIDList = [
 export enum ActionID {
   Init,
   TransitionInit,
-  TransitionSkip,
   TransitionTrigger,
   TransitionStart,
   TransitionComplete,
