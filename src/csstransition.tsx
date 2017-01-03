@@ -29,11 +29,11 @@ export interface CSSTransitionProps
   children?: ReactNode;
   defaultStyle?: CSSProperties;
   activeStyle?: CSSProperties;
+  appearStyle?: CSSProperties;
   enterStyle?: CSSProperties;
   leaveStyle?: CSSProperties;
   style?: CSSProperties;
   // TODO:
-  // appearStyle?: CSSProperties;
   // appearInitStyle?: CSSProperty;
   // enterInitStyle?: CSSProperties;
   // leaveInitStyle?: CSSProperties;
