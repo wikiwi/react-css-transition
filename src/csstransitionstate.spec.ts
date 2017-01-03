@@ -12,7 +12,8 @@ import { spy } from "sinon";
 import { CSSTransitionProps } from "./csstransition";
 import { transit } from "./transit";
 import {
-  getAppearStyle, reduce, StateID, StateIDList, ActionID, CSSTransitionState,
+  reduce, StateID, StateIDList, ActionID, CSSTransitionState,
+  getAppearStyle, getAppearPendingStyle, getEnterPendingStyle, getLeavePendingStyle,
   defaultInitState, activeInitState, appearInitState,
   defaultState, activeState,
   appearPendingState, enterPendingState, leavePendingState,
@@ -31,6 +32,40 @@ describe("csstransitionstate.ts", () => {
       assert.strictEqual(getAppearStyle(props), props.enterStyle);
     });
   });
+  describe("getEnterPendingStyle()", () => {
+    it("should return enterInitStyle", () => {
+      const props: any = { enterInitStyle: {} };
+      assert.strictEqual(getEnterPendingStyle(props), props.enterInitStyle);
+    });
+    it("should fallback to defaultStyle", () => {
+      const props: any = { defaultStyle: {} };
+      assert.strictEqual(getEnterPendingStyle(props), props.defaultStyle);
+    });
+  });
+  describe("getLeavePendingStyle()", () => {
+    it("should return leaveInitStyle", () => {
+      const props: any = { leaveInitStyle: {} };
+      assert.strictEqual(getLeavePendingStyle(props), props.leaveInitStyle);
+    });
+    it("should fallback to activeStyle", () => {
+      const props: any = { activeStyle: {} };
+      assert.strictEqual(getLeavePendingStyle(props), props.activeStyle);
+    });
+  });
+  describe("getAppearPendingStyle()", () => {
+    it("should return appearInitStyle", () => {
+      const props: any = { appearInitStyle: {}, appearStyle: {} };
+      assert.strictEqual(getAppearPendingStyle(props), props.appearInitStyle);
+    });
+    it("should fallback to enterInitStyle", () => {
+      const props: any = { enterInitStyle: {} };
+      assert.strictEqual(getAppearPendingStyle(props), props.enterInitStyle);
+    });
+    it("should fallback to defaultStyle", () => {
+      const props: any = { defaultStyle: {} };
+      assert.strictEqual(getAppearPendingStyle(props), props.defaultStyle);
+    });
+  });
   describe("states", () => {
     describe(
       "defaultInitState",
@@ -42,7 +77,7 @@ describe("csstransitionstate.ts", () => {
     );
     describe(
       "appearInitState",
-      testState(StateID.AppearInit, "appearStyle", (props) => appearInitState(props)),
+      testState(StateID.AppearInit, "defaultStyle", (props) => appearInitState(props)),
     );
     describe(
       "defaultState",

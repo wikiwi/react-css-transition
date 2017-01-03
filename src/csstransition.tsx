@@ -32,11 +32,10 @@ export interface CSSTransitionProps
   appearStyle?: CSSProperties;
   enterStyle?: CSSProperties;
   leaveStyle?: CSSProperties;
+  appearInitStyle?: CSSProperties;
+  enterInitStyle?: CSSProperties;
+  leaveInitStyle?: CSSProperties;
   style?: CSSProperties;
-  // TODO:
-  // appearInitStyle?: CSSProperty;
-  // enterInitStyle?: CSSProperties;
-  // leaveInitStyle?: CSSProperties;
 }
 
 export class CSSTransition extends Component<CSSTransitionProps, CSSTransitionState> {
@@ -78,7 +77,10 @@ export class CSSTransition extends Component<CSSTransitionProps, CSSTransitionSt
       appearStyle: _f,
       enterStyle: _g,
       leaveStyle: _h,
-      transitionDelay: _i,
+      appearInitStyle: _i,
+      enterInitStyle: _j,
+      leaveInitStyle: _k,
+      transitionDelay: _l,
       ...rest,
     } = this.props;
 

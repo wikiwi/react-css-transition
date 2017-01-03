@@ -53,6 +53,22 @@ export enum ActionID {
   TransitionComplete,
 }
 
+export function getAppearPendingStyle(props: CSSTransitionProps) {
+  return props.appearStyle
+    ? props.appearInitStyle
+      ? props.appearInitStyle
+      : props.defaultStyle
+    : getEnterPendingStyle(props);
+}
+
+export function getEnterPendingStyle(props: CSSTransitionProps) {
+  return props.enterInitStyle ? props.enterInitStyle : props.defaultStyle;
+}
+
+export function getLeavePendingStyle(props: CSSTransitionProps) {
+  return props.leaveInitStyle ? props.leaveInitStyle : props.activeStyle;
+}
+
 export function getAppearStyle(props: CSSTransitionProps) {
   return props.appearStyle ? props.appearStyle : props.enterStyle;
 }
@@ -69,7 +85,7 @@ export const defaultInitState = (props: CSSTransitionProps) => ({
 
 export const appearInitState = (props: CSSTransitionProps) => ({
   id: StateID.AppearInit,
-  style: { ...props.style, ...resolveTransit(getAppearStyle(props), getAppearDelay(props.transitionDelay)) },
+  style: { ...props.style, ...getAppearPendingStyle(props) },
 });
 
 export const activeState = (props: CSSTransitionProps) => ({
@@ -84,17 +100,17 @@ export const defaultState = (props: CSSTransitionProps) => ({
 
 export const appearPendingState = (props: CSSTransitionProps) => ({
   id: StateID.AppearPending,
-  style: { ...props.style, ...props.defaultStyle },
+  style: { ...props.style, ...getAppearPendingStyle(props) },
 });
 
 export const enterPendingState = (props: CSSTransitionProps) => ({
   id: StateID.EnterPending,
-  style: { ...props.style, ...props.defaultStyle },
+  style: { ...props.style, ...getEnterPendingStyle(props) },
 });
 
 export const leavePendingState = (props: CSSTransitionProps) => ({
   id: StateID.LeavePending,
-  style: { ...props.style, ...props.activeStyle },
+  style: { ...props.style, ...getLeavePendingStyle(props) },
 });
 
 export const appearTriggeredState = (props: CSSTransitionProps) => ({
