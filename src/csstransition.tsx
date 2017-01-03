@@ -33,7 +33,6 @@ export interface CSSTransitionProps
   leaveStyle?: CSSProperties;
   style?: CSSProperties;
   // TODO:
-  // prepareForTransition?: boolean;
   // appearStyle?: CSSProperties;
   // appearInitStyle?: CSSProperty;
   // enterInitStyle?: CSSProperties;
