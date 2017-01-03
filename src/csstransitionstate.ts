@@ -22,7 +22,6 @@ export interface CSSTransitionState {
 export enum StateID {
   ActiveInit,
   Active,
-  PreparedActive,
   LeavePending,
   LeaveTriggered,
   LeaveStarted,
@@ -34,7 +33,7 @@ export enum StateID {
 }
 
 export const StateIDList = [
-  StateID.ActiveInit, StateID.Active, StateID.PreparedActive,
+  StateID.ActiveInit, StateID.Active,
   StateID.DefaultInit, StateID.Default,
   StateID.LeavePending, StateID.LeaveTriggered, StateID.LeaveStarted,
   StateID.EnterPending, StateID.EnterTriggered, StateID.EnterStarted,
