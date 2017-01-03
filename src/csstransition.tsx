@@ -38,7 +38,7 @@ export interface CSSTransitionProps
   style?: CSSProperties;
 }
 
-export function createCSSTransition(reducer: typeof reduce) {
+export function createCSSTransition(reducer: typeof reduce): ComponentClass<CSSTransitionProps> {
   return class CSSTransition extends Component<CSSTransitionProps, CSSTransitionState> {
     public static defaultProps: any = {
       component: "div",
