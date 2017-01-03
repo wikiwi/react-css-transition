@@ -75,9 +75,10 @@ export class CSSTransition extends Component<CSSTransitionProps, CSSTransitionSt
       onTransitionComplete: _c,
       defaultStyle: _d,
       activeStyle: _e,
-      enterStyle: _f,
-      leaveStyle: _g,
-      transitionDelay: _l,
+      appearStyle: _f,
+      enterStyle: _g,
+      leaveStyle: _h,
+      transitionDelay: _i,
       ...rest,
     } = this.props;
 

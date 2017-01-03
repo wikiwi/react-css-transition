@@ -12,23 +12,37 @@ import { spy } from "sinon";
 import { CSSTransitionProps } from "./csstransition";
 import { transit } from "./transit";
 import {
-  reduce, StateID, StateIDList, ActionID, CSSTransitionState,
-  initDefaultState, initActiveState,
+  getAppearStyle, reduce, StateID, StateIDList, ActionID, CSSTransitionState,
+  defaultInitState, activeInitState, appearInitState,
   defaultState, activeState,
-  enterPendingState, leavePendingState,
-  enterTriggeredState, leaveTriggeredState,
-  enterStartedState, leaveStartedState,
+  appearPendingState, enterPendingState, leavePendingState,
+  appearTriggeredState, enterTriggeredState, leaveTriggeredState,
+  appearStartedState, enterStartedState, leaveStartedState,
 } from "./csstransitionstate";
 
 describe("csstransitionstate.ts", () => {
+  describe("getAppearStyle()", () => {
+    it("should return appearStyle", () => {
+      const props: any = { appearStyle: {} };
+      assert.strictEqual(getAppearStyle(props), props.appearStyle);
+    });
+    it("should fallback to enterStyle", () => {
+      const props: any = { enterStyle: {} };
+      assert.strictEqual(getAppearStyle(props), props.enterStyle);
+    });
+  });
   describe("states", () => {
     describe(
-      "initDefaultState",
-      testState(StateID.DefaultInit, "defaultStyle", (props) => initDefaultState(props)),
+      "defaultInitState",
+      testState(StateID.DefaultInit, "defaultStyle", (props) => defaultInitState(props)),
     );
     describe(
-      "initActiveState",
-      testState(StateID.ActiveInit, "activeStyle", (props) => initActiveState(props)),
+      "activeInitState",
+      testState(StateID.ActiveInit, "activeStyle", (props) => activeInitState(props)),
+    );
+    describe(
+      "appearInitState",
+      testState(StateID.AppearInit, "appearStyle", (props) => appearInitState(props)),
     );
     describe(
       "defaultState",
@@ -39,6 +53,10 @@ describe("csstransitionstate.ts", () => {
       testState(StateID.Active, "activeStyle", (props) => activeState(props)),
     );
     describe(
+      "appearPendingState",
+      testState(StateID.AppearPending, "defaultStyle", (props) => appearPendingState(props)),
+    );
+    describe(
       "enterPendingState",
       testState(StateID.EnterPending, "defaultStyle", (props) => enterPendingState(props)),
     );
@@ -47,12 +65,20 @@ describe("csstransitionstate.ts", () => {
       testState(StateID.LeavePending, "activeStyle", (props) => leavePendingState(props)),
     );
     describe(
+      "appearTriggeredState",
+      testState(StateID.AppearTriggered, "appearStyle", (props) => appearTriggeredState(props)),
+    );
+    describe(
       "enterTriggeredState",
       testState(StateID.EnterTriggered, "enterStyle", (props) => enterTriggeredState(props)),
     );
     describe(
       "leaveTriggeredState",
       testState(StateID.LeaveTriggered, "leaveStyle", (props) => leaveTriggeredState(props)),
+    );
+    describe(
+      "appearStartedState",
+      testState(StateID.AppearStarted, "appearStyle", (props) => appearStartedState(props)),
     );
     describe(
       "enterStartedState",
@@ -71,7 +97,7 @@ describe("csstransitionstate.ts", () => {
         assert.throw(() => reduce({}, actionID, {}));
       });
       it("should become DefaultInit", () => {
-        const {state, pending} = reduce(undefined, actionID, {});
+        const {state, pending} = reduce(undefined, actionID, { active: false });
         assert.isUndefined(pending);
         assert.strictEqual(state.id, StateID.DefaultInit);
       });
@@ -80,28 +106,42 @@ describe("csstransitionstate.ts", () => {
         assert.isUndefined(pending);
         assert.strictEqual(state.id, StateID.ActiveInit);
       });
+      it("should become AppearInit", () => {
+        const {state, pending} = reduce(undefined, actionID, { active: true, transitionAppear: true });
+        assert.isUndefined(pending);
+        assert.strictEqual(state.id, StateID.AppearInit);
+      });
     });
     describe("TransitionInit", () => {
       const actionID = ActionID.TransitionInit;
+      const validOrigin = [
+        StateID.Active, StateID.ActiveInit, StateID.Default, StateID.DefaultInit, StateID.AppearInit,
+      ];
 
       it("should fail on invalid state transitions", () => {
         StateIDList
-          .filter((id) => [StateID.Active, StateID.ActiveInit, StateID.Default, StateID.DefaultInit].indexOf(id) < 0)
+          .filter((id) => validOrigin.indexOf(id) < 0)
           .forEach((id) => assert.throw(() => reduce({ id }, actionID, {})));
       });
-      it("should transit to active pending transition state", () => {
+      it("should transit to enter pending state", () => {
         [StateID.Default, StateID.DefaultInit].forEach((id) => {
-          const {state, pending} = reduce({ id }, actionID, {});
+          const {state, pending} = reduce({ id }, actionID, { active: true });
           assert.strictEqual(pending, ActionID.TransitionTrigger);
           assert.strictEqual(state.id, StateID.EnterPending);
         });
       });
-      it("should transit to default pending transition state", () => {
+      it("should transit to leave pending state", () => {
         [StateID.Active, StateID.ActiveInit].forEach((id) => {
-          const {state, pending} = reduce({ id }, actionID, {});
+          const {state, pending} = reduce({ id }, actionID, { active: false });
           assert.strictEqual(pending, ActionID.TransitionTrigger);
           assert.strictEqual(state.id, StateID.LeavePending);
         });
+      });
+      it("should transit to appear pending state", () => {
+        const id = StateID.AppearInit;
+        const {state, pending} = reduce({ id }, actionID, { active: true });
+        assert.strictEqual(pending, ActionID.TransitionTrigger);
+        assert.strictEqual(state.id, StateID.AppearPending);
       });
     });
     describe("TransitionStart", () => {
@@ -109,23 +149,30 @@ describe("csstransitionstate.ts", () => {
 
       it("should not fail on invalid state transitions", () => {
         StateIDList
-          .filter((id) => [StateID.EnterTriggered, StateID.LeaveTriggered].indexOf(id) < 0)
+          .filter((id) => [StateID.EnterTriggered, StateID.LeaveTriggered, StateID.AppearTriggered].indexOf(id) < 0)
           .forEach((id) => assert.isNull(reduce({ id }, actionID, {})));
       });
-      it("should transit to active started transition state", () => {
-        const {state, pending} = reduce({ id: StateID.EnterTriggered }, actionID, {});
+      it("should transit to enter started state", () => {
+        const {state, pending} = reduce({ id: StateID.EnterTriggered }, actionID, { active: true });
         assert.isUndefined(pending);
         assert.strictEqual(state.id, StateID.EnterStarted);
       });
-      it("should transit to active started transition state", () => {
-        const {state, pending} = reduce({ id: StateID.LeaveTriggered }, actionID, {});
+      it("should transit to leave started state", () => {
+        const {state, pending} = reduce({ id: StateID.LeaveTriggered }, actionID, { active: false });
         assert.isUndefined(pending);
         assert.strictEqual(state.id, StateID.LeaveStarted);
+      });
+      it("should transit to appear started state", () => {
+        const {state, pending} =
+          reduce({ id: StateID.AppearTriggered }, actionID, { active: true });
+        assert.isUndefined(pending);
+        assert.strictEqual(state.id, StateID.AppearStarted);
       });
     });
     describe("TransitionComplete", () => {
       const actionID = ActionID.TransitionComplete;
       const validOrigin = [
+        StateID.AppearTriggered, StateID.AppearStarted,
         StateID.EnterTriggered, StateID.EnterStarted,
         StateID.LeaveTriggered, StateID.LeaveStarted,
       ];
@@ -136,15 +183,19 @@ describe("csstransitionstate.ts", () => {
           .forEach((id) => assert.throw(() => reduce({ id }, actionID, {})));
       });
       it("should transit to active state", () => {
-        [StateID.EnterTriggered, StateID.EnterStarted].forEach((id) => {
-          const {state, pending} = reduce({ id }, actionID, {});
+        const origin = [
+          StateID.AppearTriggered, StateID.AppearStarted,
+          StateID.EnterTriggered, StateID.EnterStarted,
+        ];
+        origin.forEach((id) => {
+          const {state, pending} = reduce({ id }, actionID, { active: true });
           assert.isUndefined(pending);
           assert.strictEqual(state.id, StateID.Active);
         });
       });
       it("should transit to default state", () => {
         [StateID.LeaveTriggered, StateID.LeaveStarted].forEach((id) => {
-          const {state, pending} = reduce({ id }, actionID, {});
+          const {state, pending} = reduce({ id }, actionID, { active: false });
           assert.isUndefined(pending);
           assert.strictEqual(state.id, StateID.Default);
         });
@@ -160,33 +211,45 @@ describe("csstransitionstate.ts", () => {
     describe("TransitionTrigger", () => {
       const actionID = ActionID.TransitionTrigger;
 
-      it("should transit to active pending transition state", () => {
+      it("should transit to enter pending state", () => {
         [StateID.Default, StateID.DefaultInit].forEach((id) => {
-          const {state, pending} = reduce({ id }, actionID, {});
+          const {state, pending} = reduce({ id }, actionID, { active: true });
           assert.strictEqual(pending, ActionID.TransitionTrigger);
           assert.strictEqual(state.id, StateID.EnterPending);
         });
       });
-      it("should transit to default pending transition state", () => {
+      it("should transit to leave pending state", () => {
         [StateID.Active, StateID.ActiveInit].forEach((id) => {
-          const {state, pending} = reduce({ id }, actionID, {});
+          const {state, pending} = reduce({ id }, actionID, { active: false });
           assert.strictEqual(pending, ActionID.TransitionTrigger);
           assert.strictEqual(state.id, StateID.LeavePending);
         });
       });
-      it("should transit to active triggered state", () => {
+      it("should transit to appear pending state", () => {
+        const id = StateID.AppearInit;
+        const {state, pending} = reduce({ id }, actionID, { active: true });
+        assert.strictEqual(pending, ActionID.TransitionTrigger);
+        assert.strictEqual(state.id, StateID.AppearPending);
+      });
+      it("should transit to enter triggered state", () => {
         const id = StateID.EnterPending;
         const {state, pending} = reduce({ id }, actionID, { active: true });
         assert.isUndefined(pending);
         assert.strictEqual(state.id, StateID.EnterTriggered);
       });
-      it("should transit to default triggered transition state", () => {
+      it("should transit to leave triggered state", () => {
         const id = StateID.LeavePending;
         const {state, pending} = reduce({ id }, actionID, { active: false });
         assert.isUndefined(pending);
         assert.strictEqual(state.id, StateID.LeaveTriggered);
       });
-      it("should interrupt pending and triggered active transition", () => {
+      it("should transit to appear triggered state", () => {
+        const id = StateID.AppearPending;
+        const {state, pending} = reduce({ id }, actionID, { active: true });
+        assert.isUndefined(pending);
+        assert.strictEqual(state.id, StateID.AppearTriggered);
+      });
+      it("should interrupt enter pending and triggered", () => {
         [StateID.EnterPending, StateID.EnterTriggered].forEach((id) => {
           const props = { active: false, onTransitionComplete: spy() };
           const {state, pending} = reduce({ id }, actionID, props);
@@ -195,7 +258,7 @@ describe("csstransitionstate.ts", () => {
           assert.isTrue(props.onTransitionComplete.calledOnce);
         });
       });
-      it("should interrupt pending and triggered default transition", () => {
+      it("should interrupt leave pending and triggered", () => {
         [StateID.LeavePending, StateID.LeaveTriggered].forEach((id) => {
           const props = { active: true, onTransitionComplete: spy() };
           const {state, pending} = reduce({ id }, actionID, props);
@@ -204,17 +267,32 @@ describe("csstransitionstate.ts", () => {
           assert.isTrue(props.onTransitionComplete.calledOnce);
         });
       });
-      it("should interrupt started active transition", () => {
+      it("should interrupt appear pending and triggered", () => {
+        [StateID.AppearPending, StateID.AppearTriggered].forEach((id) => {
+          const props = { active: false, onTransitionComplete: spy() };
+          const {state, pending} = reduce({ id }, actionID, props);
+          assert.isUndefined(pending);
+          assert.strictEqual(state.id, StateID.Default);
+          assert.isTrue(props.onTransitionComplete.calledOnce);
+        });
+      });
+      it("should interrupt enter started", () => {
         const id = StateID.EnterStarted;
         const {state, pending} = reduce({ id }, actionID, { active: false });
         assert.isUndefined(pending);
         assert.strictEqual(state.id, StateID.LeaveTriggered);
       });
-      it("should interrupt started default transition", () => {
+      it("should interrupt leave started", () => {
         const id = StateID.LeaveStarted;
         const {state, pending} = reduce({ id }, actionID, { active: true });
         assert.isUndefined(pending);
         assert.strictEqual(state.id, StateID.EnterTriggered);
+      });
+      it("should interrupt appear started", () => {
+        const id = StateID.AppearStarted;
+        const {state, pending} = reduce({ id }, actionID, { active: true });
+        assert.isUndefined(pending);
+        assert.strictEqual(state.id, StateID.LeaveTriggered);
       });
     });
   });

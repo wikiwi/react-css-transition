@@ -12,7 +12,7 @@ import { CSSProperties } from "react";
 
 import { CSSTransitionProps } from "./csstransition";
 import { resolveTransit } from "./transit";
-import { getEnterDelay, getLeaveDelay } from "./utils";
+import { getAppearDelay, getEnterDelay, getLeaveDelay } from "./utils";
 
 export interface CSSTransitionState {
   id?: StateID;
@@ -22,8 +22,12 @@ export interface CSSTransitionState {
 export enum StateID {
   DefaultInit,
   ActiveInit,
+  AppearInit,
   Default,
   Active,
+  AppearPending,
+  AppearTriggered,
+  AppearStarted,
   EnterPending,
   EnterTriggered,
   EnterStarted,
@@ -33,8 +37,9 @@ export enum StateID {
 }
 
 export const StateIDList = [
-  StateID.ActiveInit, StateID.DefaultInit,
+  StateID.ActiveInit, StateID.DefaultInit, StateID.AppearInit,
   StateID.Active, StateID.Default,
+  StateID.AppearPending, StateID.AppearTriggered, StateID.AppearStarted,
   StateID.EnterPending, StateID.EnterTriggered, StateID.EnterStarted,
   StateID.LeavePending, StateID.LeaveTriggered, StateID.LeaveStarted,
 ];
@@ -48,14 +53,23 @@ export enum ActionID {
   TransitionComplete,
 }
 
-export const initActiveState = (props: CSSTransitionProps) => ({
+export function getAppearStyle(props: CSSTransitionProps) {
+  return props.appearStyle ? props.appearStyle : props.enterStyle;
+}
+
+export const activeInitState = (props: CSSTransitionProps) => ({
   id: StateID.ActiveInit,
   style: { ...props.style, ...props.activeStyle },
 });
 
-export const initDefaultState = (props: CSSTransitionProps) => ({
+export const defaultInitState = (props: CSSTransitionProps) => ({
   id: StateID.DefaultInit,
   style: { ...props.style, ...props.defaultStyle },
+});
+
+export const appearInitState = (props: CSSTransitionProps) => ({
+  id: StateID.AppearInit,
+  style: { ...props.style, ...resolveTransit(getAppearStyle(props), getAppearDelay(props.transitionDelay)) },
 });
 
 export const activeState = (props: CSSTransitionProps) => ({
@@ -65,6 +79,11 @@ export const activeState = (props: CSSTransitionProps) => ({
 
 export const defaultState = (props: CSSTransitionProps) => ({
   id: StateID.Default,
+  style: { ...props.style, ...props.defaultStyle },
+});
+
+export const appearPendingState = (props: CSSTransitionProps) => ({
+  id: StateID.AppearPending,
   style: { ...props.style, ...props.defaultStyle },
 });
 
@@ -78,6 +97,11 @@ export const leavePendingState = (props: CSSTransitionProps) => ({
   style: { ...props.style, ...props.activeStyle },
 });
 
+export const appearTriggeredState = (props: CSSTransitionProps) => ({
+  id: StateID.AppearTriggered,
+  style: { ...props.style, ...resolveTransit(getAppearStyle(props), getAppearDelay(props.transitionDelay)) },
+});
+
 export const enterTriggeredState = (props: CSSTransitionProps) => ({
   id: StateID.EnterTriggered,
   style: { ...props.style, ...resolveTransit(props.enterStyle, getEnterDelay(props.transitionDelay)) },
@@ -86,6 +110,11 @@ export const enterTriggeredState = (props: CSSTransitionProps) => ({
 export const leaveTriggeredState = (props: CSSTransitionProps) => ({
   id: StateID.LeaveTriggered,
   style: { ...props.style, ...resolveTransit(props.leaveStyle, getLeaveDelay(props.transitionDelay)) },
+});
+
+export const appearStartedState = (props: CSSTransitionProps) => ({
+  id: StateID.AppearStarted,
+  style: { ...props.style, ...resolveTransit(getAppearStyle(props), getAppearDelay(props.transitionDelay)) },
 });
 
 export const enterStartedState = (props: CSSTransitionProps) => ({
@@ -106,8 +135,12 @@ export function reduce(
   switch (action) {
     case ActionID.Init:
       if (state !== undefined) { throw new Error("invalid state transition"); }
-      if (!props.transitionAppear && props.active) { return { state: initActiveState(props) }; }
-      return { state: initDefaultState(props) };
+      if (props.active) {
+        if (props.transitionAppear) { return { state: appearInitState(props) }; }
+        return { state: activeInitState(props) };
+      }
+      if (!props.transitionAppear && props.active) { return { state: activeInitState(props) }; }
+      return { state: defaultInitState(props) };
     case ActionID.TransitionInit:
       let nextState: CSSTransitionState;
       switch (state.id) {
@@ -119,6 +152,9 @@ export function reduce(
         case StateID.Active:
           nextState = leavePendingState(props);
           break;
+        case StateID.AppearInit:
+          nextState = appearPendingState(props);
+          break;
         default:
           throw new Error("invalid state transition");
       };
@@ -129,6 +165,8 @@ export function reduce(
           return { state: enterStartedState(props) };
         case StateID.LeaveTriggered:
           return { state: leaveStartedState(props) };
+        case StateID.AppearTriggered:
+          return { state: appearStartedState(props) };
         default:
           // We don't error out, because the workaround for transitionstart
           // could happen after transitionend.
@@ -136,6 +174,8 @@ export function reduce(
       }
     case ActionID.TransitionComplete:
       switch (state.id) {
+        case StateID.AppearStarted:
+        case StateID.AppearTriggered:
         case StateID.EnterTriggered:
         case StateID.EnterStarted:
           if (props.onTransitionComplete) { props.onTransitionComplete(); }
@@ -153,6 +193,7 @@ export function reduce(
         case StateID.Active:
         case StateID.DefaultInit:
         case StateID.Default:
+        case StateID.AppearInit:
           return reduce(state, ActionID.TransitionInit, props);
         case StateID.EnterPending:
           if (props.active) { return { state: enterTriggeredState(props) }; }
@@ -162,12 +203,20 @@ export function reduce(
           if (!props.active) { return { state: leaveTriggeredState(props) }; }
           if (props.onTransitionComplete) { props.onTransitionComplete(); }
           return { state: activeState(props) };
+        case StateID.AppearPending:
+          if (props.active) { return { state: appearTriggeredState(props) }; }
+          if (props.onTransitionComplete) { props.onTransitionComplete(); }
+          return { state: defaultState(props) };
         case StateID.EnterTriggered:
           if (props.onTransitionComplete) { props.onTransitionComplete(); }
           return { state: defaultState(props) };
         case StateID.LeaveTriggered:
           if (props.onTransitionComplete) { props.onTransitionComplete(); }
           return { state: activeState(props) };
+        case StateID.AppearTriggered:
+          if (props.onTransitionComplete) { props.onTransitionComplete(); }
+          return { state: defaultState(props) };
+        case StateID.AppearStarted:
         case StateID.EnterStarted:
           return { state: leaveTriggeredState(props) };
         case StateID.LeaveStarted:

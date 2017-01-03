@@ -19,9 +19,9 @@ describe("appear integration test", () => {
   describe("<CSSTransition>", () => {
     const activeStyle: CSSProperties = { width: "100px" };
     const defaultStyle: CSSProperties = { width: "50px" };
-    const enterStyle: CSSProperties = { width: transit("100px", 150, "ease", 25) };
+    const appearStyle: CSSProperties = { width: transit("100px", 150, "ease", 25) };
     const leaveStyle: CSSProperties = { width: transit("50px", 150, "ease", 25) };
-    const enterStyleProcessed: CSSProperties = { width: "100px", transition: "width 150ms ease 25ms" };
+    const appearStyleProcessed: CSSProperties = { width: "100px", transition: "width 150ms ease 25ms" };
     let onTransitionComplete: SinonSpy;
     let getWrapper: (props?: CSSTransitionProps) => ReactWrapper<any, {}>;
 
@@ -41,7 +41,7 @@ describe("appear integration test", () => {
       before(() => {
         onTransitionComplete = spy();
         wrapper = getWrapper({
-          activeStyle, enterStyle, leaveStyle, defaultStyle,
+          activeStyle, appearStyle, leaveStyle, defaultStyle,
           onTransitionComplete,
           active: true,
           transitionAppear: true,
@@ -63,7 +63,7 @@ describe("appear integration test", () => {
 
         it("should automatically trigger transition", () => {
           const style = target.props().style;
-          assert.deepEqual(style, enterStyleProcessed);
+          assert.deepEqual(style, appearStyleProcessed);
         });
 
         describe("when transition starts", () => {
@@ -71,7 +71,7 @@ describe("appear integration test", () => {
 
           it("should ignore", () => {
             const style = target.props().style;
-            assert.deepEqual(style, enterStyleProcessed);
+            assert.deepEqual(style, appearStyleProcessed);
           });
 
           it("should not call onTransitionComplete yet", () => {
@@ -101,7 +101,7 @@ describe("appear integration test", () => {
       before(() => {
         onTransitionComplete = spy();
         wrapper = getWrapper({
-          activeStyle, enterStyle, leaveStyle, defaultStyle,
+          activeStyle, appearStyle, leaveStyle, defaultStyle,
           onTransitionComplete,
           active: true,
           transitionAppear: true,
