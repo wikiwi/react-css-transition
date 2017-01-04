@@ -12,8 +12,8 @@ import { spy } from "sinon";
 import { CSSTransitionProps } from "./csstransition";
 import { transit } from "./transit";
 import {
-  reduce, StateID, StateIDList, ActionID, CSSTransitionState,
-  getAppearStyle, getAppearPendingStyle, getEnterPendingStyle, getLeavePendingStyle,
+  reduce, StateID, StateIDList, ActionID, CSSTransitionState, getState,
+  getDelay, transitionNames,
   defaultInitState, activeInitState, appearInitState,
   defaultState, activeState,
   appearPendingState, enterPendingState, leavePendingState,
@@ -22,48 +22,79 @@ import {
 } from "./csstransitionstate";
 
 describe("csstransitionstate.ts", () => {
-  describe("getAppearStyle()", () => {
-    it("should return appearStyle", () => {
-      const props: any = { appearStyle: {} };
-      assert.strictEqual(getAppearStyle(props), props.appearStyle);
+  describe("getDelay()", () => {
+    it("should process number", () => {
+      transitionNames.forEach((name) => assert.strictEqual(getDelay(name, 200), 200));
     });
-    it("should fallback to enterStyle", () => {
-      const props: any = { enterStyle: {} };
-      assert.strictEqual(getAppearStyle(props), props.enterStyle);
-    });
-  });
-  describe("getEnterPendingStyle()", () => {
-    it("should return enterInitStyle", () => {
-      const props: any = { enterInitStyle: {} };
-      assert.strictEqual(getEnterPendingStyle(props), props.enterInitStyle);
-    });
-    it("should fallback to defaultStyle", () => {
-      const props: any = { defaultStyle: {} };
-      assert.strictEqual(getEnterPendingStyle(props), props.defaultStyle);
+
+    it("should process object", () => {
+      transitionNames.forEach((name) => assert.strictEqual(getDelay(name, { [name]: 100 }), 100));
     });
   });
-  describe("getLeavePendingStyle()", () => {
-    it("should return leaveInitStyle", () => {
-      const props: any = { leaveInitStyle: {} };
-      assert.strictEqual(getLeavePendingStyle(props), props.leaveInitStyle);
+  describe("getState()", () => {
+    it("should return active / default state", () => {
+      ["active", "default"].forEach((name) => {
+        const id = StateID.Active;
+        const style = { left: "0px" };
+        assert.deepEqual(
+          getState(id, name, { [name + "Style"]: style }), {
+            id,
+            style,
+          });
+      });
     });
-    it("should fallback to activeStyle", () => {
-      const props: any = { activeStyle: {} };
-      assert.strictEqual(getLeavePendingStyle(props), props.activeStyle);
+    it("should return transition state", () => {
+      transitionNames.forEach((name) => {
+        const id = StateID.EnterStarted;
+        const style = { top: transit("5px", 120) };
+        const styleProcessed = { top: "5px", transition: "top 120ms ease 0ms" };
+        assert.deepEqual(
+          getState(id, name, { [name + "Style"]: style }), {
+            id,
+            style: styleProcessed,
+          });
+      });
     });
-  });
-  describe("getAppearPendingStyle()", () => {
-    it("should return appearInitStyle", () => {
-      const props: any = { appearInitStyle: {}, appearStyle: {} };
-      assert.strictEqual(getAppearPendingStyle(props), props.appearInitStyle);
+    it("should return transition init state", () => {
+      transitionNames.forEach((name) => {
+        const id = StateID.EnterStarted;
+        const style = { left: "0px" };
+        assert.deepEqual(
+          getState(id, name, { [name + "InitStyle"]: style, [name + "Style"]: {} }, { init: true }), {
+            id,
+            style,
+          });
+      });
     });
-    it("should fallback to enterInitStyle", () => {
-      const props: any = { enterInitStyle: {} };
-      assert.strictEqual(getAppearPendingStyle(props), props.enterInitStyle);
+    it("should return transition init fallback state", () => {
+      transitionNames.forEach((name) => {
+        const fallbackName = name === "leave" ? "active" : "default";
+        const id = StateID.EnterStarted;
+        const style = { left: "0px" };
+        assert.deepEqual(
+          getState(id, name, { [fallbackName + "Style"]: style, [name + "Style"]: {} }, { init: true }), {
+            id,
+            style,
+          });
+      });
     });
-    it("should fallback to defaultStyle", () => {
-      const props: any = { defaultStyle: {} };
-      assert.strictEqual(getAppearPendingStyle(props), props.defaultStyle);
+    it("should fallback to enter for appear", () => {
+      const id = StateID.AppearInit;
+      const style = { left: "0px" };
+      assert.deepEqual(
+        getState(id, "appear", { enterStyle: style }), {
+          id,
+          style,
+        });
+    });
+    it("should fallback to enterInit for appearInit", () => {
+      const id = StateID.AppearInit;
+      const style = { left: "0px" };
+      assert.deepEqual(
+        getState(id, "appear", { enterInitStyle: style }, { init: true }), {
+          id,
+          style,
+        });
     });
   });
   describe("states", () => {
@@ -77,7 +108,7 @@ describe("csstransitionstate.ts", () => {
     );
     describe(
       "appearInitState",
-      testState(StateID.AppearInit, "defaultStyle", (props) => appearInitState(props)),
+      testState(StateID.AppearInit, "appearInitStyle", (props) => appearInitState(props)),
     );
     describe(
       "defaultState",
@@ -89,15 +120,15 @@ describe("csstransitionstate.ts", () => {
     );
     describe(
       "appearPendingState",
-      testState(StateID.AppearPending, "defaultStyle", (props) => appearPendingState(props)),
+      testState(StateID.AppearPending, "appearInitStyle", (props) => appearPendingState(props)),
     );
     describe(
       "enterPendingState",
-      testState(StateID.EnterPending, "defaultStyle", (props) => enterPendingState(props)),
+      testState(StateID.EnterPending, "enterInitStyle", (props) => enterPendingState(props)),
     );
     describe(
       "leavePendingState",
-      testState(StateID.LeavePending, "activeStyle", (props) => leavePendingState(props)),
+      testState(StateID.LeavePending, "leaveInitStyle", (props) => leavePendingState(props)),
     );
     describe(
       "appearTriggeredState",
@@ -125,7 +156,7 @@ describe("csstransitionstate.ts", () => {
     );
   });
   describe("actions", () => {
-    describe("ActionInit", () => {
+    describe("Init", () => {
       const actionID = ActionID.Init;
 
       it("should fail when state is already initialized", () => {
@@ -145,6 +176,19 @@ describe("csstransitionstate.ts", () => {
         const {state, pending} = reduce(undefined, actionID, { active: true, transitionAppear: true });
         assert.isUndefined(pending);
         assert.strictEqual(state.id, StateID.AppearInit);
+      });
+    });
+    describe("Mount", () => {
+      const actionID = ActionID.Mount;
+      it("should become AppearPending", () => {
+        const id = StateID.AppearInit;
+        const {state, pending} = reduce({ id }, actionID, { active: true, transitionAppear: true });
+        assert.strictEqual(pending, ActionID.TransitionTrigger);
+        assert.strictEqual(state.id, StateID.AppearPending);
+      });
+
+      it("should do nothing", () => {
+        assert.isNull(reduce({ id: StateID.Active }, actionID, {}));
       });
     });
     describe("TransitionInit", () => {
@@ -335,37 +379,44 @@ describe("csstransitionstate.ts", () => {
 
 function testState(id: StateID, styleName: string, state: (props: CSSTransitionProps) => CSSTransitionState) {
   return () => {
+    const extraProps = ["appearStyle", "appearInitStyle"].indexOf(styleName) > -1 ? { appearStyle: {} } : {};
     it("should return id", () => {
       assert.strictEqual(state({}).id, id);
     });
-    if (["enterStyle", "leaveStyle"].indexOf(styleName) < 0) {
+    if (["appearStyle", "enterStyle", "leaveStyle"].indexOf(styleName) < 0) {
       it("should return style", () => {
         const style = { top: "0px" };
-        assert.deepEqual(state({ [styleName]: style }).style, style);
+        assert.deepEqual(state({ ...extraProps, [styleName]: style }).style, style);
       });
       it("should return combined style", () => {
         const style = { top: "0px" };
         const baseStyle = { left: "0px" };
-        assert.deepEqual(state({ style: baseStyle, [styleName]: style }).style, { ...baseStyle, ...style });
+        assert.deepEqual(
+          state({ ...extraProps, style: baseStyle, [styleName]: style }).style,
+          { ...baseStyle, ...style },
+        );
       });
     } else {
       it("should return transition style", () => {
         const style = { top: transit("5px", 120) };
         const styleProcessed = { top: "5px", transition: "top 120ms ease 0ms" };
-        assert.deepEqual(state({ [styleName]: style }).style, styleProcessed);
+        assert.deepEqual(state({ ...extraProps, [styleName]: style }).style, styleProcessed);
       });
 
       it("should return combined style", () => {
         const style = { top: transit("5px", 120) };
         const styleProcessed = { top: "5px", transition: "top 120ms ease 0ms" };
         const baseStyle = { left: "0px" };
-        assert.deepEqual(state({ style: baseStyle, [styleName]: style }).style, { ...baseStyle, ...styleProcessed });
+        assert.deepEqual(
+          state({ ...extraProps, style: baseStyle, [styleName]: style }).style,
+          { ...baseStyle, ...styleProcessed },
+        );
       });
 
       it("should return transition style with extra delay", () => {
         const style = { top: transit("5px", 120, "ease", 10) };
         const styleProcessed = { top: "5px", transition: "top 120ms ease 30ms" };
-        assert.deepEqual(state({ [styleName]: style, transitionDelay: 20 }).style, styleProcessed);
+        assert.deepEqual(state({ ...extraProps, [styleName]: style, transitionDelay: 20 }).style, styleProcessed);
       });
     }
   };

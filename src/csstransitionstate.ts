@@ -10,9 +10,8 @@
 
 import { CSSProperties } from "react";
 
-import { CSSTransitionProps } from "./csstransition";
+import { CSSTransitionProps, CSSTransitionDelay } from "./csstransition";
 import { resolveTransit } from "./transit";
-import { getAppearDelay, getEnterDelay, getLeaveDelay } from "./utils";
 
 export interface CSSTransitionState {
   id?: StateID;
@@ -46,101 +45,67 @@ export const StateIDList = [
 
 export enum ActionID {
   Init,
+  Mount,
   TransitionInit,
   TransitionTrigger,
   TransitionStart,
   TransitionComplete,
 }
 
-export function getAppearPendingStyle(props: CSSTransitionProps) {
-  return props.appearStyle
-    ? props.appearInitStyle
-      ? props.appearInitStyle
-      : props.defaultStyle
-    : getEnterPendingStyle(props);
+export const transitionNames = ["enter", "leave", "appear"];
+
+export function getDelay(name: string, delay: CSSTransitionDelay): number {
+  if (!delay) { return 0; }
+  if (typeof delay === "number") {
+    return delay as number;
+  }
+  return (delay as any)[name] ? (delay as any)[name] : 0;
 }
 
-export function getEnterPendingStyle(props: CSSTransitionProps) {
-  return props.enterInitStyle ? props.enterInitStyle : props.defaultStyle;
+export function getState(id: StateID, name: string, props: any, params: { init?: boolean } = {}): CSSTransitionState {
+  if (name === "appear" && !props.appearStyle) {
+    return getState(id, "enter", props, params);
+  }
+  let style: any;
+  if (params.init) {
+    style = props[name + "InitStyle"];
+    if (style === undefined) {
+      if (name === "enter" || name === "appear") {
+        style = props.defaultStyle;
+      } else if (name === "leave") {
+        style = props.activeStyle;
+      }
+    }
+  } else {
+    style = props[name + "Style"];
+    if (["enter", "appear", "leave"].indexOf(name) >= 0) {
+      style = resolveTransit(style, getDelay(name, props.transitionDelay));
+    }
+  }
+  return {
+    id,
+    style: { ...props.style, ...style },
+  };
 }
 
-export function getLeavePendingStyle(props: CSSTransitionProps) {
-  return props.leaveInitStyle ? props.leaveInitStyle : props.activeStyle;
+export function stateFunc(id: StateID, name: string, params: { init?: boolean } = {}) {
+  return (props: CSSTransitionProps) => getState(id, name, props, params);
 }
 
-export function getAppearStyle(props: CSSTransitionProps) {
-  return props.appearStyle ? props.appearStyle : props.enterStyle;
-}
-
-export const activeInitState = (props: CSSTransitionProps) => ({
-  id: StateID.ActiveInit,
-  style: { ...props.style, ...props.activeStyle },
-});
-
-export const defaultInitState = (props: CSSTransitionProps) => ({
-  id: StateID.DefaultInit,
-  style: { ...props.style, ...props.defaultStyle },
-});
-
-export const appearInitState = (props: CSSTransitionProps) => ({
-  id: StateID.AppearInit,
-  style: { ...props.style, ...getAppearPendingStyle(props) },
-});
-
-export const activeState = (props: CSSTransitionProps) => ({
-  id: StateID.Active,
-  style: { ...props.style, ...props.activeStyle },
-});
-
-export const defaultState = (props: CSSTransitionProps) => ({
-  id: StateID.Default,
-  style: { ...props.style, ...props.defaultStyle },
-});
-
-export const appearPendingState = (props: CSSTransitionProps) => ({
-  id: StateID.AppearPending,
-  style: { ...props.style, ...getAppearPendingStyle(props) },
-});
-
-export const enterPendingState = (props: CSSTransitionProps) => ({
-  id: StateID.EnterPending,
-  style: { ...props.style, ...getEnterPendingStyle(props) },
-});
-
-export const leavePendingState = (props: CSSTransitionProps) => ({
-  id: StateID.LeavePending,
-  style: { ...props.style, ...getLeavePendingStyle(props) },
-});
-
-export const appearTriggeredState = (props: CSSTransitionProps) => ({
-  id: StateID.AppearTriggered,
-  style: { ...props.style, ...resolveTransit(getAppearStyle(props), getAppearDelay(props.transitionDelay)) },
-});
-
-export const enterTriggeredState = (props: CSSTransitionProps) => ({
-  id: StateID.EnterTriggered,
-  style: { ...props.style, ...resolveTransit(props.enterStyle, getEnterDelay(props.transitionDelay)) },
-});
-
-export const leaveTriggeredState = (props: CSSTransitionProps) => ({
-  id: StateID.LeaveTriggered,
-  style: { ...props.style, ...resolveTransit(props.leaveStyle, getLeaveDelay(props.transitionDelay)) },
-});
-
-export const appearStartedState = (props: CSSTransitionProps) => ({
-  id: StateID.AppearStarted,
-  style: { ...props.style, ...resolveTransit(getAppearStyle(props), getAppearDelay(props.transitionDelay)) },
-});
-
-export const enterStartedState = (props: CSSTransitionProps) => ({
-  id: StateID.EnterStarted,
-  style: { ...props.style, ...resolveTransit(props.enterStyle, getEnterDelay(props.transitionDelay)) },
-});
-
-export const leaveStartedState = (props: CSSTransitionProps) => ({
-  id: StateID.LeaveStarted,
-  style: { ...props.style, ...resolveTransit(props.leaveStyle, getLeaveDelay(props.transitionDelay)) },
-});
+export const activeInitState = stateFunc(StateID.ActiveInit, "active");
+export const defaultInitState = stateFunc(StateID.DefaultInit, "default");
+export const appearInitState = stateFunc(StateID.AppearInit, "appear", { init: true });
+export const activeState = stateFunc(StateID.Active, "active");
+export const defaultState = stateFunc(StateID.Default, "default");
+export const appearPendingState = stateFunc(StateID.AppearPending, "appear", { init: true });
+export const enterPendingState = stateFunc(StateID.EnterPending, "enter", { init: true });
+export const leavePendingState = stateFunc(StateID.LeavePending, "leave", { init: true });
+export const appearTriggeredState = stateFunc(StateID.AppearTriggered, "appear");
+export const enterTriggeredState = stateFunc(StateID.EnterTriggered, "enter");
+export const leaveTriggeredState = stateFunc(StateID.LeaveTriggered, "leave");
+export const appearStartedState = stateFunc(StateID.AppearStarted, "appear");
+export const enterStartedState = stateFunc(StateID.EnterStarted, "enter");
+export const leaveStartedState = stateFunc(StateID.LeaveStarted, "leave");
 
 export function reduce(
   state: CSSTransitionState,
@@ -156,6 +121,13 @@ export function reduce(
       }
       if (!props.transitionAppear && props.active) { return { state: activeInitState(props) }; }
       return { state: defaultInitState(props) };
+    case ActionID.Mount:
+      switch (state.id) {
+        case StateID.AppearInit:
+          return reduce(state, ActionID.TransitionTrigger, props);
+        default:
+          return null;
+      }
     case ActionID.TransitionInit:
       let nextState: CSSTransitionState;
       switch (state.id) {

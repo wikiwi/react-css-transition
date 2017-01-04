@@ -14,9 +14,9 @@ import {
 
 import { ActionID, CSSTransitionState, reduce } from "./csstransitionstate";
 import { TransitionObserver } from "./transitionobserver";
-import { TransitionDelay, runInFrame } from "./utils";
+import { runInFrame } from "./utils";
 
-export type CSSTransitionDelay = TransitionDelay;
+export type CSSTransitionDelay = number | { appear?: number; enter?: number; leave?: number };
 export type CSSTransitionEventHandler = () => void;
 
 export interface CSSTransitionProps
@@ -52,9 +52,7 @@ export function createCSSTransition(reducer: typeof reduce): ComponentClass<CSST
     }
 
     public componentDidMount(): void {
-      if (this.props.transitionAppear && this.props.active) {
-        this.dispatch(ActionID.TransitionTrigger);
-      }
+      this.dispatch(ActionID.Mount);
     }
 
     public componentWillUnmount(): void {

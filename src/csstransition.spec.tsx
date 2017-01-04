@@ -50,40 +50,23 @@ describe("csstransition.tsx", () => {
       });
 
       describe("componentDidMount", () => {
-        describe("with transitionAppear=false", () => {
-          const state = { id: 0, style: {} };
-          let reducer: SinonSpy;
-          before(() => {
-            reducer = spy(() => ({ state }));
-            wrapper = getWrapper({ children: <span /> }, reducer);
-            reducer.reset();
-            (wrapper.instance() as any).componentDidMount();
-          });
-
-          it("should not dispatch action", () => {
-            assert.isFalse(reducer.called);
-          });
+        const initialState = { id: 0, style: {} };
+        const state = { id: 1, style: {} };
+        let reducer: SinonSpy;
+        before(() => {
+          reducer = spy(createReducer({ state: initialState }, { state }));
+          wrapper = getWrapper({ transitionAppear: true, active: true, children: <span /> }, reducer);
+          reducer.reset();
+          (wrapper.instance() as any).componentDidMount();
         });
 
-        describe("with transitionAppear=true", () => {
-          const initialState = { id: 0, style: {} };
-          const state = { id: 1, style: {} };
-          let reducer: SinonSpy;
-          before(() => {
-            reducer = spy(createReducer({ state: initialState }, { state }));
-            wrapper = getWrapper({ transitionAppear: true, active: true, children: <span /> }, reducer);
-            reducer.reset();
-            (wrapper.instance() as any).componentDidMount();
-          });
+        it("should dispatch ActionID.Mount", () => {
+          assert.isTrue(reducer.calledOnce);
+          assert.isTrue(reducer.calledWith(initialState, ActionID.Mount));
+        });
 
-          it("should dispatch TransitionTrigger", () => {
-            assert.isTrue(reducer.calledOnce);
-            assert.isTrue(reducer.calledWith(initialState, ActionID.TransitionTrigger));
-          });
-
-          it("should set state", () => {
-            assert.deepEqual(wrapper.state(), state);
-          });
+        it("should set state", () => {
+          assert.deepEqual(wrapper.state(), state);
         });
       });
 
@@ -98,7 +81,7 @@ describe("csstransition.tsx", () => {
           wrapper.setProps({ active: true });
         });
 
-        it("should dispatch TransitionTrigger", () => {
+        it("should dispatch ActionID.TransitionTrigger", () => {
           assert.isTrue(reducer.calledOnce);
           assert.isTrue(reducer.calledWith(initialState, ActionID.TransitionTrigger));
         });
@@ -119,7 +102,7 @@ describe("csstransition.tsx", () => {
           wrapper.find("TransitionObserver").simulate("transitionBegin");
         });
 
-        it("should dispatch TransitionStart", () => {
+        it("should dispatch ActionID.TransitionStart", () => {
           assert.isTrue(reducer.calledOnce);
           assert.isTrue(reducer.calledWith(initialState, ActionID.TransitionStart));
         });
@@ -140,7 +123,7 @@ describe("csstransition.tsx", () => {
           wrapper.find("TransitionObserver").simulate("transitionComplete");
         });
 
-        it("should dispatch TransitionComplete", () => {
+        it("should dispatch ActionID.TransitionComplete", () => {
           assert.isTrue(reducer.calledOnce);
           assert.isTrue(reducer.calledWith(initialState, ActionID.TransitionComplete));
         });
@@ -163,13 +146,13 @@ describe("csstransition.tsx", () => {
           wrapper.setProps({ active: true });
         });
 
-        it("should dispatch TransitionTrigger", () => {
+        it("should dispatch ActionID.TransitionTrigger", () => {
           assert.isTrue(reducer.calledOnce);
           assert.isTrue(reducer.calledWith(initialState, ActionID.TransitionTrigger));
           reducer.reset();
         });
 
-        it("should dispatch TransitionStart in 2nd frame", (done) => {
+        it("should dispatch ActionID.TransitionStart in 2nd frame", (done) => {
           runInFrame(1, () => {
             assert.isTrue(reducer.calledOnce);
             assert.isTrue(reducer.calledWith(pendingState, ActionID.TransitionStart));

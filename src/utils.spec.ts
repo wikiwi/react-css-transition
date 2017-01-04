@@ -13,7 +13,6 @@ import {
   convertToCSSPrefix, removeVendorPrefix,
   matchTransitionProperty, parseDuration,
   parseTransition,
-  getAppearDelay, getEnterDelay, getLeaveDelay,
   runInFrame,
 } from "./utils";
 
@@ -140,40 +139,6 @@ describe("utils.ts", () => {
         ],
       ];
       cases.forEach((c) => assert.deepEqual(parseTransition(c[0] as string), c[1]));
-    });
-  });
-
-  describe("getAppearDelay", () => {
-    it("should process number", () => {
-      assert.strictEqual(getAppearDelay(200), 200);
-    });
-
-    it("should process object", () => {
-      assert.strictEqual(getAppearDelay({ appear: 100 }), 100);
-    });
-
-    it("should fallback to enter", () => {
-      assert.strictEqual(getAppearDelay({ enter: 100 }), 100);
-    });
-  });
-
-  describe("getEnterDelay", () => {
-    it("should process number", () => {
-      assert.strictEqual(getEnterDelay(200), 200);
-    });
-
-    it("should process object", () => {
-      assert.strictEqual(getEnterDelay({ enter: 100 }), 100);
-    });
-  });
-
-  describe("getLeaveDelay", () => {
-    it("should process number", () => {
-      assert.strictEqual(getLeaveDelay(200), 200);
-    });
-
-    it("should process object", () => {
-      assert.strictEqual(getLeaveDelay({ leave: 100 }), 100);
     });
   });
 

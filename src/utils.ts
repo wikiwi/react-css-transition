@@ -68,34 +68,6 @@ export function parseTransition(transition: string): [TransitionEntry, Transitio
   return [firstProperty, lastProperty];
 }
 
-export type TransitionDelay = number | { appear?: number; enter?: number; leave?: number };
-
-export function getAppearDelay(delay: TransitionDelay): number {
-  if (!delay) { return 0; }
-  if (typeof delay === "number") {
-    return delay as number;
-  }
-  return delay.appear !== undefined
-    ? delay.appear
-    : delay.enter;
-}
-
-export function getEnterDelay(delay: TransitionDelay): number {
-  if (!delay) { return 0; }
-  if (typeof delay === "number") {
-    return delay as number;
-  }
-  return delay.enter;
-}
-
-export function getLeaveDelay(delay: TransitionDelay): number {
-  if (!delay) { return 0; }
-  if (typeof delay === "number") {
-    return delay as number;
-  }
-  return delay.leave;
-}
-
 const raf = typeof requestAnimationFrame === "undefined"
   ? (callback: Function) => setTimeout(callback, 17)
   : requestAnimationFrame;
