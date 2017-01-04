@@ -392,19 +392,19 @@ describe("csstransitionstate.ts", () => {
         const id = StateID.EnterStarted;
         const {state, pending} = reduce({ id }, actionID, {});
         assert.isUndefined(pending);
-        assert.strictEqual(state.id, StateID.LeaveTriggered);
+        assert.strictEqual(state.id, StateID.LeaveStarted);
       });
       it("should interrupt leave started", () => {
         const id = StateID.LeaveStarted;
         const {state, pending} = reduce({ id }, actionID, {});
         assert.isUndefined(pending);
-        assert.strictEqual(state.id, StateID.EnterTriggered);
+        assert.strictEqual(state.id, StateID.EnterStarted);
       });
       it("should interrupt appear started", () => {
         const id = StateID.AppearStarted;
         const {state, pending} = reduce({ id }, actionID, {});
         assert.isUndefined(pending);
-        assert.strictEqual(state.id, StateID.LeaveTriggered);
+        assert.strictEqual(state.id, StateID.LeaveStarted);
       });
     });
   });

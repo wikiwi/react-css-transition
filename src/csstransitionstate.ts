@@ -224,9 +224,9 @@ export function reduce(
           return { state: defaultState(props) };
         case StateID.AppearStarted:
         case StateID.EnterStarted:
-          return { state: leaveTriggeredState(props) };
+          return { state: leaveStartedState(props) };
         case StateID.LeaveStarted:
-          return { state: enterTriggeredState(props) };
+          return { state: enterStartedState(props) };
         default:
           throw new Error("invalid state transition");
       }
