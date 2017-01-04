@@ -54,6 +54,13 @@ export enum ActionID {
 
 export const transitionNames = ["enter", "leave", "appear"];
 
+export function hasTransition(name: string, props: any): boolean {
+  const result = props[name + "Style"] !== undefined;
+  return !result && name === "appear"
+    ? hasTransition("enter", props)
+    : result;
+}
+
 export function getDelay(name: string, delay: CSSTransitionDelay): number {
   if (!delay) { return 0; }
   if (typeof delay === "number") {
@@ -133,13 +140,25 @@ export function reduce(
       switch (state.id) {
         case StateID.DefaultInit:
         case StateID.Default:
+          if (!hasTransition("enter", props)) {
+            if (props.onTransitionComplete) { props.onTransitionComplete(); }
+            return { state: activeState(props) };
+          }
           nextState = enterPendingState(props);
           break;
         case StateID.ActiveInit:
         case StateID.Active:
+          if (!hasTransition("leave", props)) {
+            if (props.onTransitionComplete) { props.onTransitionComplete(); }
+            return { state: defaultState(props) };
+          }
           nextState = leavePendingState(props);
           break;
         case StateID.AppearInit:
+          if (!hasTransition("appear", props)) {
+            if (props.onTransitionComplete) { props.onTransitionComplete(); }
+            return { state: activeState(props) };
+          }
           nextState = appearPendingState(props);
           break;
         default:
