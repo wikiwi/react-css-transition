@@ -162,7 +162,7 @@ export function reduce(
           nextState = appearPendingState(props);
           break;
         default:
-          throw new Error("invalid state transition");
+          throw new Error(`invalid state transition from ${StateID[state.id]}`);
       };
       return { state: nextState, pending: ActionID.TransitionTrigger };
     case ActionID.TransitionStart:
@@ -191,7 +191,7 @@ export function reduce(
           if (props.onTransitionComplete) { props.onTransitionComplete(); }
           return { state: defaultState(props) };
         default:
-          throw new Error("invalid state transition");
+          throw new Error(`invalid state transition from ${StateID[state.id]}`);
       }
     case ActionID.TransitionTrigger:
       switch (state.id) {
@@ -228,7 +228,7 @@ export function reduce(
         case StateID.LeaveStarted:
           return { state: enterStartedState(props) };
         default:
-          throw new Error("invalid state transition");
+          throw new Error(`invalid state transition from ${StateID[state.id as any]}`);
       }
     default:
   }
