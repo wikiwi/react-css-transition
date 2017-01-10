@@ -22,31 +22,18 @@ export interface CSSTransitionGroupProps extends
   children?: ReactElement<CSSTransitionProps> | Array<ReactElement<CSSTransitionProps>>;
 }
 
-export interface CSStransitionGroupState {
-  mounted: boolean;
-}
-
-export class CSSTransitionGroup extends Component<CSSTransitionGroupProps, CSStransitionGroupState> {
-  constructor(props: any) {
-    super(props);
-    this.state = {
-      mounted: false,
-    };
-  }
-
-  public componentDidMount() {
-    this.setState({ mounted: true });
-  }
+export class CSSTransitionGroup extends Component<CSSTransitionGroupProps, {}> {
+  private mounted = false;
+  public componentDidMount = () => this.mounted = true;
 
   public render() {
     const { transitionAppear, children, ...rest } = this.props as any;
-    const { mounted } = this.state;
     return (
       <ReactTransitionGroup {...rest}>
         {Children.map(children, (child, index) =>
           <CSSTransitionGroupChild
             transitionAppear={transitionAppear}
-            mounted={mounted}
+            mounted={this.mounted}
             key={index}>
             {child}
           </CSSTransitionGroupChild>,

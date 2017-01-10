@@ -6,10 +6,12 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-export { runInFrame } from "../src/utils/runInFrame";
-
-export function createTestDiv() {
-  const element = document.createElement("div");
-  document.body.appendChild(element);
-  return element;
+export function parseDuration(duration: string): number {
+  const parsed = parseFloat(duration);
+  if (duration.match(/ms$/)) {
+    return parsed;
+  }
+  return parsed * 1000;
 }
+
+export default parseDuration;

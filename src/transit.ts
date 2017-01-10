@@ -8,7 +8,7 @@
 
 import { CSSProperties } from "react";
 
-import { convertToCSSPrefix } from "./utils";
+import convertToCSSPrefix from "./utils/convertToCSSPrefix";
 
 interface TransitionParams {
   duration: number;

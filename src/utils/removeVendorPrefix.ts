@@ -6,10 +6,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-export { runInFrame } from "../src/utils/runInFrame";
-
-export function createTestDiv() {
-  const element = document.createElement("div");
-  document.body.appendChild(element);
-  return element;
+export function removeVendorPrefix(val: string): string {
+  return val.replace(/^-(webkit|moz|ms|o)-/, "");
 }
+
+export default removeVendorPrefix;

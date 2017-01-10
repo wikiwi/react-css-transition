@@ -5,9 +5,8 @@
     "moduleResolution": "node",
     "jsx": "react",
     "noImplicitAny": true,
-    "noUnusedParameters": true,
+    "noUnusedParameters": false,
     "noUnusedLocals": false,
-    "noEmit": true,
     "baseUrl": "./",
     "paths": {
       "*": [

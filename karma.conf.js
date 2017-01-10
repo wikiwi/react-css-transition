@@ -47,6 +47,9 @@ module.exports = (config) => {
               sourceMap: true,
               module: "commonjs",
             },
+            exclude: [
+              /node_modules/,
+            ],
           },
           {
             enforce: "post",

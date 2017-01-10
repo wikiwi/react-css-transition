@@ -58,11 +58,12 @@ describe("csstransitiongroup.tsx", () => {
       assert.isFalse((wrapper.find("CSSTransitionGroupChild").props() as any).mounted);
     });
 
-    it("should set mounted=true on CSSTransitionGroupChild", () => {
+    it("should set mounted=true on added CSSTransitionGroupChild", () => {
       const wrapper = getWrapper(
-        { id: "abc", children: [<span />] },
+        { id: "abc", children: [] },
       );
       (wrapper.instance() as any).componentDidMount();
+      wrapper.setProps({ children: [<span />] });
       assert.isTrue((wrapper.find("CSSTransitionGroupChild").props() as any).mounted);
     });
   });
