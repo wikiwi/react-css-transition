@@ -25,7 +25,8 @@ describe("withWorkaround", () => {
   before(() => {
     onTransitionStart = spy();
     const props = {
-      transitionInfo: {
+      transitionInfo: {},
+      transitionState: {
         inTransition: false,
       },
       onTransitionStart,
@@ -50,6 +51,8 @@ describe("withWorkaround", () => {
         transitionInfo: {
           firstProperty: "width",
           firstPropertyDelay: 10,
+        },
+        transitionState: {
           inTransition: true,
         },
       });

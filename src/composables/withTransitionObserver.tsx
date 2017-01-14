@@ -14,7 +14,12 @@ import matchTransitionProperty from "../utils/matchTransitionProperty";
 export const withTransitionObserver =
   withHandlers<any, any>({
     onTransitionStart: (
-      {transitionInfo: { firstProperty, inTransition }, onTransitionStart, onTransitionBegin}: any,
+      {
+        transitionInfo: { firstProperty },
+        transitionState: { inTransition },
+        onTransitionStart,
+        onTransitionBegin,
+      }: any,
     ) => (e: TransitionEvent) => {
       if (onTransitionStart) { onTransitionStart(e); }
       if (!inTransition || e.target !== e.currentTarget ||
@@ -24,7 +29,12 @@ export const withTransitionObserver =
       onTransitionBegin();
     },
     onTransitionEnd: (
-      {transitionInfo: {lastProperty, inTransition}, onTransitionEnd, onTransitionComplete}: any,
+      {
+        transitionInfo: { lastProperty },
+        transitionState: { inTransition },
+        onTransitionEnd,
+        onTransitionComplete,
+      }: any,
     ) => (e: TransitionEvent) => {
       if (onTransitionEnd) { onTransitionEnd(e); }
       if (!inTransition || e.target !== e.currentTarget ||

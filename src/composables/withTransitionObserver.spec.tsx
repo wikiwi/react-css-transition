@@ -21,6 +21,8 @@ describe("withTransitionObserver", () => {
   const transitionInfo = {
     firstProperty: "width",
     lastProperty: "height",
+  };
+  const transitionState = {
     inTransition: true,
   };
   let wrapper: ShallowWrapper<any, any>;
@@ -34,6 +36,7 @@ describe("withTransitionObserver", () => {
   beforeEach(() => {
     const props = {
       transitionInfo,
+      transitionState,
       ...handlers,
     };
     wrapper = shallow(<Assembly {...props} />);
@@ -45,7 +48,7 @@ describe("withTransitionObserver", () => {
       assert.isTrue(handlers.onTransitionBegin.notCalled);
     });
 
-    it("should cal onTransitionStart", () => {
+    it("should call onTransitionStart", () => {
       const event = {
         target: "descendant",
       };
@@ -81,7 +84,7 @@ describe("withTransitionObserver", () => {
       const event = {
         propertyName: "width",
       };
-      wrapper.setProps({ transitionInfo: { inTransition: false } });
+      wrapper.setProps({ transitionState: { inTransition: false } });
       wrapper.simulate("transitionStart", event);
       assert.isTrue(handlers.onTransitionBegin.notCalled);
     });
@@ -128,7 +131,7 @@ describe("withTransitionObserver", () => {
       const event = {
         propertyName: "height",
       };
-      wrapper.setProps({ transitionInfo: { inTransition: false } });
+      wrapper.setProps({ transitionState: { inTransition: false } });
       wrapper.simulate("transitionEnd", event);
       assert.isTrue(handlers.onTransitionComplete.notCalled);
     });

@@ -16,6 +16,8 @@ import { resolveTransit } from "./transit";
 export interface TransitionState {
   id?: StateID;
   style?: CSSProperties;
+  className?: string;
+  inTransition?: boolean;
 }
 
 export enum StateID {
@@ -64,7 +66,15 @@ export type ActionPropKeys =
   | "leaveStyle"
   | "appearInitStyle"
   | "enterInitStyle"
-  | "leaveInitStyle";
+  | "leaveInitStyle"
+  | "defaultClassName"
+  | "activeClassName"
+  | "appearClassName"
+  | "enterClassName"
+  | "leaveClassName"
+  | "appearInitClassName"
+  | "enterInitClassName"
+  | "leaveInitClassName";
 
 export const actionPropKeys: ActionPropKeys[] = [
   "active",
@@ -78,6 +88,14 @@ export const actionPropKeys: ActionPropKeys[] = [
   "appearInitStyle",
   "enterInitStyle",
   "leaveInitStyle",
+  "defaultClassName",
+  "activeClassName",
+  "appearClassName",
+  "enterClassName",
+  "leaveClassName",
+  "appearInitClassName",
+  "enterInitClassName",
+  "leaveInitClassName",
 ];
 
 export type ActionProps = {[P in ActionPropKeys]?: CSSTransitionProps[P]};
@@ -90,7 +108,7 @@ export type Action = {
 export const transitionNames = ["enter", "leave", "appear"];
 
 export function hasTransition(name: string, props: any): boolean {
-  const result = props[name + "Style"] !== undefined;
+  const result = props[name + "Style"] !== undefined || props[name + "ClassName"] !== undefined;
   return !result && name === "appear"
     ? hasTransition("enter", props)
     : result;
@@ -105,28 +123,41 @@ export function getDelay(name: string, delay: CSSTransitionDelay): number {
 }
 
 export function getState(id: StateID, name: string, props: any, params: { init?: boolean } = {}): TransitionState {
-  if (name === "appear" && !props.appearStyle) {
+  if (name === "appear" && !props.appearStyle && !props.appearClassName) {
     return getState(id, "enter", props, params);
   }
   let style: any;
+  let className: string;
+  let inTransition = false;
   if (params.init) {
     style = props[name + "InitStyle"];
-    if (style === undefined) {
+    className = props[name + "InitClassName"];
+    if (style === undefined && className === undefined) {
       if (name === "enter" || name === "appear") {
         style = props.defaultStyle;
+        className = props.defaultClassName;
       } else if (name === "leave") {
         style = props.activeStyle;
+        className = props.activeClassName;
       }
     }
   } else {
     style = props[name + "Style"];
+    className = props[name + "ClassName"];
     if (["enter", "appear", "leave"].indexOf(name) >= 0) {
+      inTransition = true;
       style = resolveTransit(style, getDelay(name, props.transitionDelay));
     }
   }
+
+  style = style || {};
+  className = className || "";
+
   return {
     id,
     style,
+    className,
+    inTransition,
   };
 }
 

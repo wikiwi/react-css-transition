@@ -15,6 +15,7 @@ import { assemble } from "react-assemble";
 import { withTransitionState } from "./withTransitionState";
 import { StateID, ActionID, Reducer, TransitionState } from "../reducer";
 import { Component } from "../../test/component";
+import { pick } from "../utils/pick";
 import runInFrame from "../utils/runInFrame";
 
 const createReducer = (map: { [no: number]: { state: TransitionState, pending?: ActionID, completed?: boolean } }) =>
@@ -44,14 +45,14 @@ describe("withTransitionState.tsx", () => {
       it("should dispatch Init", () => {
         assert.isTrue(reducer.calledWith(StateID.EntryPoint, { kind: ActionID.Init, props: {} }));
       });
-      it("should return transitionStyle", () => {
-        assert.deepEqual(wrapper.props().transitionStyle, state.style);
+      it("should return transitionState", () => {
+        assert.deepEqual(wrapper.props().transitionState, pick(state, "style", "className"));
       });
     });
 
     describe("componentDidMount", () => {
       const initialState = { id: 1, style: {} };
-      const state = { id: 2, style: { top: 0 } };
+      const state = { id: 2, style: { top: 0 }, className: "class" };
       let reducer: SinonSpy;
       before(() => {
         reducer = spy(createReducer({ 0: { state: initialState }, 1: { state } }));
@@ -67,14 +68,14 @@ describe("withTransitionState.tsx", () => {
         }));
       });
 
-      it("should return transitionStyle", () => {
-        assert.deepEqual(wrapper.props().transitionStyle, state.style);
+      it("should return transitionState", () => {
+        assert.deepEqual(wrapper.props().transitionState, pick(state, "style", "className"));
       });
     });
 
     describe("componentWillReceiveProps", () => {
       const initialState = { id: 1, style: {} };
-      const state = { id: 2, style: { top: 0 } };
+      const state = { id: 2, style: { top: 0 }, className: "foo" };
       let reducer: SinonSpy;
       before(() => {
         reducer = spy(createReducer({ 0: { state: initialState }, 1: { state } }));
@@ -90,14 +91,14 @@ describe("withTransitionState.tsx", () => {
         }));
       });
 
-      it("should return transitionStyle", () => {
-        assert.deepEqual(wrapper.props().transitionStyle, state.style);
+      it("should return transitionState", () => {
+        assert.deepEqual(wrapper.props().transitionState, pick(state, "style", "className"));
       });
     });
 
     describe("onTransitionBegin", () => {
       const initialState = { id: 1, style: {} };
-      const state = { id: 2, style: { top: 0 } };
+      const state = { id: 2, style: { top: 0 }, className: "foo" };
       let reducer: SinonSpy;
       before(() => {
         reducer = spy(createReducer({ 0: { state: initialState }, 1: { state } }));
@@ -110,14 +111,14 @@ describe("withTransitionState.tsx", () => {
         assert.isTrue(reducer.calledWith(initialState.id, { kind: ActionID.TransitionStart, props: {} }));
       });
 
-      it("should return transitionStyle", () => {
-        assert.deepEqual(wrapper.props().transitionStyle, state.style);
+      it("should return transitionState", () => {
+        assert.deepEqual(wrapper.props().transitionState, pick(state, "style", "className"));
       });
     });
 
     describe("onTransitionComplete", () => {
       const initialState = { id: 1, style: {} };
-      const state = { id: 2, style: { top: 0 } };
+      const state = { id: 2, style: { top: 0 }, className: "foo" };
       let reducer: SinonSpy;
       before(() => {
         reducer = spy(createReducer({ 0: { state: initialState }, 1: { state } }));
@@ -130,16 +131,16 @@ describe("withTransitionState.tsx", () => {
         assert.isTrue(reducer.calledWith(initialState.id, { kind: ActionID.TransitionComplete, props: {} }));
       });
 
-      it("should return transitionStyle", () => {
-        assert.deepEqual(wrapper.props().transitionStyle, state.style);
+      it("should return transitionState", () => {
+        assert.deepEqual(wrapper.props().transitionState, pick(state, "style", "className"));
       });
     });
 
     describe("pending action", () => {
       const initialState = { id: 1, style: {} };
-      const pendingState = { id: 2, style: { top: 0 } };
+      const pendingState = { id: 2, style: { top: 0 }, className: "foo" };
       const pending = ActionID.TransitionStart;
-      const state = { id: 2, style: { top: 2 } };
+      const state = { id: 2, style: { top: 2 }, className: "bar" };
       let reducer: SinonSpy;
       before(() => {
         reducer = spy(createReducer({ 0: { state: initialState }, 1: { state: pendingState, pending }, 2: { state } }));
@@ -156,8 +157,8 @@ describe("withTransitionState.tsx", () => {
         reducer.reset();
       });
 
-      it("should return intermediate transitionStyle", () => {
-        assert.deepEqual(wrapper.props().transitionStyle, pendingState.style);
+      it("should return intermediate transitionState", () => {
+        assert.deepEqual(wrapper.props().transitionState, pick(pendingState, "style", "className"));
       });
 
       it("should dispatch ActionID.TransitionStart in 2nd frame", (done) => {
@@ -170,16 +171,16 @@ describe("withTransitionState.tsx", () => {
         });
       });
 
-      it("should return transitionStyle", () => {
-        assert.deepEqual(wrapper.props().transitionStyle, state.style);
+      it("should return transitionState", () => {
+        assert.deepEqual(wrapper.props().transitionState, pick(state, "style", "className"));
       });
     });
 
     describe("interrupt pending action when state changed", () => {
       const initialState = { id: 1, style: {} };
-      const pendingState = { id: 2, style: { top: 0 } };
+      const pendingState = { id: 2, style: { top: 0 }, className: "foo" };
       const pending = ActionID.TransitionStart;
-      const state = { id: 3, style: { top: 2 } };
+      const state = { id: 3, style: { top: 2 }, className: "bar" };
       let reducer: SinonSpy;
       before(() => {
         reducer = spy(createReducer({ 0: { state: initialState }, 1: { state: pendingState, pending }, 2: { state } }));
@@ -190,8 +191,8 @@ describe("withTransitionState.tsx", () => {
         reducer.reset();
       });
 
-      it("should return final transitionStyle", () => {
-        assert.deepEqual(wrapper.props().transitionStyle, state.style);
+      it("should return final transitionState", () => {
+        assert.deepEqual(wrapper.props().transitionState, pick(state, "style", "className"));
       });
 
       it("should not dispatch any further actions", (done) => {

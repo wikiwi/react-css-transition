@@ -12,12 +12,20 @@ import { combine, withProps, withHandlers, omitProps } from "react-assemble";
 
 export const withWorkaround = combine(
   withHandlers<any, any>({
-    workaroundHandler: ({transitionInfo: {firstProperty}, onTransitionStart }: any) => () => {
+    workaroundHandler: ({
+      transitionInfo: {firstProperty},
+      onTransitionStart,
+    }: any) => () => {
       onTransitionStart({ propertyName: firstProperty });
     },
   }),
   withProps<any, any>((
-    {transitionInfo: {firstPropertyDelay, inTransition}, workaroundHandler, children}: any,
+    {
+      transitionInfo: {firstPropertyDelay},
+      transitionState: {inTransition},
+      workaroundHandler,
+      children,
+    }: any,
   ) => {
     const workaroundProps: React.HTMLProps<HTMLSpanElement> = {
       key: "workaround",

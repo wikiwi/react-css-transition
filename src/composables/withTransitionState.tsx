@@ -21,8 +21,12 @@ export const withTransitionState = (reduce: Reducer) => combine(
   isolate(
     withProps<any, any>((props: any) => ({ actionProps: pick(props, ...actionPropKeys) })),
     withState<any, any>(
-      "transitionStyle", "setTransitionStyle",
-      ({actionProps}: any) => reduce(StateID.EntryPoint, { kind: ActionID.Init, props: actionProps }).state.style,
+      "transitionState", "setTransitionState",
+      ({actionProps}: any) =>
+        pick(
+          reduce(StateID.EntryPoint, { kind: ActionID.Init, props: actionProps }).state,
+          "style", "className", "inTransition",
+        ),
     ),
     withHandlers<any, any>((initialProps: any) => {
       let stateID = reduce(StateID.EntryPoint, { kind: ActionID.Init, props: initialProps }).state.id;
@@ -35,7 +39,7 @@ export const withTransitionState = (reduce: Reducer) => combine(
       };
       return {
         cancelPendingIfExistent: () => cancelPendingIfExistent,
-        dispatch: ({actionProps, onTransitionComplete, setTransitionStyle, transitionStyle}: any) => {
+        dispatch: ({actionProps, onTransitionComplete, setTransitionState, transitionState}: any) => {
           const run = (actionID: ActionID) => {
             const result = reduce(stateID, { kind: actionID, props: actionProps });
             if (!result) { return; }
@@ -51,8 +55,10 @@ export const withTransitionState = (reduce: Reducer) => combine(
                 cancelPending = runInFrame(1, () => run(pending));
               };
             }
-            if (!shallowEqual(transitionStyle, result.state.style)) {
-              setTransitionStyle(state.style, callback);
+            if (!shallowEqual(transitionState.style, result.state.style) ||
+              transitionState.className !== result.state.className ||
+              transitionState.inTransition !== result.state.inTransition) {
+              setTransitionState(pick(state, "style", "className", "inTransition"), callback);
             } else if (callback) {
               callback();
             }
@@ -75,6 +81,6 @@ export const withTransitionState = (reduce: Reducer) => combine(
       if (prevActive === nextActive) { return; }
       dispatch(ActionID.TransitionTrigger);
     }),
-    integrate<any>("transitionStyle", "onTransitionBegin", "onTransitionComplete"),
+    integrate<any>("transitionState", "onTransitionBegin", "onTransitionComplete"),
   ),
 );

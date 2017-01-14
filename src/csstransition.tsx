@@ -12,11 +12,12 @@ import { assemble, setDisplayName, omitProps, defaultProps } from "react-assembl
 
 import { reducer } from "./reducer";
 import { withTransitionState } from "./composables/withTransitionState";
-import { mergeWithStyle } from "./composables/mergeWithStyle";
+import { mergeWithBaseStyle } from "./composables/mergeWithBaseStyle";
 import { withTransitionInfo } from "./composables/withTransitionInfo";
 import { withTransitionObserver } from "./composables/withTransitionObserver";
 import { withWorkaround } from "./composables/withWorkaround";
 import { preventPhantomEvents } from "./composables/preventPhantomEvents";
+import { withDOMNodeCallback } from "./composables/withDOMNodeCallback";
 
 export type CSSTransitionDelay = number | { appear?: number; enter?: number; leave?: number };
 export type CSSTransitionEventHandler = () => void;
@@ -38,6 +39,15 @@ export interface CSSTransitionProps
   enterInitStyle?: CSSProperties;
   leaveInitStyle?: CSSProperties;
   style?: CSSProperties;
+  defaultClassName?: string;
+  activeClassName?: string;
+  appearClassName?: string;
+  enterClassName?: string;
+  leaveClassName?: string;
+  appearInitClassName?: string;
+  enterInitClassName?: string;
+  leaveInitClassName?: string;
+  className?: string;
 }
 
 export interface CSSTransitionInnerProps
@@ -46,6 +56,7 @@ export interface CSSTransitionInnerProps
   component?: string | ComponentClass<any> | StatelessComponent<any>;
   onTransitionBegin: any;
   onTransitionComplete: any;
+  onDOMNodeRef?: (ref: Element) => void;
 }
 
 const withDefaultProps = defaultProps<CSSTransitionProps>({
@@ -63,17 +74,28 @@ const mapPropsToInner = omitProps<any>(
   "appearInitStyle",
   "enterInitStyle",
   "leaveInitStyle",
+  "defaultClassName",
+  "activeClassName",
+  "appearClassName",
+  "enterClassName",
+  "leaveClassName",
+  "appearInitClassName",
+  "enterInitClassName",
+  "leaveInitClassName",
   "transitionDelay",
   "onTransitionComplete",
   "onTransitionBegin",
   "transitionInfo",
+  "transitionState",
+  "getDOMNode",
 );
 
 const enhance = assemble<CSSTransitionInnerProps, CSSTransitionProps>(
   setDisplayName("CSSTransition"),
   withDefaultProps,
+  withDOMNodeCallback,
   withTransitionState(reducer),
-  mergeWithStyle,
+  mergeWithBaseStyle,
   withTransitionInfo,
   withTransitionObserver,
   withWorkaround,
@@ -82,6 +104,7 @@ const enhance = assemble<CSSTransitionInnerProps, CSSTransitionProps>(
 );
 
 export const CSSTransitionInner: StatelessComponent<CSSTransitionInnerProps> =
-  ({component: Wrapper, children, ...rest }) => <Wrapper {...rest} children={children} />;
+  ({component: Wrapper, onDOMNodeRef, children, ...rest }) =>
+    <Wrapper ref={onDOMNodeRef} {...rest} children={children} />;
 
 export const CSSTransition = enhance(CSSTransitionInner);
