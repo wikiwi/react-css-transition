@@ -1,4 +1,5 @@
 --compilers tsx:ts-node/register,ts:ts-node/register
 --reporter dot
+test/jsdom.ts
 src/**/*.spec.tsx
 src/**/*.spec.ts

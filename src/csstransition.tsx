@@ -16,6 +16,7 @@ import { mergeWithStyle } from "./composables/mergeWithStyle";
 import { withTransitionInfo } from "./composables/withTransitionInfo";
 import { withTransitionObserver } from "./composables/withTransitionObserver";
 import { withWorkaround } from "./composables/withWorkaround";
+import { preventPhantomEvents } from "./composables/preventPhantomEvents";
 
 export type CSSTransitionDelay = number | { appear?: number; enter?: number; leave?: number };
 export type CSSTransitionEventHandler = () => void;
@@ -76,6 +77,7 @@ const enhance = assemble<CSSTransitionInnerProps, CSSTransitionProps>(
   withTransitionInfo,
   withTransitionObserver,
   withWorkaround,
+  preventPhantomEvents,
   mapPropsToInner,
 );
 

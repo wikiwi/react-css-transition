@@ -51,6 +51,7 @@
   "devDependencies": {
     "@types/chai": "^3.4.34",
     "@types/enzyme": "^2.5.37",
+    "@types/jsdom": "^2.0.29",
     "@types/mocha": "^2.2.32",
     "@types/react": "^0.14.43",
     "@types/react-addons-transition-group": "^0.14.17",
@@ -73,6 +74,7 @@
     "gulp-yaml-validate": "^1.0.2",
     "istanbul": "^1.1.0-alpha.1",
     "istanbul-instrumenter-loader": "^1.1.0",
+    "jsdom": "^9.9.1",
     "json-loader": "^0.5.4",
     "karma": "^1.3.0",
     "karma-chrome-launcher": "^2.0.0",
