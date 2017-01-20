@@ -180,12 +180,10 @@ export const appearStartedState = stateFunc(StateID.AppearStarted, "appear");
 export const enterStartedState = stateFunc(StateID.EnterStarted, "enter");
 export const leaveStartedState = stateFunc(StateID.LeaveStarted, "leave");
 
-export type Reducer = typeof reducer;
+export type Reducer = (stateID: StateID, action: Action) =>
+  { state: TransitionState, pending?: ActionID, completed?: boolean };
 
-export function reducer(
-  stateID: StateID,
-  action: Action,
-): { state: TransitionState, pending?: ActionID, completed?: boolean } {
+export const reducer: Reducer = (stateID, action) => {
   const props = action.props;
   switch (action.kind) {
     case ActionID.Init:
@@ -290,4 +288,4 @@ export function reducer(
     default:
   }
   throw new Error("unexpected error");
-}
+};
