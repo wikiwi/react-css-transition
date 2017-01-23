@@ -7,25 +7,39 @@
  */
 
 import * as React from "react";
-import { Children } from "react";
-import { combine, withProps, withHandlers, omitProps } from "react-assemble";
+import { ReactNode, EventHandler, TransitionEvent, Children } from "react";
+import { combine, withProps, withHandlers, omitProps } from "reassemble";
+
+import { WithTransitionStateProps } from "./withTransitionState";
+import { WithTransitionInfoProps } from "./withTransitionInfo";
+import { WithTransitionObserverProps } from "./withTransitionObserver";
+
+type PropsOut = {
+  workaroundHandler?: EventHandler<TransitionEvent>,
+  children?: ReactNode;
+};
+
+type PropsUnion = WithTransitionObserverProps
+  & WithTransitionStateProps
+  & WithTransitionInfoProps
+  & PropsOut;
 
 export const withWorkaround = combine(
-  withHandlers<any, any>({
+  withHandlers<PropsUnion, PropsOut>({
     workaroundHandler: ({
       transitionInfo: {firstProperty},
       onTransitionStart,
-    }: any) => () => {
-      onTransitionStart({ propertyName: firstProperty });
+    }) => () => {
+      onTransitionStart({ propertyName: firstProperty } as any);
     },
   }),
-  withProps<any, any>((
+  withProps((
     {
       transitionInfo: {firstPropertyDelay},
       transitionState: {inTransition},
       workaroundHandler,
       children,
-    }: any,
+    },
   ) => {
     const workaroundProps: React.HTMLProps<HTMLSpanElement> = {
       key: "workaround",
@@ -39,5 +53,8 @@ export const withWorkaround = combine(
       children: [<span {...workaroundProps } />, ...Children.toArray(children)],
     };
   }),
-  omitProps<any>("workaroundHandler", "onTransitionStart"),
+  omitProps<keyof PropsUnion>(
+    "workaroundHandler",
+    "onTransitionStart",
+  ),
 );

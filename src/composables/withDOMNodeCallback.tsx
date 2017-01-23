@@ -6,10 +6,17 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { withHandlers } from "react-assemble";
+import { withHandlers } from "reassemble";
+
+import { CSSTransitionInnerProps } from "../csstransition";
+
+export type WithDOMNodeCallbackProps = {
+  onDOMNodeRef: CSSTransitionInnerProps["onDOMNodeRef"],
+  getDOMNode: () => Element,
+};
 
 export const withDOMNodeCallback =
-  withHandlers<any, any>(() => {
+  withHandlers<{}, WithDOMNodeCallbackProps>(() => {
     let ref: Element;
     return {
       onDOMNodeRef: () => (e: Element) => {

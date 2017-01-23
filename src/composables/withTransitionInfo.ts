@@ -6,43 +6,67 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { withProps, withHandlers, isolate, integrate } from "react-assemble";
+import { withProps, withHandlers, isolate, integrate } from "reassemble";
 
+import { CSSTransitionProps } from "../csstransition";
+import { WithDOMNodeCallbackProps } from "./withDOMNodeCallback";
+import { WithTransitionStateProps } from "./withTransitionState";
 import { parseTransition, TransitionEntry } from "../utils/parseTransition";
 import { parseComputedTransition } from "../utils/parseComputedTransition";
 import { memoize } from "../utils/memoize";
 
+export type WithTransitionInfoProps = {
+  transitionInfo?: {
+    firstPropertyDelay: number,
+    firstProperty: string,
+    lastProperty: string,
+  },
+};
+
+type PropsOut = WithTransitionInfoProps & {
+  parseComputedTransitionMemoized?: typeof parseComputedTransition,
+};
+
+type PropsUnion = CSSTransitionProps
+  & WithDOMNodeCallbackProps
+  & WithTransitionStateProps
+  & PropsOut;
+
 export const withTransitionInfo =
   isolate(
-    withHandlers<any, any>(() => {
-      const memoized = memoize(
-        (node: Element) => parseComputedTransition(getComputedStyle(node)),
-        (node: Element) => node.className,
-      );
-      return {
-        parseComputedTransitionMemoized: () => memoized,
-      };
-    }),
-    withProps<any, any>(({style, className, transitionState, getDOMNode, parseComputedTransitionMemoized}: any) => {
-      if (transitionState.inTransition) {
-        let parsed: [TransitionEntry, TransitionEntry];
-        if (style && style.transition) {
-          parsed = parseTransition(style.transition);
-        } else {
-          const node = getDOMNode();
-          node.className = className;
-          parsed = parseComputedTransitionMemoized(node);
-        }
-        const [{delay: firstPropertyDelay, property: firstProperty}, {property: lastProperty}] = parsed;
+    withHandlers<PropsUnion, PropsOut>(
+      () => {
+        const memoized = memoize(
+          (node: Element) => parseComputedTransition(getComputedStyle(node)),
+          (node: Element) => node.className,
+        );
         return {
-          transitionInfo: {
-            firstPropertyDelay,
-            firstProperty,
-            lastProperty,
-          },
+          parseComputedTransitionMemoized: () => memoized,
         };
-      }
-      return { transitionInfo: {} };
-    }),
-    integrate<any>("transitionInfo"),
+      }),
+    withProps<PropsUnion, PropsOut>(
+      ({style, className, transitionState, getDOMNode, parseComputedTransitionMemoized}) => {
+        if (transitionState.inTransition) {
+          let parsed: [TransitionEntry, TransitionEntry];
+          if (style && style.transition) {
+            parsed = parseTransition(style.transition);
+          } else {
+            const node = getDOMNode();
+            node.className = className;
+            parsed = parseComputedTransitionMemoized(node);
+          }
+          const [{delay: firstPropertyDelay, property: firstProperty}, {property: lastProperty}] = parsed;
+          return {
+            transitionInfo: {
+              firstPropertyDelay,
+              firstProperty,
+              lastProperty,
+            },
+          };
+        }
+        return { transitionInfo: {} };
+      }),
+    integrate<keyof WithTransitionInfoProps>(
+      "transitionInfo",
+    ),
   );

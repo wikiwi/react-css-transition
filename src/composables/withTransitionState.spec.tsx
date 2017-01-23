@@ -10,7 +10,7 @@ import * as React from "react";
 import { assert } from "chai";
 import { ShallowWrapper, shallow } from "enzyme";
 import { SinonSpy, spy } from "sinon";
-import { assemble } from "react-assemble";
+import { assemble } from "reassemble";
 
 import { withTransitionState } from "./withTransitionState";
 import { StateID, ActionID, Reducer, TransitionState } from "../reducer";
@@ -36,7 +36,7 @@ describe("withTransitionState.tsx", () => {
     let wrapper: ShallowWrapper<any, any>;
 
     describe("constructor", () => {
-      const state = { id: 1, style: {} };
+      const state: TransitionState = { id: 1, style: {} };
       let reducer: SinonSpy;
       before(() => {
         reducer = spy(() => ({ state }));

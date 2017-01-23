@@ -6,13 +6,19 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { combine, withProps } from "react-assemble";
+import { combine, withProps } from "reassemble";
+import { HTMLAttributes } from "react";
+
+import { WithTransitionStateProps } from "./withTransitionState";
 
 const mergeClasses = (...classes: string[]) => classes.filter((s) => s).join(" ");
 
+type StyleProps = Pick<HTMLAttributes<any>, "style" | "className">;
+
 export const mergeWithBaseStyle = combine(
-  withProps<any, any>(({ transitionState, style, className }: any) => ({
-    style: { ...style, ...transitionState.style },
-    className: mergeClasses(className, transitionState.className),
-  })),
+  withProps<StyleProps & WithTransitionStateProps, StyleProps>(
+    ({ transitionState, style, className }) => ({
+      style: { ...style, ...transitionState.style },
+      className: mergeClasses(className, transitionState.className),
+    })),
 );

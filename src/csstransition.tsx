@@ -8,7 +8,7 @@
 
 import * as React from "react";
 import { CSSProperties, ComponentClass, ReactNode, StatelessComponent, HTMLAttributes } from "react";
-import { assemble, setDisplayName, omitProps, defaultProps } from "react-assemble";
+import { assemble, setDisplayName, omitProps, defaultProps } from "reassemble";
 
 import { reducer } from "./reducer";
 import { withTransitionState } from "./composables/withTransitionState";
@@ -59,11 +59,11 @@ export interface CSSTransitionInnerProps
   onDOMNodeRef?: (ref: Element) => void;
 }
 
-const withDefaultProps = defaultProps<CSSTransitionProps>({
+const withDefaultProps = defaultProps<Partial<CSSTransitionProps>>({
   component: "div",
 });
 
-const mapPropsToInner = omitProps<any>(
+const mapPropsToInner = omitProps<keyof CSSTransitionProps | "onTransitionBegin" | "transitionInfo" | "transitionState" | "getDOMNode">(
   "active",
   "transitionAppear",
   "defaultStyle",

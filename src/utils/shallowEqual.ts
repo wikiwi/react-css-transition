@@ -6,4 +6,4 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-export * from "react-assemble/cjs/utils/shallowEqual";
+export * from "reassemble/cjs/utils/shallowEqual";

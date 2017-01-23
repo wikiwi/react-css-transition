@@ -99,6 +99,6 @@
     "webpack": "^2.2.0-rc.1"
   },
   "dependencies": {
-    "react-assemble": "file:///home/vagrant/projects/typescript/react-assemble"
+    "reassemble": "file:///home/vagrant/projects/typescript/reassemble"
   }
 }

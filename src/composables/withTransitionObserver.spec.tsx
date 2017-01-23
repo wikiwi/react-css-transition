@@ -10,7 +10,7 @@ import * as React from "react";
 import { assert } from "chai";
 import { shallow, ShallowWrapper } from "enzyme";
 import { spy } from "sinon";
-import { assemble } from "react-assemble";
+import { assemble } from "reassemble";
 
 import { withTransitionObserver } from "./withTransitionObserver";
 import { Component } from "../../test/component";

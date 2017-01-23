@@ -9,7 +9,7 @@
 import * as React from "react";
 import { assert } from "chai";
 import { shallow, mount } from "enzyme";
-import { assemble } from "react-assemble";
+import { assemble } from "reassemble";
 
 import { withTransitionInfo } from "./withTransitionInfo";
 import { Component } from "../../test/component";

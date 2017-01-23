@@ -6,4 +6,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-export * from "react-assemble/cjs/utils/pick";
+import pick from "reassemble/lib/utils/pick";
+
+export { pick };
+export default pick;

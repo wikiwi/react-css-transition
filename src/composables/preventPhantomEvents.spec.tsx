@@ -11,7 +11,7 @@ import { StatelessComponent } from "react";
 import { assert } from "chai";
 import { mount, ReactWrapper } from "enzyme";
 import { spy, SinonSpy } from "sinon";
-import { assemble } from "react-assemble";
+import { assemble } from "reassemble";
 
 import { preventPhantomEvents } from "./preventPhantomEvents";
 const Component: StatelessComponent<any> = ({onTransitionEnd}) => <span {...{ onTransitionEnd }} />;
