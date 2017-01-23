@@ -6,13 +6,7 @@
     "jsx": "react",
     "noImplicitAny": true,
     "noUnusedParameters": false,
-    "noUnusedLocals": false,
-    "baseUrl": "./",
-    "paths": {
-      "*": [
-        "./node_modules/@typeless/*"
-      ]
-    }
+    "noUnusedLocals": false
   },
   "include": [
     "./src/**/*.ts",

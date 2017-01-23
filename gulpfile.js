@@ -8,6 +8,7 @@ const eslint = require("gulp-eslint");
 const merge = require("merge2");
 const yamllint = require("gulp-yaml-validate");
 const sourcemaps = require("gulp-sourcemaps");
+const replace = require("gulp-replace");
 
 const files = {
   tsWithoutTest: ["./src/**/*.ts", "./src/**/*.tsx", "!./src/**/*.spec.tsx", "!./src/**/*.spec.ts"],
@@ -29,7 +30,13 @@ function build(dest, module) {
       target: "es5",
       module,
     });
-    const tsResult = gulp.src(files.tsWithoutTest)
+
+    let src = gulp.src(files.tsWithoutTest);
+    if (dest === "lib") {
+      // Use es6 module versions for dependencies.
+      src = src.pipe(replace("reassemble/cjs/", "reassemble/lib/"));
+    }
+    const tsResult = src
       .pipe(sourcemaps.init())
       .pipe(tsProject())
       .once("error", onBuildError);
