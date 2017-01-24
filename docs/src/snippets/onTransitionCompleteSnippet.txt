@@ -1,0 +1,3 @@
+{
+  onTransitionComplete: () => console.log("transition completed!"),
+}

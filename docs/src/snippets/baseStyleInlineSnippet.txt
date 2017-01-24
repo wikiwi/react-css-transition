@@ -1,0 +1,5 @@
+{
+  style: {
+    display: "inline-box",
+  },
+}

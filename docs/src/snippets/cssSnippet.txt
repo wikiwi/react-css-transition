@@ -1,0 +1,6 @@
+{
+  defaultClassName: "default-class"
+  enterClassName: "enter-class",
+  leaveClassName: "leave-class",
+  activeClassName: "active-class",
+}

@@ -1,0 +1,6 @@
+<CSSTransitionGroup>
+  <CSSTransition>
+    <MyComponent />
+  </CSSTransition>
+  /* ... */
+</CSSTranistionGroup>

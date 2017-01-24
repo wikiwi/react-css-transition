@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "es6",
+    "moduleResolution": "node",
+    "jsx": "preserve",
+    "lib": ["dom", "es5", "scripthost", "es2015"],
+    "noImplicitAny": false,
+    "baseUrl": "./",
+    "paths": {
+      "react-css-transition": [
+        "../src"
+      ]
+    }
+  },
+  "include": [
+    "./src/**/*.ts",
+    "./src/**/*.tsx",
+    "./src/**/*.d.ts"
+  ]
+}

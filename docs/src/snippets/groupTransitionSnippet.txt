@@ -1,0 +1,11 @@
+import { CSSTransition, transit } from "react-css-transition";
+
+export const FadeInOut = (props) => (
+  <CSSTransition
+    {...props}
+    defaultStyle={{ opacity: 0 }}
+    enterStyle={{ opacity: transit(1.0, 500, "ease-in-out") }}
+    leaveStyle={{ opacity: transit(0, 500, "ease-in-out") }}
+    activeStyle={{ opacity: 1.0 }}
+  />
+);

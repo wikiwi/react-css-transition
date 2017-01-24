@@ -1,0 +1,23 @@
+{
+  style: {
+    position: "absolute",
+  },
+  defaultStyle: {
+    left: 0,
+  },
+  enterInitStyle: {
+    transform: "translate(0, 0)",
+  },
+  enterStyle: {
+    transform: transit("translate(175px, 0)", 500, "ease-in-out"),
+  },
+  leaveStyle: {
+    transform: transit("translate(0, 0)", 500, "ease-in-out"),
+  },
+  leaveInitStyle: {
+    transform: "translate(175px, 0)",
+  },
+  activeStyle: {
+    left: "175px",
+  },
+}
