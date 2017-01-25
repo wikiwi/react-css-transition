@@ -123,10 +123,11 @@ describe("csstransitiongroup.tsx", () => {
       assert.isTrue(done.calledOnce);
     });
 
-    describe("on componentWillLeave()", () => {
+    describe("onComponentWillLeave", () => {
       let onTransitionComplete: SinonSpy;
       let done: SinonSpy;
       let wrapper: ShallowWrapper<CSSTransitionGroupChildProps, {}>;
+
       before(() => {
         onTransitionComplete = spy();
         done = spy();
@@ -136,6 +137,10 @@ describe("csstransitiongroup.tsx", () => {
           },
         );
         (wrapper.instance() as any).componentWillLeave(done);
+      });
+
+      it("should set active=false", () => {
+        assert.isFalse((wrapper.find(Element).props() as any).active);
       });
 
       it("should not inmediately call callback", () => {
@@ -149,6 +154,39 @@ describe("csstransitiongroup.tsx", () => {
 
       it("should call user onTransitionComplete", () => {
         assert.isTrue(onTransitionComplete.calledOnce);
+      });
+    });
+
+    describe("revert leaving", () => {
+      let onTransitionComplete: SinonSpy;
+      let leaveDone: SinonSpy;
+      let enterDone: SinonSpy;
+      let wrapper: ShallowWrapper<CSSTransitionGroupChildProps, {}>;
+
+      before(() => {
+        onTransitionComplete = spy();
+        leaveDone = spy();
+        enterDone = spy();
+        wrapper = getWrapper(
+          {
+            children: <Element onTransitionComplete={onTransitionComplete} />,
+          },
+        );
+        (wrapper.instance() as any).componentWillLeave(leaveDone);
+        (wrapper.instance() as any).componentWillEnter(enterDone);
+      });
+
+      it("should set active=true", () => {
+        assert.isTrue((wrapper.find(Element).props() as any).active);
+      });
+
+      it("should inmediately call enter done callback", () => {
+        assert.isTrue(enterDone.calledOnce);
+      });
+
+      it("should not call leave done callback", () => {
+        wrapper.simulate("transitionComplete");
+        assert.isTrue(leaveDone.notCalled);
       });
     });
   });

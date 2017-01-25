@@ -67,6 +67,11 @@ export class CSSTransitionGroupChild extends Component<CSSTransitionGroupChildPr
   }
 
   public componentWillEnter(done: () => void) {
+    // component was leaving but was interrupted.
+    if (!this.state.active) {
+      this.setState({ active: true });
+      this.leaveDone = null;
+    }
     done();
   }
 
