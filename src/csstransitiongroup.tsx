@@ -23,6 +23,9 @@ export interface CSSTransitionGroupProps extends
 }
 
 export class CSSTransitionGroup extends Component<CSSTransitionGroupProps, {}> {
+  public static defaultProps: any = {
+    component: "div",
+  };
   private mounted = false;
   public componentDidMount = () => this.mounted = true;
 
