@@ -42,13 +42,13 @@ export const preventPhantomEvents = combine(
           onTransitionEnd: ({onTransitionEnd}) => (e: TransitionEvent) => {
             if (!onTransitionEnd) { return; }
 
-            // Skip transitionEnd that comes <= 15ms after (reversing) a transition.
+            // Skip transitionEnd that comes <= 10ms after (reversing) a transition.
             // In most cases this came from the previous transition.
             let compareWith = lastTriggerTime;
             if ((e.timeStamp as any) < 1000000000000 && lastTriggerTimePerformance) {
               compareWith = lastTriggerTimePerformance;
             }
-            if ((e.timeStamp as any) - compareWith <= 15) {
+            if ((e.timeStamp as any) - compareWith <= 10) {
               return;
             }
 
