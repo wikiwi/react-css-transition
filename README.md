@@ -45,7 +45,7 @@ const FadeInOutComponent = ({active, ...rest}) => (
 );
 ```
 
-A transition group that fades in and out its children:
+A transition group that fades in and out its children when entering or leaving the DOM:
 
 ```js
 import { CSSTransitionGroup, CSSTransition, transit } from "react-css-transition";
