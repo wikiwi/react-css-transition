@@ -4,7 +4,7 @@ Take back control of CSS Transitions for React!
 
 [![NPM Version Widget]][npm version]
 [![Build Status Widget]][build status]
-[![Coverage Status Widget]][coverage status]
+[![Coverage Widget]][coverage]
 
 ## Installation
 
@@ -21,7 +21,7 @@ npm install react-css-transition --save
 
 [build status widget]: https://img.shields.io/travis/wikiwi/react-css-transition/master.svg?style=flat-square
 
-[coverage status]: https://coveralls.io/github/wikiwi/react-css-transition?branch=master
+[coverage]: https://codecov.io/gh/wikiwi/react-css-transition
 
-[coverage status widget]: https://img.shields.io/coveralls/wikiwi/react-css-transition/master.svg?style=flat-square
+[coverage widget]: https://codecov.io/gh/wikiwi/react-css-transition/branch/master/graph/badge.svg
 

@@ -15,7 +15,7 @@ module.exports = (config) => {
     },
     remapCoverageReporter: {
       text: null,
-      lcovonly: "./coverage/lcov-integration.info",
+      lcovonly: "./coverage/integration.lcov",
     },
     coverageReporter: {
       reporters: [

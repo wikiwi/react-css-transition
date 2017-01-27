@@ -19,7 +19,7 @@ before_script:
 script:
 - npm run all
 after_success:
-- npm run ci:coveralls
+- bash <(curl -s https://codecov.io/bash)
 deploy:
   provider: npm
   on:
