@@ -23,7 +23,7 @@
     "docs:dev": "cd ./docs && webpack-dev-server --host 0.0.0.0",
     "docs:build": "cd ./docs && cross-env NODE_ENV=production webpack",
     "docs:deploy": "npm run docs:build && gulp docs:deploy",
-    "all": "npm run lint && npm run test && npm run build",
+    "all": "npm run lint && npm run test && npm run build && npm run docs:build",
     "build": "gulp && webpack && cross-env BUILD_MINIFIED=true webpack",
     "clean": "rm -r -f dist lib cjs coverage",
     "release": "npm version -m 'react-css-transition release %s'",
