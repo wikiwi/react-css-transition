@@ -34,6 +34,7 @@ export const FadeInOutGroup = (props) => (
 );
 
 // This example uses reassemble to handle internal state.
+// See: https://github.com/wikiwi/reassemble.
 const enhance = assemble(
   withState("count", "setCount", 1),
   withHandlers({

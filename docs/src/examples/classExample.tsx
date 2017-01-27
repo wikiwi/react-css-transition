@@ -34,6 +34,7 @@ import { Button } from "../components";
 import classes from "./classExample.css";
 
 // This example uses reassemble to handle internal state.
+// See: https://github.com/wikiwi/reassemble.
 const enhance = assemble(
   withState("active", "setActive", false),
   withHandlers({
