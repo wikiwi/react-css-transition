@@ -6,3 +6,4 @@
 /cjs/
 .DS_Store
 /docs/build/
+/.nyc_output/
