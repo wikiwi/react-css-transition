@@ -38,7 +38,7 @@ const FadeInOutComponent = ({active, ...rest}) => (
     enterStyle={{ opacity: transit(1.0, 500, "ease-in-out") }}
     leaveStyle={{ opacity: transit(0, 500, "ease-in-out") }}
     activeStyle={{ opacity: 1.0 }}
-    active={props.active}
+    active={active}
   >
     <MyComponent {...rest} />
   </CSSTransition>
