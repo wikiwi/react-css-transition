@@ -74,6 +74,7 @@ module.exports = {
   plugins: [
     new CopyWebpackPlugin([
       { from: "src/index.html" },
+      { from: "media/preview.png" },
     ]),
     new webpack.DefinePlugin({
       "process.env": {

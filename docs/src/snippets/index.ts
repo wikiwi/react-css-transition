@@ -12,3 +12,5 @@ export { default as groupTranistionSnippet } from "./groupTransitionSnippet";
 export { default as groupSnippet } from "./groupSnippet";
 export { default as componentSnippet } from "./componentSnippet";
 export { default as introSnippet } from "./introSnippet";
+export { default as delaySnippet } from "./delaySnippet";
+export { default as delayObjectSnippet } from "./delayObjectSnippet";

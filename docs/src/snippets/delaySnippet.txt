@@ -1,0 +1,3 @@
+{
+  transitionDelay: 300,
+}

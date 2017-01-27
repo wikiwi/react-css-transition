@@ -1,0 +1,3 @@
+{
+  transitionDelay: { enter: 150, leave: 50 },
+}
