@@ -122,6 +122,6 @@
     "webpack-dev-server": "^1.16.2"
   },
   "dependencies": {
-    "reassemble": "file:///home/vagrant/projects/typescript/reassemble"
+    "reassemble": "^0.4.0"
   }
 }
