@@ -61,7 +61,7 @@ module.exports = {
         loader: "babel-loader",
         include: path.resolve(__dirname, "../node_modules/react-icons"),
         query: {
-          presets: [...reactPresets],
+          presets: ["es2015", ...reactPresets],
         },
       },
     ],

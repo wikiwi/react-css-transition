@@ -20,7 +20,9 @@
   "main": "./cjs/index.js",
   "typings": "./lib/index.d.ts",
   "scripts": {
-    "dev": "cd ./docs && webpack-dev-server --host 0.0.0.0",
+    "docs:dev": "cd ./docs && webpack-dev-server --host 0.0.0.0",
+    "docs:build": "cd ./docs && cross-env NODE_ENV=production webpack",
+    "docs:deploy": "npm run docs:build && gulp docs:deploy",
     "all": "npm run lint && npm run test && npm run build",
     "build": "gulp && webpack && cross-env BUILD_MINIFIED=true webpack",
     "clean": "rm -r -f dist lib cjs coverage",
@@ -79,6 +81,7 @@
     "file-loader": "^0.9.0",
     "gulp": "^3.9.1",
     "gulp-eslint": "^3.0.1",
+    "gulp-gh-pages": "^0.5.4",
     "gulp-jsonlint": "^1.1.2",
     "gulp-replace": "^0.5.4",
     "gulp-sourcemaps": "^2.2.0",

@@ -4,6 +4,7 @@
 /dist/
 /lib/
 /cjs/
+/docs/build
 .DS_Store
-/docs/build/
 /.nyc_output/
+/.publish

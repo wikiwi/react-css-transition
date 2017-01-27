@@ -9,6 +9,7 @@ const merge = require("merge2");
 const yamllint = require("gulp-yaml-validate");
 const sourcemaps = require("gulp-sourcemaps");
 const replace = require("gulp-replace");
+const ghPages = require("gulp-gh-pages");
 
 const files = {
   tsWithoutTest: ["./src/**/*.ts", "./src/**/*.tsx", "!./src/**/*.spec.tsx", "!./src/**/*.spec.ts"],
@@ -76,6 +77,11 @@ gulp.task("jsonlint", () => {
 gulp.task("yamllint", () => {
   return gulp.src(files.yaml, { dot: true })
     .pipe(yamllint());
+});
+
+gulp.task("docs:deploy", () => {
+  return gulp.src("./docs/build/**/*")
+    .pipe(ghPages());
 });
 
 gulp.task("lint", ["jsonlint", "eslint", "tslint", "yamllint"]);
