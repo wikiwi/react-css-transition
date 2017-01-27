@@ -103,6 +103,7 @@
     "merge2": "^1.0.2",
     "mocha": "^3.1.2",
     "nyc": "^10.1.2",
+    "postcss-js": "^0.2.0",
     "postcss-loader": "^1.2.2",
     "postcss-nesting": "^2.3.1",
     "raw-loader": "^0.5.1",
