@@ -11,13 +11,13 @@ import { CSSProperties, ComponentClass, ReactNode, StatelessComponent, HTMLAttri
 import { assemble, setDisplayName, omitProps, defaultProps } from "reassemble";
 
 import { reducer } from "./reducer";
-import { withTransitionState } from "./composables/withTransitionState";
+import { withTransitionState, WithTransitionStateProps } from "./composables/withTransitionState";
 import { mergeWithBaseStyle } from "./composables/mergeWithBaseStyle";
-import { withTransitionInfo } from "./composables/withTransitionInfo";
-import { withTransitionObserver } from "./composables/withTransitionObserver";
+import { withTransitionInfo, WithTransitionInfoProps } from "./composables/withTransitionInfo";
+import { withTransitionObserver, WithTransitionObserverProps } from "./composables/withTransitionObserver";
 import { withWorkaround } from "./composables/withWorkaround";
 import { preventPhantomEvents } from "./composables/preventPhantomEvents";
-import { withDOMNodeCallback } from "./composables/withDOMNodeCallback";
+import { withDOMNodeCallback, WithDOMNodeCallbackProps } from "./composables/withDOMNodeCallback";
 
 export type CSSTransitionDelay = number | { appear?: number; enter?: number; leave?: number };
 export type CSSTransitionEventHandler = () => void;
@@ -59,11 +59,18 @@ export interface CSSTransitionInnerProps
   onDOMNodeRef?: (ref: Element) => void;
 }
 
+type PropsUnion = CSSTransitionProps
+  & WithTransitionInfoProps
+  & WithTransitionStateProps
+  & WithDOMNodeCallbackProps
+  & WithTransitionObserverProps
+  & CSSTransitionInnerProps;
+
 const withDefaultProps = defaultProps<Partial<CSSTransitionProps>>({
   component: "div",
 });
 
-const mapPropsToInner = omitProps<keyof CSSTransitionProps | "onTransitionBegin" | "transitionInfo" | "transitionState" | "getDOMNode">(
+const mapPropsToInner = omitProps<keyof PropsUnion>(
   "active",
   "transitionAppear",
   "defaultStyle",
