@@ -5,7 +5,6 @@
     "object-literal-sort-keys": false,
     "forin": false,
     "no-string-literal": false,
-    "file-header": [true, "@license"],
     "no-switch-case-fall-through": true,
     "max-classes-per-file": false,
     "object-literal-key-quotes": [true, "as-needed"],
