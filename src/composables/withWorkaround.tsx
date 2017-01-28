@@ -35,11 +35,11 @@ export const withWorkaround = combine(
   ) => {
     const workaroundProps: React.HTMLProps<HTMLSpanElement> = {
       key: "workaround",
-      style: { transform: "scale(0.99)" },
+      style: { opacity: 0.9 },
     };
     if (inTransition) {
       workaroundProps.onTransitionEnd = workaroundHandler;
-      workaroundProps.style = { transform: "scale(1.0)", transition: `transform 1ms linear ${firstPropertyDelay}ms` };
+      workaroundProps.style = { opacity: 1.0, transition: `opacity 1ms linear ${firstPropertyDelay}ms` };
     }
     return {
       children: [<span {...workaroundProps } />, ...Children.toArray(children)],

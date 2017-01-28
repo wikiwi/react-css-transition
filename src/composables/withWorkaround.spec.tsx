@@ -34,7 +34,7 @@ describe("withWorkaround", () => {
 
   it("should have default style", () => {
     const style = wrapper.childAt(0).props().style;
-    assert.deepEqual(style, { transform: "scale(0.99)" });
+    assert.deepEqual(style, { opacity: 0.9 });
   });
 
   describe("during a transition", () => {
@@ -52,12 +52,12 @@ describe("withWorkaround", () => {
 
     it("should perform a second transition", () => {
       const style = wrapper.childAt(0).props().style;
-      assert.deepEqual(style, { transform: "scale(1.0)", transition: "transform 1ms linear 10ms" });
+      assert.deepEqual(style, { opacity: 1.0, transition: "opacity 1ms linear 10ms" });
     });
 
     describe("when second transition ends", () => {
       before(() => {
-        wrapper.childAt(0).simulate("transitionEnd", { propertyName: "transform" });
+        wrapper.childAt(0).simulate("transitionEnd", { propertyName: "opacity" });
       });
 
       it("should call onTransitionStart", () => {
