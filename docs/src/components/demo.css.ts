@@ -52,5 +52,6 @@ export default createClassRules({
 
   main: {
     padding: "32px",
+    overflow: "hidden",
   },
 });
