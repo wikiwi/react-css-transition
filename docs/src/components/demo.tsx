@@ -44,7 +44,7 @@ const enhance = assemble<DemoInnerProps, DemoProps>(
 );
 
 const DemoInner: StatelessComponent<DemoInnerProps> =
-  ({title, source, component: Component, onClick, active}) => (
+  ({title, source, component: Example, onClick, active}) => (
     <section className={classes.root}>
       <div className={classes.bar}>
         <h3>{title}</h3>
@@ -57,7 +57,7 @@ const DemoInner: StatelessComponent<DemoInnerProps> =
         </SyntaxHighlighter>
       </CSSTransition>
       <div className={classes.main}>
-        <Component />
+        <Example />
       </div>
     </section>
   );

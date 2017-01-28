@@ -17,7 +17,7 @@ module.exports = {
   entry: "./src/app.tsx",
   devtool: "sourcemap",
   resolve: {
-    extensions: [".ts", ".tsx", ".js", ".txt"],
+    extensions: [".ts", ".tsx", ".js", ".jsx", ".txt"],
     modules: ["../node_modules"],
     plugins: [new TsConfigPathsPlugin()],
   },
@@ -38,7 +38,7 @@ module.exports = {
         exclude: path.resolve(__dirname, "../node_modules"),
       },
       {
-        test: /\.tsx?$/,
+        test: /(\.jsx?|\.tsx?)$/,
         loader: "awesome-typescript-loader",
         exclude: path.resolve(__dirname, "../node_modules"),
         query: {

@@ -6,6 +6,7 @@
     "jsx": "preserve",
     "lib": ["dom", "es5", "scripthost", "es2015"],
     "noImplicitAny": false,
+    "allowJs": true,
     "baseUrl": "./",
     "paths": {
       "react-css-transition": [

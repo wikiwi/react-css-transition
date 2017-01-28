@@ -1,6 +1,5 @@
 import * as React from "react";
 import { CSSTransition, transit } from "react-css-transition";
-import { assemble, withState, withHandlers } from "reassemble";
 
 import { Button } from "../components";
 import { prefix } from "../theme";
@@ -28,23 +27,26 @@ const styles = prefix({
   },
 });
 
-// This example uses reassemble to handle internal state.
-// See: https://github.com/wikiwi/reassemble.
-const enhance = assemble(
-  withState("active", "setActive", false),
-  withHandlers({
-    onClick: ({active, setActive}) => () => setActive(!active),
-  }),
-);
+class InlineExample extends React.Component {
 
-export const InlineExample = enhance(
-  ({active, onClick}) => (
-    <div>
-      <CSSTransition
-        {...styles}
-        active={active}
-        />
-      <Button onClick={onClick}>Trigger</Button>
-    </div>
-  ),
-);
+  constructor(props) {
+    super(props);
+    this.state = {active: false};
+  }
+
+  onClick = () => this.setState({active: !this.state.active});
+
+  render() {
+    return (
+      <div>
+        <CSSTransition
+          {...styles}
+          active={this.state.active}
+          />
+        <Button onClick={this.onClick}>Trigger</Button>
+      </div>
+    );
+  }
+}
+
+export default InlineExample;

@@ -1,6 +1,5 @@
 import * as React from "react";
 import { CSSTransition, transit } from "react-css-transition";
-import { assemble, withState, withHandlers } from "reassemble";
 
 import { prefix } from "../theme";
 import { Button } from "../components";
@@ -29,22 +28,22 @@ const styles = prefix({
   },
 });
 
-// This example uses reassemble to handle internal state.
-// See: https://github.com/wikiwi/reassemble.
-const enhance = assemble(
-  withState("count", "setCount", 1),
-  withHandlers({
-    onClickMount: ({count, setCount}) => () => setCount(count < 6 ? count + 1 : 6),
-    onClickUnmount: ({count, setCount}) => () => setCount(count > 0 ? count - 1 : 0),
-  }),
-);
+class AppearExample extends React.Component {
 
-export const AppearExample = enhance(
-  ({active, onClickMount, onClickUnmount, count}) => (
+  constructor(props) {
+    super(props);
+    this.state = {mounted: 1};
+  }
+
+  onClickMount = () => this.setState({mounted: this.state.mounted < 6 ? this.state.mounted + 1 : 6});
+  onClickUnmount = () => this.setState({mounted: this.state.mounted > 0 ? this.state.mounted - 1 : 0});
+
+  render() {
+    return (
     <div>
       <div style={prefix({ display: "flex", marginBottom: "32px", height: "20px" })}>
         {
-          Array(count).fill("").map((_, idx) =>
+          Array(this.state.mounted).fill("").map((_, idx) =>
             <CSSTransition
               {...styles}
               key={idx}
@@ -54,8 +53,11 @@ export const AppearExample = enhance(
           )
         }
       </div>
-      <Button style={{ marginRight: "16px" }} onClick={onClickMount}>Mount</Button>
-      <Button onClick={onClickUnmount}>Unmount</Button>
-    </div >
-  ),
-);
+      <Button style={{ marginRight: "16px" }} onClick={this.onClickMount}>Mount</Button>
+      <Button onClick={this.onClickUnmount}>Unmount</Button>
+    </div>
+    );
+  }
+}
+
+export default AppearExample;

@@ -1,6 +1,5 @@
 import * as React from "react";
 import { CSSTransition } from "react-css-transition";
-import { assemble, withState, withHandlers } from "reassemble";
 
 import { Button } from "../components";
 
@@ -33,22 +32,26 @@ import { Button } from "../components";
 
 import classes from "./classExample.css";
 
-// This example uses reassemble to handle internal state.
-// See: https://github.com/wikiwi/reassemble.
-const enhance = assemble(
-  withState("active", "setActive", false),
-  withHandlers({
-    onClick: ({active, setActive}) => () => setActive(!active),
-  }),
-);
+class ClassExample extends React.Component {
 
-export const ClassExample = enhance(
-  ({active, onClick}) => (
-    <div>
-      <CSSTransition
-        {...classes}
-        active={active}
-        />
-      <Button onClick={onClick}>Trigger</Button>
-    </div>
-  ));
+  constructor(props) {
+    super(props);
+    this.state = {active: false};
+  }
+
+  onClick = () => this.setState({active: !this.state.active});
+
+  render() {
+    return (
+      <div>
+        <CSSTransition
+          {...classes}
+          active={this.state.active}
+          />
+        <Button onClick={this.onClick}>Trigger</Button>
+      </div>
+    );
+  }
+}
+
+export default ClassExample;

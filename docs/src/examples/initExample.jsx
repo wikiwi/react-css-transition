@@ -1,13 +1,8 @@
 import * as React from "react";
 import { CSSTransition, transit } from "react-css-transition";
-import { assemble, withState, withHandlers } from "reassemble";
 
 import { Button } from "../components";
 import { prefix } from "../theme";
-
-// Note that in this example only when the component is transitioning
-// the transform style is applied. Otherwise it returns to
-// absolute positioning.
 
 const styles = prefix({
   style: {
@@ -38,25 +33,28 @@ const styles = prefix({
   },
 });
 
-// This example uses reassemble to handle internal state.
-// See: https://github.com/wikiwi/reassemble.
-const enhance = assemble(
-  withState("active", "setActive", false),
-  withHandlers({
-    onClick: ({active, setActive}) => () => setActive(!active),
-  }),
-);
+class InitExample extends React.Component {
 
-export const InitExample = enhance(
-  ({active, onClick}) => (
-    <div>
+  constructor(props) {
+    super(props);
+    this.state = {active: false};
+  }
+
+  onClick = () => this.setState({active: !this.state.active});
+
+  render() {
+    return (
+      <div>
       <div style={{ position: "relative", height: "52px" }}>
         <CSSTransition
           {...styles}
-          active={active}
+          active={this.state.active}
           />
       </div>
-      <Button onClick={onClick}>Trigger</Button>
-    </div>
-  ),
-);
+        <Button onClick={this.onClick}>Trigger</Button>
+      </div>
+    );
+  }
+}
+
+export default InitExample;
