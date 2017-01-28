@@ -3,15 +3,11 @@ import { CSSTransition, transit } from "react-css-transition";
 
 import { Button } from "../components";
 import { prefix } from "../theme";
+import Circle from "./circle";
 
 const styles = prefix({
-  style: {
+  style:{
     position: "absolute",
-    boxShadow: "1px 1px 5px 0px rgba(0,0,0,0.25)",
-    borderRadius: "50%",
-    background: "#dc7d16",
-    height: "20px",
-    width: "20px",
   },
   defaultStyle: {
     left: "0px",
@@ -34,24 +30,25 @@ const styles = prefix({
 });
 
 class InitExample extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {active: false};
+    this.handleClick = this.handleClick.bind(this);
   }
 
-  onClick = () => this.setState({active: !this.state.active});
+  handleClick() {
+    this.setState({active: !this.state.active});
+  }
 
   render() {
     return (
       <div>
-      <div style={{ position: "relative", height: "52px" }}>
-        <CSSTransition
-          {...styles}
-          active={this.state.active}
-          />
-      </div>
-        <Button onClick={this.onClick}>Trigger</Button>
+        <div style={{ position: "relative", height: "52px" }}>
+          <CSSTransition {...styles} active={this.state.active}>
+            <Circle />
+          </CSSTransition>
+        </div>
+        <Button onClick={this.handleClick}>Trigger</Button>
       </div>
     );
   }

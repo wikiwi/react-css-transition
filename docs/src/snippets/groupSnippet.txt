@@ -1,9 +1,6 @@
-import * as React from "react";
 import { CSSTransitionGroup } from "react-css-transition";
 
-import { FadeInOut } from "./transitions";
-
-export const FadeInOutGroup = (props) => (
+const FadeInOutGroup = (props) => (
   <CSSTransitionGroup {...props}>
     {
       React.Children.map(

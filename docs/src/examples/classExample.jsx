@@ -2,18 +2,11 @@ import * as React from "react";
 import { CSSTransition } from "react-css-transition";
 
 import { Button } from "../components";
+import Circle from "./circle";
 
 /*
   CSS defined using CSS-Modules.
 
-  .className: {
-    boxShadow: "1px 1px 5px 0px rgba(0,0,0,0.25)",
-    borderRadius: "50%",
-    marginBottom: "32px",
-    background: "#dc7d16",
-    height: "20px",
-    width: "20px",
-  },
   .defaultClassName: {
     transform: "translate(0, 0)",
   },
@@ -33,22 +26,23 @@ import { Button } from "../components";
 import classes from "./classExample.css";
 
 class ClassExample extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {active: false};
+    this.handleClick = this.handleClick.bind(this);
   }
 
-  onClick = () => this.setState({active: !this.state.active});
+  handleClick() {
+    this.setState({active: !this.state.active});
+  }
 
   render() {
     return (
       <div>
-        <CSSTransition
-          {...classes}
-          active={this.state.active}
-          />
-        <Button onClick={this.onClick}>Trigger</Button>
+        <CSSTransition {...classes} active={this.state.active}>
+          <Circle />
+        </CSSTransition>
+        <Button onClick={this.handleClick}>Trigger</Button>
       </div>
     );
   }

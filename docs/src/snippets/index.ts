@@ -10,6 +10,7 @@ export { default as initStyleSnippet } from "./initStyleSnippet";
 export { default as groupTreeSnippet } from "./groupTreeSnippet";
 export { default as groupTranistionSnippet } from "./groupTransitionSnippet";
 export { default as groupSnippet } from "./groupSnippet";
+export { default as groupExampleSnippet } from "./groupExampleSnippet";
 export { default as componentSnippet } from "./componentSnippet";
 export { default as introSnippet } from "./introSnippet";
 export { default as delaySnippet } from "./delaySnippet";

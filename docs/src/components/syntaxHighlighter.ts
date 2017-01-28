@@ -11,7 +11,7 @@ registerLanguage("bash", bash);
 
 const customStyle = {
   padding: "16px",
-  fontSize: "14px",
+  fontSize: "13px",
 };
 
 const codeTagProps = {

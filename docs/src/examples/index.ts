@@ -1,3 +1,7 @@
+import IntroExampleUncast from "./introExample";
+export const IntroExample: any = IntroExampleUncast;
+export { default as introExampleSource } from "!raw-loader!./introExample";
+
 import InlineExampleUncast from "./inlineExample";
 export const InlineExample: any = InlineExampleUncast;
 export { default as inlineExampleSource } from "!raw-loader!./inlineExample";

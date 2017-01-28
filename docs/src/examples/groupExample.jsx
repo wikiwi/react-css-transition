@@ -3,18 +3,8 @@ import { CSSTransition, CSSTransitionGroup, transit } from "react-css-transition
 
 import { prefix } from "../theme";
 import { Button } from "../components";
-
-const circleStyle = prefix({
-  display: "inline-box",
-  boxShadow: "1px 1px 5px 0px rgba(0,0,0,0.25)",
-  borderRadius: "50%",
-  background: "#dc7d16",
-  height: "20px",
-  width: "20px",
-  marginRight: "8px",
-});
-
-const Circle = () => <div style={circleStyle} />;
+import Circle from "./circle";
+import classes from "./groupExample.css";
 
 const fadeInOutStyles = prefix({
   defaultStyle: {
@@ -45,14 +35,22 @@ export const FadeInOutGroup = (props) => (
 );
 
 class GroupExample extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {mounted: 1};
+    this.handleClickMount = this.handleClickMount.bind(this);
+    this.handleClickUnmount = this.handleClickUnmount.bind(this);
   }
 
-  onClickMount = () => this.setState({mounted: this.state.mounted < 6 ? this.state.mounted + 1 : 6});
-  onClickUnmount = () => this.setState({mounted: this.state.mounted > 0 ? this.state.mounted - 1 : 0});
+  handleClickMount() {
+    const mounted = this.state.mounted;
+    this.setState({mounted: mounted < 6 ? mounted + 1 : 6});
+  }
+
+  handleClickUnmount() {
+    const mounted = this.state.mounted;
+    this.setState({mounted: mounted > 0 ? mounted - 1 : 0});
+  }
 
   render() {
     return (
@@ -62,15 +60,54 @@ class GroupExample extends React.Component {
         >
         {
           Array(this.state.mounted).fill(null).map((_, idx) =>
-            <Circle key={idx} />,
+            <Circle key={idx} />
           )
         }
       </FadeInOutGroup>
-      <Button style={{ marginRight: "16px" }} onClick={this.onClickMount}>Mount</Button>
-      <Button onClick={this.onClickUnmount}>Unmount</Button>
+      <Button style={{ marginRight: "16px" }} onClick={this.handleClickMount}>Mount</Button>
+      <Button onClick={this.handleClickUnmount}>Unmount</Button>
     </div >
     );
   }
 }
 
-export default GroupExample;
+class TodoList extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {items: ['hello', 'world', 'click', 'me']};
+    this.handleAdd = this.handleAdd.bind(this);
+  }
+
+  handleAdd() {
+    const input = prompt('Enter some text');
+    if (input) {
+      const newItems = this.state.items.concat([input]);
+      this.setState({items: newItems});
+    }
+  }
+
+  handleRemove(i) {
+    let newItems = this.state.items.slice();
+    newItems.splice(i, 1);
+    this.setState({items: newItems});
+  }
+
+  render() {
+    const items = this.state.items.map((item, i) => (
+      <div key={item} onClick={() => this.handleRemove(i)} className={classes.item}>
+        {item}
+      </div>
+    ));
+
+    return (
+      <div>
+        <FadeInOutGroup className={classes.container}>
+          {items}
+        </FadeInOutGroup>
+        <Button onClick={this.handleAdd}>Add Item</Button>
+      </div>
+    );
+  }
+}
+
+export default TodoList;

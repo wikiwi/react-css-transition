@@ -6,6 +6,7 @@ import { CSSTransition, CSSTransitionProps, transit } from "react-css-transition
 import { Demo, Logo, SyntaxHighlighter, Button, Quote } from "./components";
 
 import {
+  IntroExample,
   InlineExample, inlineExampleSource,
   ClassExample, classExampleSource,
   CompletionExample, completionExampleSource,
@@ -25,10 +26,11 @@ import {
   initStyleSnippet,
   groupTreeSnippet,
   groupTranistionSnippet,
+  groupSnippet,
+  groupExampleSnippet,
   cssSnippet,
   componentSnippet,
   introSnippet,
-  groupSnippet,
   delaySnippet,
   delayObjectSnippet,
 } from "./snippets";
@@ -133,6 +135,7 @@ const App: StatelessComponent<void> = () => (
 
         <section className={classes.mainSection}>
           <h3>How It Looks Like</h3>
+          <IntroExample />
           <SyntaxHighlighter language="javascript">
             {introSnippet}
           </SyntaxHighlighter>
@@ -320,9 +323,6 @@ const App: StatelessComponent<void> = () => (
           <SyntaxHighlighter language="bash">
             {groupTreeSnippet}
           </SyntaxHighlighter>
-          <div className={classes.block}>
-            <Demo title="Transition Group Example" component={GroupExample} source={groupExampleSource} />
-          </div>
           <p>
             Let's predefine a <code>CSSTransition</code>:
           </p>
@@ -330,11 +330,20 @@ const App: StatelessComponent<void> = () => (
             {groupTranistionSnippet}
           </SyntaxHighlighter>
           <p>
-            Finally create a component that fades in and out its children:
+            Then create a component that fades in and out its children:
           </p>
           <SyntaxHighlighter language="javascript">
             {groupSnippet}
           </SyntaxHighlighter>
+          <p>
+            Finally we put it into use:
+          </p>
+          <SyntaxHighlighter language="javascript">
+            {groupExampleSnippet}
+          </SyntaxHighlighter>
+          <div className={classes.block}>
+            <Demo title="Transition Group Example" component={GroupExample} source={groupExampleSource} />
+          </div>
 
           <section className={classes.mainSection}>
             <h4>Appear on Initial Mount</h4>

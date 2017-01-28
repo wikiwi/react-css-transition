@@ -3,15 +3,9 @@ import { CSSTransition, transit } from "react-css-transition";
 
 import { prefix } from "../theme";
 import { Button } from "../components";
+import Circle from "./circle";
 
 const styles = prefix({
-  style: {
-    boxShadow: "1px 1px 5px 0px rgba(0,0,0,0.25)",
-    borderRadius: "50%",
-    background: "#dc7d16",
-    height: "20px",
-    width: "20px",
-  },
   defaultStyle: {
     transform: "translate(0, 0)",
   },
@@ -26,29 +20,37 @@ const styles = prefix({
   },
 });
 
-class InlineExample extends React.Component {
-
+class CompletionExample extends React.Component {
   constructor(props) {
     super(props);
     this.state = {active: false, count: 0};
+    this.handleClick = this.handleClick.bind(this);
+    this.handleTransitionComplete = this.handleTransitionComplete.bind(this);
   }
 
-  onClick = () => this.setState({active: !this.state.active});
-  onTransitionComplete = () => this.setState({count: this.state.count + 1});
+  handleClick() {
+    this.setState({active: !this.state.active});
+  }
+
+  handleTransitionComplete() {
+    this.setState({count: this.state.count + 1});
+  }
 
   render() {
     return (
       <div>
         <CSSTransition
           {...styles}
-          onTransitionComplete={this.onTransitionComplete}
+          onTransitionComplete={this.handleTransitionComplete}
           active={this.state.active}
-          />
+          >
+          <Circle />
+        </CSSTransition>
         <p><code>onTransitionComplete calls: {this.state.count}</code></p>
-        <Button onClick={this.onClick}>Trigger</Button>
+        <Button onClick={this.handleClick}>Trigger</Button>
       </div>
     );
   }
 }
 
-export default InlineExample;
+export default CompletionExample;
