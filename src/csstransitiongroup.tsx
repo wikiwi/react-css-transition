@@ -25,11 +25,11 @@ export class CSSTransitionGroup extends Component<CSSTransitionGroupProps, {}> {
     const { transitionAppear, children, ...rest } = this.props as any;
     return (
       <ReactTransitionGroup {...rest}>
-        {Children.map(children, (child, index) =>
+        {Children.map(children, (child: ReactElement<any>, index) =>
           <CSSTransitionGroupChild
             transitionAppear={transitionAppear}
             mounted={this.mounted}
-            key={index}>
+            key={child.key}>
             {child}
           </CSSTransitionGroupChild>,
         )}

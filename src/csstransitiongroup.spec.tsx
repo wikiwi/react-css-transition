@@ -58,6 +58,13 @@ describe("csstransitiongroup.tsx", () => {
       wrapper.setProps({ children: [<span />] });
       assert.isTrue((wrapper.find("CSSTransitionGroupChild").props() as any).mounted);
     });
+
+    it("should set key of CSSTransitionGroupChild to match keys of children", () => {
+      const wrapper = getWrapper(
+        { id: "abc", children: [<span key="mykey" />] },
+      );
+      assert.strictEqual((wrapper.find("CSSTransitionGroupChild").key()), ".$mykey");
+    });
   });
 
   describe("<CSSTransitionGroupChild>", () => {
