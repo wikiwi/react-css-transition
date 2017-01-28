@@ -25,7 +25,8 @@ export const preventPhantomEvents = combine(
           handleTimeUpdateRequest: () => () => {
             if (timeUpdateRequested) {
               lastTriggerTime = Date.now();
-              if (typeof performance !== "undefined") {
+              if (typeof performance !== "undefined" &&
+                typeof performance.now !== "undefined") {
                 lastTriggerTimePerformance = performance.now();
               }
               timeUpdateRequested = false;

@@ -14,7 +14,7 @@ const reactPresets = process.env.NODE_ENV === "production" ? ["react", "react-op
 const additionalPlugins = process.env.NODE_ENV === "production" ? [uglifyPlugin] : [];
 
 module.exports = {
-  entry: "./src/app.tsx",
+  entry: ["babel-polyfill", "./src/app.tsx"],
   devtool: "sourcemap",
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".jsx", ".txt"],

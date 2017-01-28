@@ -99,6 +99,7 @@ export default createClassRules({
     marginTop: "48px",
   },
   main: {
+    display: "block",
     margin: "0 auto",
     maxWidth: "1024px",
     textAlign: "left",
