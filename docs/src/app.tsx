@@ -54,6 +54,7 @@ const fadeIn: CSSTransitionProps = {
   },
 };
 
+const codePenURL = "http://codepen.io/wikiwi/pen/MJQWYY?editors=0010";
 const newSpecURL = "https://drafts.csswg.org/css-transitions-2/#dom-transitionevent-transitionstart";
 const githubURL = "https://github.com/wikiwi/react-css-transition";
 const cssTransitionIssuePostURL = "https://www.smashingmagazine.com/2013/04/css3-transitions-thank-god-specification/";
@@ -139,6 +140,9 @@ const App: StatelessComponent<void> = () => (
           <SyntaxHighlighter language="javascript">
             {introSnippet}
           </SyntaxHighlighter>
+          <p>
+            <a href={codePenURL}>Go to CodePen example</a>
+          </p>
         </section>
 
         <section className={classes.mainSection}>
