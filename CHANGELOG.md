@@ -1,3 +1,7 @@
+## 0.6.2 (Januar 31, 2017)
+
+- Update reassemble to 0.5.0
+
 ## 0.6.1 (Januar 28, 2017)
 
 - Fix wrong keys in CSSTransitionGroup
