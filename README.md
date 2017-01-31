@@ -8,6 +8,8 @@ _React CSS Transition_ provides a reliable way to transition your components bet
 
 [Read the full documentation](https://wikiwi.github.io/react-css-transition/)
 
+[Checkout this CodePen](http://codepen.io/wikiwi/pen/MJQWYY?editors=0010)
+
 ## Installation
 
 ```sh
