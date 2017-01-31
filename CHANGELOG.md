@@ -1,5 +1,9 @@
 ## 0.6.2 (Januar 31, 2017)
 
+- Use correct UMD library name `ReactCSSTransition`
+
+## 0.6.2 (Januar 31, 2017)
+
 - Update reassemble to 0.5.0
 
 ## 0.6.1 (Januar 28, 2017)
