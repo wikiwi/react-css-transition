@@ -58,7 +58,6 @@ const codePenURL = "http://codepen.io/wikiwi/pen/MJQWYY?editors=0010";
 const newSpecURL = "https://drafts.csswg.org/css-transitions-2/#dom-transitionevent-transitionstart";
 const githubURL = "https://github.com/wikiwi/react-css-transition";
 const cssTransitionIssuePostURL = "https://www.smashingmagazine.com/2013/04/css3-transitions-thank-god-specification/";
-const transitionStartEventURL = "https://msdn.microsoft.com/en-us/library/dn632683(v=vs.85).aspx";
 const getComputedStyleURL = "https://developer.mozilla.org/en-US/docs/Web/API/Window/getComputedStyle";
 const reactTransitionAddonURL = "https://facebook.github.io/react/docs/animation.html";
 
@@ -87,17 +86,13 @@ const App: StatelessComponent<void> = () => (
         <h2>Why we need this</h2>
         <p>
           CSS transitions are known for its <a href={cssTransitionIssuePostURL}>problems and unreliability</a>.
-          The most painful issue is the inability to reliably detect the start of a transition. Because browsers
-          handle CSS transitions in an async way, there is no easy way to know whether we are in the middle of a
-          transition or not. This is most problematic when we want to reverse a potentially started transition.
-          There is a new <a href={newSpecURL}>CSS Specification Draft</a> on the way addressing these
-          issues, but currently only <em>Internet Explorer > 10</em> and <em>Edge</em> are supporting
-          the <a href={transitionStartEventURL}>transitionstart</a> event.
+          Until browsers implement the new <a href={newSpecURL}>CSS Specification Draft</a> there is no
+          easy way to detect the start and the end of a transition. This is most problematic when we
+          want to reverse a potentially started transition or run a callback as soon as the transition ends.
         </p>
         <p>
-          React CSS Transition uses a workaround to circumvent the lack of
-          a <em>transitionstart</em> event and aims to provide a reliable API for you to
-          transition between two states that works across browsers.
+          React CSS Transition handles the issues for you and gives you a reliable API to transition between
+          two states that works across browsers.
         </p>
         <div className={classes.block}>
           <Quote source="User on Blink Dev Group" url={quoteURLBlinkDev}>
