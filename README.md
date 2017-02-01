@@ -6,6 +6,8 @@
 
 _React CSS Transition_ provides a reliable way to transition your components between two states across browers.
 
+With its `onTransitionComplete` handler you can even orchestrate more complex transitions.
+
 [Read the full documentation](https://wikiwi.github.io/react-css-transition/)
 
 [Checkout this CodePen](http://codepen.io/wikiwi/pen/MJQWYY?editors=0010)
