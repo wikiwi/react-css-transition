@@ -29,4 +29,10 @@ describe("matchTransitionProperty", () => {
       matchTransitionProperty("-o-background", "-moz-background-color"),
     );
   });
+
+  it("should handle all", () => {
+    assert.isTrue(
+      matchTransitionProperty("-webkit-background-color", "all"),
+    );
+  });
 });
