@@ -3,7 +3,7 @@ import {
   Component, Children, ReactElement, HTMLAttributes,
   ComponentClass, StatelessComponent, cloneElement,
 } from "react";
-import TransitionGroup from "react-transition-group/TransitionGroup";
+import * as TransitionGroup from "react-transition-group/TransitionGroup";
 
 import { CSSTransitionProps } from "./csstransition";
 
