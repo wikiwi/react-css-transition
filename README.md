@@ -4,9 +4,7 @@
 [![Build Status Widget]][build status]
 [![Coverage Widget]][coverage]
 
-_React CSS Transition_ provides a reliable way to transition your components between two states across browers.
-
-With its `onTransitionComplete` handler you can even orchestrate more complex transitions.
+_React CSS Transition_ provides a reliable way to transition your components between two states across browers without relying on timeouts.
 
 [Read the full documentation](https://wikiwi.github.io/react-css-transition/)
 
