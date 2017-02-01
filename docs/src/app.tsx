@@ -188,7 +188,7 @@ const App: StatelessComponent<void> = () => (
           <h3>Defining Transitions Using Inline Styles</h3>
           <p>
             Transitions can be defined using inline styles. The provided styles must be already prefixed
-            if you want to support legacy browsers. Reactt CSS Transition contains the
+            if you want to support legacy browsers. React CSS Transition contains the
             helper <code>transit(value, duration, timingFunction, delay)</code> which makes defining
             transitions easy. Both <code>duration</code> and <code>delay</code> accepts a numeric value
             in milliseconds.
