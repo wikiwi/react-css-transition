@@ -25,7 +25,7 @@ describe("csstransitiongroup.tsx", () => {
       const wrapper = getWrapper(
         { id: "abc", children: <span key="child" /> },
       );
-      const { id } = wrapper.find("ReactTransitionGroup").props();
+      const { id } = wrapper.find("TransitionGroup").props();
       assert.strictEqual(id, "abc");
     });
 

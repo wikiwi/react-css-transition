@@ -3,7 +3,7 @@ import {
   Component, Children, ReactElement, HTMLAttributes,
   ComponentClass, StatelessComponent, cloneElement,
 } from "react";
-import * as ReactTransitionGroup from "react-addons-transition-group";
+import TransitionGroup from "react-transition-group/TransitionGroup";
 
 import { CSSTransitionProps } from "./csstransition";
 
@@ -24,7 +24,7 @@ export class CSSTransitionGroup extends Component<CSSTransitionGroupProps, {}> {
   public render() {
     const { transitionAppear, children, ...rest } = this.props as any;
     return (
-      <ReactTransitionGroup {...rest}>
+      <TransitionGroup {...rest}>
         {Children.map(children, (child: ReactElement<any>, index) =>
           <CSSTransitionGroupChild
             transitionAppear={transitionAppear}
@@ -33,7 +33,7 @@ export class CSSTransitionGroup extends Component<CSSTransitionGroupProps, {}> {
             {child}
           </CSSTransitionGroupChild>,
         )}
-      </ReactTransitionGroup>);
+      </TransitionGroup>);
   }
 }
 
