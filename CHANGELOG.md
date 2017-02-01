@@ -1,3 +1,7 @@
+## 0.6.4 (February 01, 2017)
+
+- Supports transition property `all`
+
 ## 0.6.3 (Januar 31, 2017)
 
 - Use correct UMD library name `ReactCSSTransition`
