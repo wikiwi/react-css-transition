@@ -27,7 +27,7 @@ function build(dest, module) {
   return () => {
     const tsProject = ts.createProject("tsconfig.json", {
       noEmitOnError: true,
-      declaration: dest === "lib",
+      declaration: true,
       target: "es5",
       module,
     });
