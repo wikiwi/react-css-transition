@@ -1,3 +1,7 @@
+## 0.7.1 (February 02, 2017)
+
+- Export missing typescript type definitions for cjs
+
 ## 0.7.0 (February 01, 2017)
 
 - Switch to [react-transition-group](https://github.com/reactjs/react-transition-group)
