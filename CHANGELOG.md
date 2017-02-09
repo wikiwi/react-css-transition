@@ -1,3 +1,7 @@
+## 0.7.2 (February 09, 2017)
+
+- Fix bug when parsing transitions with a cubic-bezier or steps function
+
 ## 0.7.1 (February 02, 2017)
 
 - Export missing typescript type definitions for cjs
