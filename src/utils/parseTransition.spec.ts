@@ -19,6 +19,13 @@ describe("parseTransition", () => {
           { property: "height", duration: 3000, delay: 2000 },
         ],
       ],
+      [
+        "transform 100ms cubic-bezier(0.4, 0.0, 0.6, 1) 150ms",
+        [
+          { property: "transform", duration: 100, delay: 150 },
+          { property: "transform", duration: 100, delay: 150 },
+        ],
+      ],
     ];
     cases.forEach((c) => assert.deepEqual(parseTransition(c[0] as string), c[1]));
   });

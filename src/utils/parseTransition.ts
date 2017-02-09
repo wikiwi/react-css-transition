@@ -11,9 +11,9 @@ export function parseTransition(transition: string): [TransitionEntry, Transitio
   let firstProperty: TransitionEntry = null;
   let lastPropertyTotalDuration = -1;
   let firstPropertyDelay = 99999999;
-  transition.split(/\s*,\s*/).forEach(
+  transition.split(/\s*,\s*(?![^\(]*\))/g).forEach(
     (entry) => {
-      const parts = entry.split(/\s+/);
+      const parts = entry.split(/\s+(?![^\(]*\))/g);
       const property = parts.filter((p) => p.match(/^[a-z\-A-Z]+$/))[0];
       const [duration = 0, delay = 0] = parts.filter((p) => p.match(/^[0-9]+m?s$/)).map((p) => parseDuration(p));
       const totalDuration = duration + delay;
