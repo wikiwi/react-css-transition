@@ -8,8 +8,8 @@ import { mergeWithBaseStyle } from "./composables/mergeWithBaseStyle";
 import { withTransitionInfo, WithTransitionInfoProps } from "./composables/withTransitionInfo";
 import { withTransitionObserver, WithTransitionObserverProps } from "./composables/withTransitionObserver";
 import { withWorkaround } from "./composables/withWorkaround";
-import { preventPhantomEvents } from "./composables/preventPhantomEvents";
 import { withDOMNodeCallback, WithDOMNodeCallbackProps } from "./composables/withDOMNodeCallback";
+// import { preventPhantomEvents } from "./composables/preventPhantomEvents";
 
 export type CSSTransitionDelay = number | { appear?: number; enter?: number; leave?: number };
 export type CSSTransitionEventHandler = () => void;
@@ -98,7 +98,8 @@ const enhance = assemble<CSSTransitionInnerProps, CSSTransitionProps>(
   withTransitionInfo,
   withTransitionObserver,
   withWorkaround,
-  preventPhantomEvents,
+  // TODO: needs more investigation and probably a different way to do it.
+  // preventPhantomEvents,
   mapPropsToInner,
 );
 
