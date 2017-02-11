@@ -34,6 +34,11 @@ export const preventPhantomEvents = isolate(
         onTransitionEnd: ({onTransitionEnd}) => (e: TransitionEvent) => {
           if (!onTransitionEnd) { return; }
 
+          if (e.target !== e.currentTarget) {
+            onTransitionEnd(e);
+            return;
+          }
+
           // Skip transitionEnd that comes <= 10ms after (reversing) a transition.
           // In most cases this came from the previous transition.
           let compareWith = lastTriggerTime;

@@ -26,6 +26,13 @@ describe("preventPhantomEvents", () => {
     assert.isTrue(onTransitionEnd.notCalled);
   });
 
+  it("should not block onTransitionEnd originating from children", () => {
+    wrapper.setProps({ active: true });
+    const event = { timeStamp: Date.now(), target: "a", currentTarget: "b" };
+    wrapper.simulate("transitionEnd", event);
+    assert.isTrue(onTransitionEnd.called);
+  });
+
   it("should call onTransitionEnd", () => {
     wrapper.setProps({ active: true });
     const event = { timeStamp: Date.now() + 20 };
