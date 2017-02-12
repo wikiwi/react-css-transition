@@ -12,6 +12,7 @@ export type WithTransitionInfoProps = {
     firstPropertyDelay: number,
     firstProperty: string,
     lastProperty: string,
+    totalDuration: number,
   },
 };
 
@@ -47,12 +48,13 @@ export const withTransitionInfo =
             node.className = className;
             parsed = parseComputedTransitionMemoized(node);
           }
-          const [{delay: firstPropertyDelay, property: firstProperty}, {property: lastProperty}] = parsed;
+          const [first, last] = parsed;
           return {
             transitionInfo: {
-              firstPropertyDelay,
-              firstProperty,
-              lastProperty,
+              firstPropertyDelay: first.delay,
+              firstProperty: first.property,
+              lastProperty: last.property,
+              totalDuration: last.duration + last.delay,
             },
           };
         }

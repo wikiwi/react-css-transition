@@ -45,6 +45,7 @@ describe("withTransitionInfo", () => {
           firstProperty: "width",
           firstPropertyDelay: 10,
           lastProperty: "width",
+          totalDuration: 10010,
         },
       };
       const wrapper = shallow(<Assembly {...input} />);
@@ -81,6 +82,7 @@ describe("withTransitionInfo", () => {
           firstProperty: "width",
           firstPropertyDelay: 10,
           lastProperty: "width",
+          totalDuration: 10010,
         },
       };
       const wrapper = mount(<Assembly {...input} />);
