@@ -7,6 +7,7 @@ import {
   defaultInitState, activeInitState, appearInitState,
   defaultState, activeState,
   appearPendingState, enterPendingState, leavePendingState,
+  appearPrepareState, enterPrepareState, leavePrepareState,
   appearTriggeredState, enterTriggeredState, leaveTriggeredState,
   appearStartedState, enterStartedState, leaveStartedState,
 } from "./reducer";
@@ -68,7 +69,7 @@ describe("reducer.ts", () => {
     });
     it("should return transition init state", () => {
       transitionNames.forEach((name) => {
-        const id = StateID.EnterStarted;
+        const id = StateID.EnterPending;
         const inTransition = false;
         const style = { top: 0 };
         const className = "foo";
@@ -105,7 +106,7 @@ describe("reducer.ts", () => {
           },
         ];
         cases.forEach((c, idx) => {
-          assert.deepEqual(getState(id, name, c.props, { init: true }), c.out,
+          assert.deepEqual(getState(id, name, c.props, { mode: "init" }), c.out,
             `Case ${name} ${idx} unexpected state.`);
         });
       });
@@ -114,7 +115,7 @@ describe("reducer.ts", () => {
   it("should return transition init fallback state", () => {
     transitionNames.forEach((name) => {
       const fallbackName = name === "leave" ? "active" : "default";
-      const id = StateID.EnterStarted;
+      const id = StateID.EnterPending;
       const inTransition = false;
       const style = { top: 0 };
       const className = "foo";
@@ -149,72 +150,118 @@ describe("reducer.ts", () => {
         },
       ];
       cases.forEach((c, idx) => {
-        assert.deepEqual(getState(id, name, c.props, { init: true }), c.out,
+        assert.deepEqual(getState(id, name, c.props, { mode: "init" }), c.out,
           `Case ${name} ${idx} unexpected state.`);
       });
     });
   });
-  it("should fallback appear to enter", () => {
-    const id = StateID.AppearInit;
-    const style = { left: "0px" };
-    const className = "foo";
-    const inTransition = true;
-    const cases = [
-      {
-        props: {
-          enterStyle: style,
+  it("should return transition prepare state", () => {
+    transitionNames.forEach((name) => {
+      const id = StateID.EnterPrepare;
+      const inTransition = false;
+      const style = { top: 0 };
+      const transition = "opacity 200ms";
+      const styleWithTransition = { ...style, transition };
+      const className = "foo";
+      const cases = [
+        {
+          props: {
+            [name + "InitStyle"]: style,
+            [name + "Style"]: { transition },
+          },
+          out: { id, style: styleWithTransition, inTransition, className: "" },
         },
-        out: { id, style, inTransition, className: "" },
-      },
-      {
-        props: {
-          enterClassName: className,
+        {
+          props: {
+            [name + "InitStyle"]: style,
+            [name + "Style"]: { transition },
+            [name + "InitClassName"]: className,
+          },
+          out: { id, style: styleWithTransition, inTransition, className },
         },
-        out: { id, className, inTransition, style: {} },
-      },
-      {
-        props: {
-          enterStyle: style,
-          enterClassName: className,
+        {
+          props: {
+            [name + "InitStyle"]: style,
+            [name + "ClassName"]: "bar",
+            [name + "InitClassName"]: className,
+          },
+          out: { id, style, inTransition, className },
         },
-        out: { id, style, inTransition, className },
-      },
-    ];
-    cases.forEach((c, idx) => {
-      assert.deepEqual(getState(id, "appear", c.props), c.out,
-        `Case ${name} ${idx} unexpected state.`);
+        {
+          props: {
+            [name + "ClassName"]: "bar",
+            [name + "InitClassName"]: className,
+          },
+          out: { id, style: {}, inTransition, className },
+        },
+      ];
+      cases.forEach((c, idx) => {
+        assert.deepEqual(getState(id, name, c.props, { mode: "prepare" }), c.out,
+          `Case ${name} ${idx} unexpected state.`);
+      });
     });
   });
-  it("should fallback appearInit to enterInit", () => {
-    const id = StateID.AppearInit;
-    const style = { left: "0px" };
-    const className = "foo";
-    const inTransition = false;
-    const cases = [
-      {
-        props: {
-          enterInitStyle: style,
-        },
-        out: { id, style, inTransition, className: "" },
+});
+it("should fallback appear to enter", () => {
+  const id = StateID.AppearInit;
+  const style = { left: "0px" };
+  const className = "foo";
+  const inTransition = true;
+  const cases = [
+    {
+      props: {
+        enterStyle: style,
       },
-      {
-        props: {
-          enterInitClassName: className,
-        },
-        out: { id, className, inTransition, style: {} },
+      out: { id, style, inTransition, className: "" },
+    },
+    {
+      props: {
+        enterClassName: className,
       },
-      {
-        props: {
-          enterInitStyle: style,
-          enterInitClassName: className,
-        },
-        out: { id, style, inTransition, className },
+      out: { id, className, inTransition, style: {} },
+    },
+    {
+      props: {
+        enterStyle: style,
+        enterClassName: className,
       },
-    ];
-    cases.forEach((c, idx) => {
-      assert.deepEqual(getState(id, "appear", c.props, { init: true }), c.out,
-        `Case ${name} ${idx} unexpected state.`);
-    });
+      out: { id, style, inTransition, className },
+    },
+  ];
+  cases.forEach((c, idx) => {
+    assert.deepEqual(getState(id, "appear", c.props), c.out,
+      `Case ${name} ${idx} unexpected state.`);
+  });
+});
+it("should fallback appearInit to enterInit", () => {
+  const id = StateID.AppearInit;
+  const style = { left: "0px" };
+  const className = "foo";
+  const inTransition = false;
+  const cases = [
+    {
+      props: {
+        enterInitStyle: style,
+      },
+      out: { id, style, inTransition, className: "" },
+    },
+    {
+      props: {
+        enterInitClassName: className,
+      },
+      out: { id, className, inTransition, style: {} },
+    },
+    {
+      props: {
+        enterInitStyle: style,
+        enterInitClassName: className,
+      },
+      out: { id, style, inTransition, className },
+    },
+  ];
+  cases.forEach((c, idx) => {
+    assert.deepEqual(getState(id, "appear", c.props, { mode: "init" }), c.out,
+      `Case ${name} ${idx} unexpected state.`);
   });
 });
 describe("states", () => {
@@ -249,6 +296,18 @@ describe("states", () => {
   describe(
     "leavePendingState",
     testState(StateID.LeavePending, "leaveInitStyle", (props) => leavePendingState(props)),
+  );
+  describe(
+    "appearPrepareState",
+    testState(StateID.AppearPrepare, "appearInitStyle", (props) => appearPrepareState(props)),
+  );
+  describe(
+    "enterPrepareState",
+    testState(StateID.EnterPrepare, "enterInitStyle", (props) => enterPrepareState(props)),
+  );
+  describe(
+    "leavePrepareState",
+    testState(StateID.LeavePrepare, "leaveInitStyle", (props) => leavePrepareState(props)),
   );
   describe(
     "appearTriggeredState",
@@ -312,7 +371,7 @@ describe("actions", () => {
           appearStyle: {},
         },
       });
-      assert.strictEqual(pending, ActionID.TransitionTrigger);
+      assert.strictEqual(pending, ActionID.TransitionPrepare);
       assert.strictEqual(state.id, StateID.AppearPending);
     });
 
@@ -334,21 +393,21 @@ describe("actions", () => {
     it("should transit to enter pending state", () => {
       [StateID.Default, StateID.DefaultInit].forEach((id) => {
         const {state, pending} = reducer(id, { kind: actionID, props: { enterStyle: {} } });
-        assert.strictEqual(pending, ActionID.TransitionTrigger);
+        assert.strictEqual(pending, ActionID.TransitionPrepare);
         assert.strictEqual(state.id, StateID.EnterPending);
       });
     });
     it("should transit to leave pending state", () => {
       [StateID.Active, StateID.ActiveInit].forEach((id) => {
         const {state, pending} = reducer(id, { kind: actionID, props: { leaveStyle: {} } });
-        assert.strictEqual(pending, ActionID.TransitionTrigger);
+        assert.strictEqual(pending, ActionID.TransitionPrepare);
         assert.strictEqual(state.id, StateID.LeavePending);
       });
     });
     it("should transit to appear pending state", () => {
       const id = StateID.AppearInit;
       const {state, pending} = reducer(id, { kind: actionID, props: { appearStyle: {} } });
-      assert.strictEqual(pending, ActionID.TransitionTrigger);
+      assert.strictEqual(pending, ActionID.TransitionPrepare);
       assert.strictEqual(state.id, StateID.AppearPending);
     });
     it("should skip to active and complete", () => {
@@ -433,47 +492,46 @@ describe("actions", () => {
   });
   describe("TransitionTrigger", () => {
     const actionID = ActionID.TransitionTrigger;
-
     it("should transit to enter pending state", () => {
       [StateID.Default, StateID.DefaultInit].forEach((id) => {
         const {state, pending} = reducer(id, { kind: actionID, props: { enterStyle: {} } });
-        assert.strictEqual(pending, ActionID.TransitionTrigger);
+        assert.strictEqual(pending, ActionID.TransitionPrepare);
         assert.strictEqual(state.id, StateID.EnterPending);
       });
     });
     it("should transit to leave pending state", () => {
       [StateID.Active, StateID.ActiveInit].forEach((id) => {
         const {state, pending} = reducer(id, { kind: actionID, props: { leaveStyle: {} } });
-        assert.strictEqual(pending, ActionID.TransitionTrigger);
+        assert.strictEqual(pending, ActionID.TransitionPrepare);
         assert.strictEqual(state.id, StateID.LeavePending);
       });
     });
     it("should transit to appear pending state", () => {
       const id = StateID.AppearInit;
       const {state, pending} = reducer(id, { kind: actionID, props: { appearStyle: {} } });
-      assert.strictEqual(pending, ActionID.TransitionTrigger);
+      assert.strictEqual(pending, ActionID.TransitionPrepare);
       assert.strictEqual(state.id, StateID.AppearPending);
     });
     it("should transit to enter triggered state", () => {
-      const id = StateID.EnterPending;
+      const id = StateID.EnterPrepare;
       const {state, pending} = reducer(id, { kind: actionID, props: { active: true } });
       assert.isUndefined(pending);
       assert.strictEqual(state.id, StateID.EnterTriggered);
     });
     it("should transit to leave triggered state", () => {
-      const id = StateID.LeavePending;
+      const id = StateID.LeavePrepare;
       const {state, pending} = reducer(id, { kind: actionID, props: { active: false } });
       assert.isUndefined(pending);
       assert.strictEqual(state.id, StateID.LeaveTriggered);
     });
     it("should transit to appear triggered state", () => {
-      const id = StateID.AppearPending;
+      const id = StateID.AppearPrepare;
       const {state, pending} = reducer(id, { kind: actionID, props: { active: true } });
       assert.isUndefined(pending);
       assert.strictEqual(state.id, StateID.AppearTriggered);
     });
     it("should interrupt enter pending and triggered", () => {
-      [StateID.EnterPending, StateID.EnterTriggered].forEach((id) => {
+      [StateID.EnterPending, StateID.EnterPrepare, StateID.EnterTriggered].forEach((id) => {
         const props = { active: false };
         const {state, pending, completed} = reducer(id, { kind: actionID, props });
         assert.isUndefined(pending);
@@ -482,7 +540,7 @@ describe("actions", () => {
       });
     });
     it("should interrupt leave pending and triggered", () => {
-      [StateID.LeavePending, StateID.LeaveTriggered].forEach((id) => {
+      [StateID.LeavePending, StateID.LeavePrepare, StateID.LeaveTriggered].forEach((id) => {
         const props = { active: true };
         const {state, pending, completed} = reducer(id, { kind: actionID, props });
         assert.isUndefined(pending);
@@ -491,7 +549,7 @@ describe("actions", () => {
       });
     });
     it("should interrupt appear pending and triggered", () => {
-      [StateID.AppearPending, StateID.AppearTriggered].forEach((id) => {
+      [StateID.AppearPending, StateID.AppearPrepare, StateID.AppearTriggered].forEach((id) => {
         const props = { active: false };
         const {state, pending, completed} = reducer(id, { kind: actionID, props });
         assert.isUndefined(pending);
@@ -537,7 +595,6 @@ function testState(id: StateID, styleName: string, state: (props: ActionProps) =
         const styleProcessed = { top: "5px", transition: "top 120ms ease 0ms" };
         assert.deepEqual(state({ ...extraProps, [styleName]: style }).style, styleProcessed);
       });
-
       it("should return transition style with extra delay", () => {
         const style = { top: transit("5px", 120, "ease", 10) };
         const styleProcessed = { top: "5px", transition: "top 120ms ease 30ms" };

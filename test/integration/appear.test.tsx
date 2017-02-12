@@ -11,9 +11,11 @@ describe("appear integration test", () => {
   describe("<CSSTransition>", () => {
     const activeStyle: CSSProperties = { width: "100px" };
     const defaultStyle: CSSProperties = { width: "50px" };
+    const appearInitStyle: CSSProperties = { width: "60px" };
     const appearStyle: CSSProperties = { width: transit("100px", 150, "ease", 25) };
     const leaveStyle: CSSProperties = { width: transit("50px", 150, "ease", 25) };
-    const appearStyleProcessed: CSSProperties = { width: "100px", transition: "width 150ms ease 25ms" };
+    const transition = "width 150ms ease 25ms";
+    const appearStyleProcessed: CSSProperties = { width: "100px", transition };
     let onTransitionComplete: SinonSpy;
     let getWrapper: (props?: CSSTransitionProps) => ReactWrapper<any, {}>;
 
@@ -33,7 +35,7 @@ describe("appear integration test", () => {
       before(() => {
         onTransitionComplete = spy();
         wrapper = getWrapper({
-          activeStyle, appearStyle, leaveStyle, defaultStyle,
+          activeStyle, appearStyle, leaveStyle, defaultStyle, appearInitStyle,
           onTransitionComplete,
           active: true,
           transitionAppear: true,
@@ -45,12 +47,20 @@ describe("appear integration test", () => {
         wrapper.detach();
       });
 
-      it("should start with default style", () => {
+      it("should start with appear init style", () => {
         const style = target.props().style;
-        assert.deepEqual(style, defaultStyle);
+        assert.deepEqual(style, appearInitStyle);
       });
 
       describe("after mount", () => {
+        before((done) => runInFrame(1, () => done()));
+        it("should apply prepare style", () => {
+          const style = target.props().style;
+          assert.deepEqual(style, { ...appearInitStyle, transition });
+        });
+      });
+
+      describe("after prepare", () => {
         before((done) => runInFrame(1, () => done()));
 
         it("should automatically trigger transition", () => {

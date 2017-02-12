@@ -11,10 +11,13 @@ describe("basic integration test", () => {
   describe("<CSSTransition>", () => {
     const activeStyle: CSSProperties = { width: "100px" };
     const defaultStyle: CSSProperties = { width: "50px" };
+    const enterInitStyle: CSSProperties = { width: "60px" };
+    const leaveInitStyle: CSSProperties = { width: "90px" };
     const enterStyle: CSSProperties = { width: transit("100px", 150, "ease", 25) };
     const leaveStyle: CSSProperties = { width: transit("50px", 150, "ease", 25) };
-    const enterStyleProcessed: CSSProperties = { width: "100px", transition: "width 150ms ease 25ms" };
-    const leaveStyleProcessed: CSSProperties = { width: "50px", transition: "width 150ms ease 25ms" };
+    const transition = "width 150ms ease 25ms";
+    const enterStyleProcessed: CSSProperties = { width: "100px", transition };
+    const leaveStyleProcessed: CSSProperties = { width: "50px", transition };
     let onTransitionComplete: SinonSpy;
     let getWrapper: (props?: CSSTransitionProps) => ReactWrapper<any, {}>;
     let getWrapperAttached: (props?: CSSTransitionProps) => ReactWrapper<any, {}>;
@@ -52,8 +55,10 @@ describe("basic integration test", () => {
         onTransitionComplete = spy();
         wrapper = getWrapperAttached({
           activeStyle,
+          enterInitStyle,
           enterStyle,
           leaveStyle,
+          leaveInitStyle,
           defaultStyle,
           onTransitionComplete,
         });
@@ -74,12 +79,20 @@ describe("basic integration test", () => {
           wrapper.setProps({ active: true });
         });
 
-        it("should remain in default style", () => {
+        it("should apply enter init style", () => {
           const style = target.props().style;
-          assert.deepEqual(style, defaultStyle);
+          assert.deepEqual(style, enterInitStyle);
         });
 
-        it("should begin transition after 2nd render", (done) => {
+        it("should prepare transition after one frame", (done) => {
+          runInFrame(1, () => {
+            const style = target.props().style;
+            assert.deepEqual(style, { ...enterInitStyle, transition });
+            done();
+          });
+        });
+
+        it("should begin transition after another frame", (done) => {
           runInFrame(1, () => {
             const style = target.props().style;
             assert.deepEqual(style, enterStyleProcessed);
@@ -122,7 +135,13 @@ describe("basic integration test", () => {
       before(() => {
         onTransitionComplete = spy();
         wrapper = getWrapperAttached({
-          activeStyle, enterStyle, leaveStyle, defaultStyle, onTransitionComplete,
+          activeStyle,
+          enterInitStyle,
+          enterStyle,
+          leaveStyle,
+          leaveInitStyle,
+          defaultStyle,
+          onTransitionComplete,
           active: true,
         });
         target = wrapper.find("div");
@@ -142,12 +161,20 @@ describe("basic integration test", () => {
           wrapper.setProps({ active: false });
         });
 
-        it("should remain in active style", () => {
+        it("should apply leave init style", () => {
           const style = target.props().style;
-          assert.deepEqual(style, activeStyle);
+          assert.deepEqual(style, leaveInitStyle);
         });
 
-        it("should begin transition after 2nd render", (done) => {
+        it("should prepare transition after one frame", (done) => {
+          runInFrame(1, () => {
+            const style = target.props().style;
+            assert.deepEqual(style, { ...leaveInitStyle, transition });
+            done();
+          });
+        });
+
+        it("should begin transition after another frame", (done) => {
           runInFrame(1, () => {
             const style = target.props().style;
             assert.deepEqual(style, leaveStyleProcessed);
@@ -209,7 +236,8 @@ describe("basic integration test", () => {
       describe("when transition was triggered", () => {
         before((done) => {
           wrapper.setProps({ active: true });
-          runInFrame(1, done);
+          // after init and prepare states.
+          runInFrame(3, done);
         });
 
         it("should begin transition", () => {
@@ -264,7 +292,8 @@ describe("basic integration test", () => {
       describe("when transition was triggered", () => {
         before((done) => {
           wrapper.setProps({ active: false });
-          runInFrame(1, done);
+          // after init and prepare states.
+          runInFrame(3, done);
         });
 
         it("should begin transition", () => {
@@ -319,7 +348,8 @@ describe("basic integration test", () => {
       describe("when transition was triggered", () => {
         before((done) => {
           wrapper.setProps({ active: true });
-          runInFrame(1, done);
+          // after init and prepare states.
+          runInFrame(3, done);
         });
 
         it("should begin transition", () => {
@@ -401,7 +431,8 @@ describe("basic integration test", () => {
       describe("when transition was triggered", () => {
         before((done) => {
           wrapper.setProps({ active: false });
-          runInFrame(1, done);
+          // after init and prepare states.
+          runInFrame(3, done);
         });
 
         it("should begin transition", () => {

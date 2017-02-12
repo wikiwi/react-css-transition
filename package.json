@@ -31,8 +31,8 @@
     "test": "npm run test:unit && npm run test:integration",
     "test:unit": "cross-env TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' nyc mocha --opts mocha.opts",
     "test:unit:watch": "npm run test:unit -- --watch",
-    "test:integration": "karma start",
-    "test:integration:watch": "karma start --single-run=false"
+    "test:integration": "cross-env NODE_ENV=integration karma start",
+    "test:integration:watch": "cross-env NODE_ENV=integration karma start --single-run=false"
   },
   "engines": {
     "node": ">=4"

@@ -20,12 +20,15 @@ export enum StateID {
   Default,
   Active,
   AppearPending,
+  AppearPrepare,
   AppearTriggered,
   AppearStarted,
   EnterPending,
+  EnterPrepare,
   EnterTriggered,
   EnterStarted,
   LeavePending,
+  LeavePrepare,
   LeaveTriggered,
   LeaveStarted,
 }
@@ -36,12 +39,14 @@ export const StateIDList = [
   StateID.AppearPending, StateID.AppearTriggered, StateID.AppearStarted,
   StateID.EnterPending, StateID.EnterTriggered, StateID.EnterStarted,
   StateID.LeavePending, StateID.LeaveTriggered, StateID.LeaveStarted,
+  StateID.AppearPrepare, StateID.EnterPrepare, StateID.LeavePrepare,
 ];
 
 export enum ActionID {
   Init,
   Mount,
   TransitionInit,
+  TransitionPrepare,
   TransitionTrigger,
   TransitionStart,
   TransitionComplete,
@@ -114,14 +119,16 @@ export function getDelay(name: string, delay: CSSTransitionDelay): number {
   return (delay as any)[name] ? (delay as any)[name] : 0;
 }
 
-export function getState(id: StateID, name: string, props: any, params: { init?: boolean } = {}): TransitionState {
+export type GetStateParams = { mode?: "init" | "prepare" };
+
+export function getState(id: StateID, name: string, props: any, params: GetStateParams = {}): TransitionState {
   if (name === "appear" && !props.appearStyle && !props.appearClassName) {
     return getState(id, "enter", props, params);
   }
   let style: any;
   let className: string;
   let inTransition = false;
-  if (params.init) {
+  if (params.mode === "init" || params.mode === "prepare") {
     style = props[name + "InitStyle"];
     className = props[name + "InitClassName"];
     if (style === undefined && className === undefined) {
@@ -131,6 +138,13 @@ export function getState(id: StateID, name: string, props: any, params: { init?:
       } else if (name === "leave") {
         style = props.activeStyle;
         className = props.activeClassName;
+      }
+    }
+    // Setting transition before starting one fixes issues on IE & Edge...
+    if (params.mode === "prepare" && style !== undefined) {
+      const tmp = resolveTransit(props[name + "Style"], getDelay(name, props.transitionDelay));
+      if (tmp.transition) {
+        style = { ...style, transition: tmp.transition };
       }
     }
   } else {
@@ -153,18 +167,21 @@ export function getState(id: StateID, name: string, props: any, params: { init?:
   };
 }
 
-export function stateFunc(id: StateID, name: string, params: { init?: boolean } = {}) {
+export function stateFunc(id: StateID, name: string, params: GetStateParams = {}) {
   return (props: Action["props"]) => getState(id, name, props, params);
 }
 
 export const activeInitState = stateFunc(StateID.ActiveInit, "active");
 export const defaultInitState = stateFunc(StateID.DefaultInit, "default");
-export const appearInitState = stateFunc(StateID.AppearInit, "appear", { init: true });
+export const appearInitState = stateFunc(StateID.AppearInit, "appear", { mode: "init" });
 export const activeState = stateFunc(StateID.Active, "active");
 export const defaultState = stateFunc(StateID.Default, "default");
-export const appearPendingState = stateFunc(StateID.AppearPending, "appear", { init: true });
-export const enterPendingState = stateFunc(StateID.EnterPending, "enter", { init: true });
-export const leavePendingState = stateFunc(StateID.LeavePending, "leave", { init: true });
+export const appearPendingState = stateFunc(StateID.AppearPending, "appear", { mode: "init" });
+export const enterPendingState = stateFunc(StateID.EnterPending, "enter", { mode: "init" });
+export const leavePendingState = stateFunc(StateID.LeavePending, "leave", { mode: "init" });
+export const appearPrepareState = stateFunc(StateID.AppearPrepare, "appear", { mode: "prepare" });
+export const enterPrepareState = stateFunc(StateID.EnterPrepare, "enter", { mode: "prepare" });
+export const leavePrepareState = stateFunc(StateID.LeavePrepare, "leave", { mode: "prepare" });
 export const appearTriggeredState = stateFunc(StateID.AppearTriggered, "appear");
 export const enterTriggeredState = stateFunc(StateID.EnterTriggered, "enter");
 export const leaveTriggeredState = stateFunc(StateID.LeaveTriggered, "leave");
@@ -177,6 +194,8 @@ export type Reducer = (stateID: StateID, action: Action) =>
 
 export const reducer: Reducer = (stateID, action) => {
   const props = action.props;
+  let nextState: TransitionState;
+
   switch (action.kind) {
     case ActionID.Init:
       if (stateID !== StateID.EntryPoint) { throw new Error("invalid entrypoint"); }
@@ -194,7 +213,6 @@ export const reducer: Reducer = (stateID, action) => {
           return null;
       }
     case ActionID.TransitionInit:
-      let nextState: TransitionState;
       switch (stateID) {
         case StateID.DefaultInit:
         case StateID.Default:
@@ -215,6 +233,24 @@ export const reducer: Reducer = (stateID, action) => {
             return { state: activeState(props), completed: true };
           }
           nextState = appearPendingState(props);
+          break;
+        default:
+          throw new Error(`invalid state transition from ${StateID[stateID]}`);
+      };
+      return { state: nextState, pending: ActionID.TransitionPrepare };
+    case ActionID.TransitionPrepare:
+      switch (stateID) {
+        case StateID.EnterPending:
+          if (!props.active) { return { state: defaultState(props), completed: true }; }
+          nextState = enterPrepareState(props);
+          break;
+        case StateID.LeavePending:
+          if (props.active) { return { state: activeState(props), completed: true }; }
+          nextState = leavePrepareState(props);
+          break;
+        case StateID.AppearPending:
+          if (!props.active) { return { state: defaultState(props), completed: true }; }
+          nextState = appearPrepareState(props);
           break;
         default:
           throw new Error(`invalid state transition from ${StateID[stateID]}`);
@@ -255,12 +291,18 @@ export const reducer: Reducer = (stateID, action) => {
         case StateID.AppearInit:
           return reducer(stateID, { kind: ActionID.TransitionInit, props });
         case StateID.EnterPending:
-          if (props.active) { return { state: enterTriggeredState(props) }; }
           return { state: defaultState(props), completed: true };
         case StateID.LeavePending:
-          if (!props.active) { return { state: leaveTriggeredState(props) }; }
           return { state: activeState(props), completed: true };
         case StateID.AppearPending:
+          return { state: defaultState(props), completed: true };
+        case StateID.EnterPrepare:
+          if (props.active) { return { state: enterTriggeredState(props) }; }
+          return { state: defaultState(props), completed: true };
+        case StateID.LeavePrepare:
+          if (!props.active) { return { state: leaveTriggeredState(props) }; }
+          return { state: activeState(props), completed: true };
+        case StateID.AppearPrepare:
           if (props.active) { return { state: appearTriggeredState(props) }; }
           return { state: defaultState(props), completed: true };
         case StateID.EnterTriggered:
