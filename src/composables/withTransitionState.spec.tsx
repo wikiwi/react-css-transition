@@ -34,8 +34,8 @@ describe("withTransitionState.tsx", () => {
         reducer = spy(() => ({ state }));
         wrapper = getWrapper({ children: <span /> }, reducer);
       });
-      it("should dispatch Init", () => {
-        assert.isTrue(reducer.calledWith(StateID.EntryPoint, { kind: ActionID.Init, props: {} }));
+      it("should dispatch New", () => {
+        assert.isTrue(reducer.calledWith(StateID.EntryPoint, { kind: ActionID.New, props: {} }));
       });
       it("should return transitionState", () => {
         assert.deepEqual(wrapper.props().transitionState, pick(state, "style", "className"));

@@ -14,36 +14,36 @@ export interface TransitionState {
 
 export enum StateID {
   EntryPoint,
-  DefaultInit,
-  ActiveInit,
-  AppearInit,
+  DefaultNew,
+  ActiveNew,
+  AppearNew,
   Default,
   Active,
-  AppearPending,
+  AppearInit,
   AppearPrepare,
   AppearTriggered,
   AppearStarted,
-  EnterPending,
+  EnterInit,
   EnterPrepare,
   EnterTriggered,
   EnterStarted,
-  LeavePending,
+  LeaveInit,
   LeavePrepare,
   LeaveTriggered,
   LeaveStarted,
 }
 
 export const StateIDList = [
-  StateID.ActiveInit, StateID.DefaultInit, StateID.AppearInit,
+  StateID.ActiveNew, StateID.DefaultNew, StateID.AppearNew,
   StateID.Active, StateID.Default,
-  StateID.AppearPending, StateID.AppearTriggered, StateID.AppearStarted,
-  StateID.EnterPending, StateID.EnterTriggered, StateID.EnterStarted,
-  StateID.LeavePending, StateID.LeaveTriggered, StateID.LeaveStarted,
+  StateID.AppearInit, StateID.AppearTriggered, StateID.AppearStarted,
+  StateID.EnterInit, StateID.EnterTriggered, StateID.EnterStarted,
+  StateID.LeaveInit, StateID.LeaveTriggered, StateID.LeaveStarted,
   StateID.AppearPrepare, StateID.EnterPrepare, StateID.LeavePrepare,
 ];
 
 export enum ActionID {
-  Init,
+  New,
   Mount,
   TransitionInit,
   TransitionPrepare,
@@ -171,14 +171,14 @@ export function stateFunc(id: StateID, name: string, params: GetStateParams = {}
   return (props: Action["props"]) => getState(id, name, props, params);
 }
 
-export const activeInitState = stateFunc(StateID.ActiveInit, "active");
-export const defaultInitState = stateFunc(StateID.DefaultInit, "default");
-export const appearInitState = stateFunc(StateID.AppearInit, "appear", { mode: "init" });
+export const activeNewState = stateFunc(StateID.ActiveNew, "active");
+export const defaultNewState = stateFunc(StateID.DefaultNew, "default");
+export const appearNewState = stateFunc(StateID.AppearNew, "appear", { mode: "init" });
 export const activeState = stateFunc(StateID.Active, "active");
 export const defaultState = stateFunc(StateID.Default, "default");
-export const appearPendingState = stateFunc(StateID.AppearPending, "appear", { mode: "init" });
-export const enterPendingState = stateFunc(StateID.EnterPending, "enter", { mode: "init" });
-export const leavePendingState = stateFunc(StateID.LeavePending, "leave", { mode: "init" });
+export const appearInitState = stateFunc(StateID.AppearInit, "appear", { mode: "init" });
+export const enterInitState = stateFunc(StateID.EnterInit, "enter", { mode: "init" });
+export const leaveInitState = stateFunc(StateID.LeaveInit, "leave", { mode: "init" });
 export const appearPrepareState = stateFunc(StateID.AppearPrepare, "appear", { mode: "prepare" });
 export const enterPrepareState = stateFunc(StateID.EnterPrepare, "enter", { mode: "prepare" });
 export const leavePrepareState = stateFunc(StateID.LeavePrepare, "leave", { mode: "prepare" });
@@ -197,42 +197,42 @@ export const reducer: Reducer = (stateID, action) => {
   let nextState: TransitionState;
 
   switch (action.kind) {
-    case ActionID.Init:
+    case ActionID.New:
       if (stateID !== StateID.EntryPoint) { throw new Error("invalid entrypoint"); }
       if (props.active) {
-        if (props.transitionAppear) { return { state: appearInitState(props) }; }
-        return { state: activeInitState(props) };
+        if (props.transitionAppear) { return { state: appearNewState(props) }; }
+        return { state: activeNewState(props) };
       }
-      if (!props.transitionAppear && props.active) { return { state: activeInitState(props) }; }
-      return { state: defaultInitState(props) };
+      if (!props.transitionAppear && props.active) { return { state: activeNewState(props) }; }
+      return { state: defaultNewState(props) };
     case ActionID.Mount:
       switch (stateID) {
-        case StateID.AppearInit:
+        case StateID.AppearNew:
           return reducer(stateID, { kind: ActionID.TransitionTrigger, props });
         default:
           return null;
       }
     case ActionID.TransitionInit:
       switch (stateID) {
-        case StateID.DefaultInit:
+        case StateID.DefaultNew:
         case StateID.Default:
           if (!hasTransition("enter", props)) {
             return { state: activeState(props), completed: true };
           }
-          nextState = enterPendingState(props);
+          nextState = enterInitState(props);
           break;
-        case StateID.ActiveInit:
+        case StateID.ActiveNew:
         case StateID.Active:
           if (!hasTransition("leave", props)) {
             return { state: defaultState(props), completed: true };
           }
-          nextState = leavePendingState(props);
+          nextState = leaveInitState(props);
           break;
-        case StateID.AppearInit:
+        case StateID.AppearNew:
           if (!hasTransition("appear", props)) {
             return { state: activeState(props), completed: true };
           }
-          nextState = appearPendingState(props);
+          nextState = appearInitState(props);
           break;
         default:
           throw new Error(`invalid state transition from ${StateID[stateID]}`);
@@ -240,15 +240,15 @@ export const reducer: Reducer = (stateID, action) => {
       return { state: nextState, pending: ActionID.TransitionPrepare };
     case ActionID.TransitionPrepare:
       switch (stateID) {
-        case StateID.EnterPending:
+        case StateID.EnterInit:
           if (!props.active) { return { state: defaultState(props), completed: true }; }
           nextState = enterPrepareState(props);
           break;
-        case StateID.LeavePending:
+        case StateID.LeaveInit:
           if (props.active) { return { state: activeState(props), completed: true }; }
           nextState = leavePrepareState(props);
           break;
-        case StateID.AppearPending:
+        case StateID.AppearInit:
           if (!props.active) { return { state: defaultState(props), completed: true }; }
           nextState = appearPrepareState(props);
           break;
@@ -284,17 +284,17 @@ export const reducer: Reducer = (stateID, action) => {
       }
     case ActionID.TransitionTrigger:
       switch (stateID) {
-        case StateID.ActiveInit:
+        case StateID.ActiveNew:
         case StateID.Active:
-        case StateID.DefaultInit:
+        case StateID.DefaultNew:
         case StateID.Default:
-        case StateID.AppearInit:
+        case StateID.AppearNew:
           return reducer(stateID, { kind: ActionID.TransitionInit, props });
-        case StateID.EnterPending:
+        case StateID.EnterInit:
           return { state: defaultState(props), completed: true };
-        case StateID.LeavePending:
+        case StateID.LeaveInit:
           return { state: activeState(props), completed: true };
-        case StateID.AppearPending:
+        case StateID.AppearInit:
           return { state: defaultState(props), completed: true };
         case StateID.EnterPrepare:
           if (props.active) { return { state: enterTriggeredState(props) }; }

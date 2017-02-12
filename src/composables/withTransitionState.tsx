@@ -42,13 +42,13 @@ export const withTransitionState = (reduce: Reducer) => combine(
       "transitionState", "setTransitionState",
       ({actionProps}) =>
         pick(
-          reduce(StateID.EntryPoint, { kind: ActionID.Init, props: actionProps }).state,
+          reduce(StateID.EntryPoint, { kind: ActionID.New, props: actionProps }).state,
           "style", "className", "inTransition",
         ),
     ),
     withHandlers<PropsUnion, PropsOut>(
       (initialProps) => {
-        let stateID = reduce(StateID.EntryPoint, { kind: ActionID.Init, props: initialProps }).state.id;
+        let stateID = reduce(StateID.EntryPoint, { kind: ActionID.New, props: initialProps }).state.id;
         let cancelPending: () => void = null;
         const cancelPendingIfExistent = () => {
           if (cancelPending) {
