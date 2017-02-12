@@ -50,6 +50,7 @@ export enum ActionID {
   TransitionTrigger,
   TransitionStart,
   TransitionComplete,
+  Timeout,
 }
 
 export type ActionPropKeys =
@@ -271,8 +272,8 @@ export const reducer: Reducer = (stateID, action) => {
       }
     case ActionID.TransitionComplete:
       switch (stateID) {
-        case StateID.AppearStarted:
         case StateID.AppearTriggered:
+        case StateID.AppearStarted:
         case StateID.EnterTriggered:
         case StateID.EnterStarted:
           return { state: activeState(props), completed: true };
@@ -318,6 +319,19 @@ export const reducer: Reducer = (stateID, action) => {
           return { state: enterStartedState(props) };
         default:
           throw new Error(`invalid state transition from ${StateID[stateID as any]}`);
+      }
+    case ActionID.Timeout:
+      switch (stateID) {
+        case StateID.AppearTriggered:
+        case StateID.AppearStarted:
+        case StateID.EnterTriggered:
+        case StateID.EnterStarted:
+          return { state: activeState(props), completed: true };
+        case StateID.LeaveTriggered:
+        case StateID.LeaveStarted:
+          return { state: defaultState(props), completed: true };
+        default:
+          throw new Error(`invalid state transition from ${StateID[stateID]}`);
       }
     default:
   }

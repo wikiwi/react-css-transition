@@ -490,6 +490,45 @@ describe("actions", () => {
       });
     });
   });
+  describe("Timeout", () => {
+    const actionID = ActionID.Timeout;
+    const validOrigin = [
+      StateID.AppearTriggered, StateID.AppearStarted,
+      StateID.EnterTriggered, StateID.EnterStarted,
+      StateID.LeaveTriggered, StateID.LeaveStarted,
+    ];
+
+    it("should fail on invalid state transitions", () => {
+      StateIDList
+        .filter((id) => validOrigin.indexOf(id) < 0)
+        .forEach((id) => assert.throw(() => reducer(id, { kind: actionID, props: {} })));
+    });
+    it("should transit to active state", () => {
+      const origin = [
+        StateID.AppearTriggered, StateID.AppearStarted,
+        StateID.EnterTriggered, StateID.EnterStarted,
+      ];
+      origin.forEach((id) => {
+        const {state, pending} = reducer(id, { kind: actionID, props: {} });
+        assert.isUndefined(pending);
+        assert.strictEqual(state.id, StateID.Active);
+      });
+    });
+    it("should transit to default state", () => {
+      [StateID.LeaveTriggered, StateID.LeaveStarted].forEach((id) => {
+        const {state, pending} = reducer(id, { kind: actionID, props: {} });
+        assert.isUndefined(pending);
+        assert.strictEqual(state.id, StateID.Default);
+      });
+    });
+    it("should complete", () => {
+      validOrigin.forEach((id) => {
+        const result = reducer(id, { kind: actionID, props: {} });
+        assert.isTrue(result.completed);
+      });
+    });
+  });
+
   describe("TransitionTrigger", () => {
     const actionID = ActionID.TransitionTrigger;
     it("should transit to enter init state", () => {
