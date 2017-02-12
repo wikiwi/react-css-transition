@@ -37,9 +37,10 @@ export const withWorkaround = combine(
       key: "workaround",
       style: { opacity: 0.9 },
     };
+    const transition = `opacity 1ms linear ${firstPropertyDelay}ms`;
     if (inTransition) {
       workaroundProps.onTransitionEnd = workaroundHandler;
-      workaroundProps.style = { opacity: 1.0, transition: `opacity 1ms linear ${firstPropertyDelay}ms` };
+      workaroundProps.style = { opacity: 1.0, transition, WebkitTransition: transition };
     }
     return {
       children: [<span {...workaroundProps } />, ...Children.toArray(children)],

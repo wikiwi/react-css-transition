@@ -52,7 +52,8 @@ describe("withWorkaround", () => {
 
     it("should perform a second transition", () => {
       const style = wrapper.childAt(0).props().style;
-      assert.deepEqual(style, { opacity: 1.0, transition: "opacity 1ms linear 10ms" });
+      const transition = "opacity 1ms linear 10ms";
+      assert.deepEqual(style, { opacity: 1.0, transition, WebkitTransition: transition });
     });
 
     describe("when second transition ends", () => {
