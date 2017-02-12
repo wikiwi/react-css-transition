@@ -19,6 +19,7 @@ export type TransitionState = {
 
 export type WithTransitionStateProps = {
   transitionState?: TransitionState,
+  timeout?: () => void,
 };
 
 type PropsOut =
@@ -89,6 +90,7 @@ export const withTransitionState = (reduce: Reducer) => combine(
     withHandlers<PropsUnion, PropsOut>({
       onTransitionBegin: ({dispatch}) => () => dispatch(ActionID.TransitionStart),
       onTransitionComplete: ({dispatch}) => () => dispatch(ActionID.TransitionComplete),
+      timeout: ({dispatch}) => () => dispatch(ActionID.Timeout),
     }),
     onDidMount<PropsUnion>(
       ({dispatch}) => {
@@ -104,7 +106,7 @@ export const withTransitionState = (reduce: Reducer) => combine(
         dispatch(ActionID.TransitionTrigger);
       }),
     integrate<keyof PropsUnion>(
-      "transitionState", "onTransitionBegin", "onTransitionComplete",
+      "timeout", "transitionState", "onTransitionBegin", "onTransitionComplete",
     ),
   ),
 );

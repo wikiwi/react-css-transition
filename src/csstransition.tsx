@@ -6,6 +6,7 @@ import { reducer } from "./reducer";
 import { withTransitionState, WithTransitionStateProps } from "./composables/withTransitionState";
 import { mergeWithBaseStyle } from "./composables/mergeWithBaseStyle";
 import { withTransitionInfo, WithTransitionInfoProps } from "./composables/withTransitionInfo";
+import { withTimeout } from "./composables/withTimeout";
 import { withTransitionObserver, WithTransitionObserverProps } from "./composables/withTransitionObserver";
 import { withWorkaround } from "./composables/withWorkaround";
 import { withDOMNodeCallback, WithDOMNodeCallbackProps } from "./composables/withDOMNodeCallback";
@@ -86,6 +87,7 @@ const mapPropsToInner = omitProps<keyof PropsUnion>(
   "onTransitionBegin",
   "transitionInfo",
   "transitionState",
+  "timeout",
   "getDOMNode",
 );
 
@@ -96,6 +98,7 @@ const enhance = assemble<CSSTransitionInnerProps, CSSTransitionProps>(
   withTransitionState(reducer),
   mergeWithBaseStyle,
   withTransitionInfo,
+  withTimeout,
   withTransitionObserver,
   withWorkaround,
   // TODO: needs more investigation and probably a different way to do it.

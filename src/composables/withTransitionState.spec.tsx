@@ -128,6 +128,26 @@ describe("withTransitionState.tsx", () => {
       });
     });
 
+    describe("timeout", () => {
+      const initialState = { id: 1, style: {} };
+      const state = { id: 2, style: { top: 0 }, className: "foo" };
+      let reducer: SinonSpy;
+      before(() => {
+        reducer = spy(createReducer({ 0: { state: initialState }, 1: { state } }));
+        wrapper = getWrapper({ children: <span /> }, reducer);
+        reducer.reset();
+        wrapper.props().timeout();
+      });
+
+      it("should dispatch ActionID.Timeout", () => {
+        assert.isTrue(reducer.calledWith(initialState.id, { kind: ActionID.Timeout, props: {} }));
+      });
+
+      it("should return transitionState", () => {
+        assert.deepEqual(wrapper.props().transitionState, pick(state, "style", "className"));
+      });
+    });
+
     describe("pending action", () => {
       const initialState = { id: 1, style: {} };
       const pendingState = { id: 2, style: { top: 0 }, className: "foo" };
