@@ -1,3 +1,10 @@
+## 0.7.3 (February 14, 2017)
+
+- Added full support for IE and Edge (atm. limited to inline styles)
+- Better compatibility with transit and prefixers
+- Use an automatic timeout as a fallback for rare edge cases
+- Refractored lifecycle hooks to align more with React Fiber
+
 ## 0.7.2 (February 09, 2017)
 
 - Fix bug when parsing transitions with a cubic-bezier or steps function
