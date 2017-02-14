@@ -11,6 +11,7 @@ import pick from "../utils/pick";
 import { ActionID, StateID, Reducer, actionPropKeys, ActionPropKeys } from "../reducer";
 
 export type TransitionState = {
+  id?: StateID,
   style?: CSSProperties,
   className?: string,
   inTransition?: boolean,
@@ -34,6 +35,8 @@ type PropsOut =
 
 type PropsUnion = CSSTransitionProps & PropsOut;
 
+const pickTransitionState = (state: any) => pick(state, "style", "className", "inTransition", "id");
+
 export const withTransitionState = (reduce: Reducer) => combine(
   isolate(
     withProps<PropsUnion, PropsOut>(
@@ -42,9 +45,8 @@ export const withTransitionState = (reduce: Reducer) => combine(
     withState<PropsUnion, keyof PropsOut, TransitionState>(
       "transitionState", "setTransitionState",
       ({actionProps}) =>
-        pick(
+        pickTransitionState(
           reduce(StateID.EntryPoint, { kind: ActionID.New, props: actionProps }).state,
-          "style", "className", "inTransition",
         ),
     ),
     withHandlers<PropsUnion, PropsOut>(
@@ -82,7 +84,7 @@ export const withTransitionState = (reduce: Reducer) => combine(
                   cancelPending = runInFrame(1, () => run(pending));
                 };
               }
-              setTransitionState(pick(state, "style", "className", "inTransition"), null);
+              setTransitionState(pickTransitionState(state));
             };
             return run;
           },
