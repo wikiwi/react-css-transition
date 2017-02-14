@@ -111,7 +111,7 @@
     "sinon": "^2.0.0-pre.4",
     "style-loader": "^0.13.1",
     "ts-node": "^2.0.0",
-    "tslint": "~4.1.1",
+    "tslint": "^4.4.2",
     "typescript": "^2.1.5",
     "url-loader": "^0.5.7",
     "webpack": "^2.2.0",
