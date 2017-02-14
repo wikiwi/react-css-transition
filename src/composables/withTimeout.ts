@@ -1,4 +1,4 @@
-import { withHandlers, isolate, onWillReceiveProps, onWillUnmount } from "reassemble";
+import { withHandlers, isolate, onWillReceiveProps, onDidUpdate, onWillUnmount } from "reassemble";
 
 import { CSSTransitionProps } from "../csstransition";
 import { WithTransitionStateProps } from "./withTransitionState";
@@ -32,14 +32,27 @@ export const withTimeout =
         {transitionState: {inTransition}, active},
         {
           transitionState: {inTransition: nextInTransition},
-          transitionInfo: {totalDuration},
-          cancel, timeoutIn, active: nextActive,
+          cancel, active: nextActive,
         },
       ) => {
-        const newTransition = inTransition !== nextInTransition;
+        const inTransitionChanged = inTransition !== nextInTransition;
+        const interrupted = nextInTransition && active !== nextActive;
+        if (inTransitionChanged || interrupted) {
+          cancel();
+        }
+      }),
+    onDidUpdate<PropsUnion>(
+      (
+        {transitionState: {inTransition}, active},
+        {
+          transitionState: {inTransition: nextInTransition},
+          transitionInfo: {totalDuration},
+          timeoutIn, active: nextActive,
+        },
+      ) => {
+        const newTransition = !inTransition && nextInTransition;
         const interrupted = nextInTransition && active !== nextActive;
         if (newTransition || interrupted) {
-          cancel();
           if (nextInTransition) {
             timeoutIn(totalDuration * timeoutMultiplier);
           }
