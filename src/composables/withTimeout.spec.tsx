@@ -97,4 +97,24 @@ describe("withTimeout", () => {
       }, halfPeriod);
     }, halfPeriod);
   });
+
+  it("should not call timeout after unmount", (done) => {
+    const props = {
+      transitionState: {
+        inTransition: false,
+      },
+      transitionInfo: {
+        totalDuration: 20,
+      },
+      timeout: spy(),
+    };
+    const timeoutIn = props.transitionInfo.totalDuration * timeoutMultiplier;
+    const wrapper = mount(<Assembly {...props} />);
+    wrapper.setProps({ transitionState: { inTransition: true } });
+    wrapper.unmount();
+    setTimeout(() => {
+      assert.isFalse(props.timeout.called);
+      done();
+    }, timeoutIn);
+  });
 });

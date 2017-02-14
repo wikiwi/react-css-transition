@@ -1,4 +1,4 @@
-import { withHandlers, isolate, onWillReceiveProps, debug } from "reassemble";
+import { withHandlers, isolate, onWillReceiveProps, onWillUnmount } from "reassemble";
 
 import { CSSTransitionProps } from "../csstransition";
 import { WithTransitionStateProps } from "./withTransitionState";
@@ -45,4 +45,5 @@ export const withTimeout =
           }
         }
       }),
+    onWillUnmount<PropsUnion>(({ cancel }) => cancel()),
   );
