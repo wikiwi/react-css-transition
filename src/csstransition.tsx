@@ -10,7 +10,7 @@ import { withTimeout } from "./composables/withTimeout";
 import { withTransitionObserver, WithTransitionObserverProps } from "./composables/withTransitionObserver";
 import { withWorkaround } from "./composables/withWorkaround";
 import { withDOMNodeCallback, WithDOMNodeCallbackProps } from "./composables/withDOMNodeCallback";
-// import { preventPhantomEvents } from "./composables/preventPhantomEvents";
+import { preventPhantomEvents } from "./composables/preventPhantomEvents";
 
 export type CSSTransitionDelay = number | { appear?: number; enter?: number; leave?: number };
 export type CSSTransitionEventHandler = () => void;
@@ -101,8 +101,7 @@ const enhance = assemble<CSSTransitionInnerProps, CSSTransitionProps>(
   withTimeout,
   withTransitionObserver,
   withWorkaround,
-  // TODO: needs more investigation and probably a different way to do it.
-  // preventPhantomEvents,
+  preventPhantomEvents,
   mapPropsToInner,
 );
 
