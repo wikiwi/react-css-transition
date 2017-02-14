@@ -190,6 +190,10 @@ export const appearStartedState = stateFunc(StateID.AppearStarted, "appear");
 export const enterStartedState = stateFunc(StateID.EnterStarted, "enter");
 export const leaveStartedState = stateFunc(StateID.LeaveStarted, "leave");
 
+const invalidTransitionError = (stateID: StateID, actionID: ActionID) => {
+  return new Error(`invalid state transition from ${StateID[stateID]} with ${ActionID[actionID]}`);
+};
+
 export type Reducer = (stateID: StateID, action: Action) =>
   { state: TransitionState, pending?: ActionID, completed?: boolean };
 
@@ -236,7 +240,7 @@ export const reducer: Reducer = (stateID, action) => {
           nextState = appearInitState(props);
           break;
         default:
-          throw new Error(`invalid state transition from ${StateID[stateID]}`);
+          throw invalidTransitionError(stateID, action.kind);
       };
       return { state: nextState, pending: ActionID.TransitionPrepare };
     case ActionID.TransitionPrepare:
@@ -254,7 +258,7 @@ export const reducer: Reducer = (stateID, action) => {
           nextState = appearPrepareState(props);
           break;
         default:
-          throw new Error(`invalid state transition from ${StateID[stateID]}`);
+          throw invalidTransitionError(stateID, action.kind);
       };
       return { state: nextState, pending: ActionID.TransitionTrigger };
     case ActionID.TransitionStart:
@@ -281,7 +285,7 @@ export const reducer: Reducer = (stateID, action) => {
         case StateID.LeaveStarted:
           return { state: defaultState(props), completed: true };
         default:
-          throw new Error(`invalid state transition from ${StateID[stateID]}`);
+          throw invalidTransitionError(stateID, action.kind);
       }
     case ActionID.TransitionTrigger:
       switch (stateID) {
@@ -318,7 +322,7 @@ export const reducer: Reducer = (stateID, action) => {
         case StateID.LeaveStarted:
           return { state: enterStartedState(props) };
         default:
-          throw new Error(`invalid state transition from ${StateID[stateID as any]}`);
+          throw invalidTransitionError(stateID, action.kind);
       }
     case ActionID.Timeout:
       switch (stateID) {
@@ -331,7 +335,7 @@ export const reducer: Reducer = (stateID, action) => {
         case StateID.LeaveStarted:
           return { state: defaultState(props), completed: true };
         default:
-          throw new Error(`invalid state transition from ${StateID[stateID]}`);
+          throw invalidTransitionError(stateID, action.kind);
       }
     default:
   }
