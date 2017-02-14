@@ -173,7 +173,8 @@ describe("withTransitionState.tsx", () => {
         assert.deepEqual(wrapper.props().transitionState, pick(pendingState, "style", "className"));
       });
 
-      it("should dispatch ActionID.TransitionStart in 2nd frame", (done) => {
+      it("should dispatch ActionID.TransitionStart after update in 2nd frame", (done) => {
+        (wrapper.instance() as any).componentDidUpdate();
         runInFrame(1, () => {
           assert.isTrue(reducer.calledWith(pendingState.id, {
             kind: ActionID.TransitionStart,

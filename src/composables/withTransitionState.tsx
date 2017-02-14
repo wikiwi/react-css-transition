@@ -2,9 +2,8 @@ import { CSSProperties } from "react";
 import {
   combine, withState, withHandlers, withProps,
   onDidMount, onWillUnmount, onWillReceiveProps,
-  isolate, integrate, StateUpdater,
+  isolate, integrate, StateUpdater, onDidUpdate,
 } from "reassemble";
-import * as shallowEqual from "fbjs/lib/shallowEqual";
 
 import { CSSTransitionProps, CSSTransitionInnerProps } from "../csstransition";
 import runInFrame from "../utils/runInFrame";
@@ -27,6 +26,7 @@ type PropsOut =
     actionProps?: {[P in ActionPropKeys]?: CSSTransitionProps[P]},
     cancelPendingIfExistent?: () => void,
     dispatch?: (actionID: ActionID) => void,
+    runPending?: () => void,
     setTransitionState?: StateUpdater<TransitionState>,
     onTransitionBegin?: CSSTransitionInnerProps["onTransitionBegin"],
     onTransitionComplete?: CSSTransitionInnerProps["onTransitionComplete"],
@@ -51,6 +51,7 @@ export const withTransitionState = (reduce: Reducer) => combine(
       (initialProps) => {
         let stateID = reduce(StateID.EntryPoint, { kind: ActionID.New, props: initialProps }).state.id;
         let cancelPending: () => void = null;
+        let pendingCallback: () => void;
         const cancelPendingIfExistent = () => {
           if (cancelPending) {
             cancelPending();
@@ -59,7 +60,14 @@ export const withTransitionState = (reduce: Reducer) => combine(
         };
         return {
           cancelPendingIfExistent: () => cancelPendingIfExistent,
-          dispatch: ({actionProps, onTransitionComplete, setTransitionState, transitionState}) => {
+          runPending: () => () => {
+            const callback = pendingCallback;
+            pendingCallback = null;
+            if (callback) {
+              callback();
+            }
+          },
+          dispatch: ({actionProps, onTransitionComplete, setTransitionState}) => {
             const run = (actionID: ActionID) => {
               const result = reduce(stateID, { kind: actionID, props: actionProps });
               if (!result) { return; }
@@ -69,19 +77,12 @@ export const withTransitionState = (reduce: Reducer) => combine(
               const {state, pending} = result;
               stateID = state.id;
               cancelPendingIfExistent();
-              let callback: any;
               if (pending) {
-                callback = () => {
+                pendingCallback = () => {
                   cancelPending = runInFrame(1, () => run(pending));
                 };
               }
-              if (!shallowEqual(transitionState.style, result.state.style) ||
-                transitionState.className !== result.state.className ||
-                transitionState.inTransition !== result.state.inTransition) {
-                setTransitionState(pick(state, "style", "className", "inTransition"), callback);
-              } else if (callback) {
-                callback();
-              }
+              setTransitionState(pick(state, "style", "className", "inTransition"), null);
             };
             return run;
           },
@@ -96,14 +97,18 @@ export const withTransitionState = (reduce: Reducer) => combine(
       ({dispatch}) => {
         dispatch(ActionID.Mount);
       }),
-    onWillUnmount<PropsUnion>(
-      ({cancelPendingIfExistent}) => {
-        cancelPendingIfExistent();
-      }),
     onWillReceiveProps<PropsUnion>(
       ({active: prevActive}, {active: nextActive, dispatch}) => {
         if (prevActive === nextActive) { return; }
         dispatch(ActionID.TransitionTrigger);
+      }),
+    onDidUpdate<PropsUnion>(
+      ({runPending}) => {
+        runPending();
+      }),
+    onWillUnmount<PropsUnion>(
+      ({cancelPendingIfExistent}) => {
+        cancelPendingIfExistent();
       }),
     integrate<keyof PropsUnion>(
       "timeout", "transitionState", "onTransitionBegin", "onTransitionComplete",
