@@ -4,7 +4,7 @@
 [![Build Status Widget]][build status]
 [![Coverage Widget]][coverage]
 
-_React CSS Transition_ provides a reliable way to transition your components between two states across browers without relying on timeouts.
+_React CSS Transition_ provides a reliable way to transition your components between two states across browers.
 
 [Read the full documentation](https://wikiwi.github.io/react-css-transition/)
 
@@ -22,9 +22,10 @@ npm install react-css-transition --save
 - Perform a reverse transition when interrupted
 - Define transitions using inline styles or CSS classes
 - Transition components when entering or leaving the DOM
-- Notifiy when a transition has finished
+- Notify when a transition has finished
 - Support the application of initial values before a transition
 - Includes typescript definitions
+- Falls back to an automatically set timeout in rare edge cases.
 
 ## License
 
