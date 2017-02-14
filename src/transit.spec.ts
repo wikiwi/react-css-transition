@@ -6,15 +6,19 @@ import { transit, resolveTransit } from "./transit";
 describe("transit.ts", () => {
   describe("transit", () => {
     it("should parse shorthand order", () => {
-      const config = transit("100px", 50, "linear", 30);
-      assert.strictEqual(config.value, "100px");
-      assert.deepEqual(config.params, { duration: 50, timing: "linear", delay: 30 });
+      const obj = transit("100px", 50, "linear", 30);
+      assert.isArray(obj);
+      assert.lengthOf(obj, 1);
+      assert.strictEqual(obj[0], "100px");
+      assert.deepEqual(obj.transitParams, { duration: 50, timing: "linear", delay: 30 });
     });
 
     it("should use defaults", () => {
-      const config = transit("100px", 30);
-      assert.strictEqual(config.value, "100px");
-      assert.deepEqual(config.params, { duration: 30, timing: "ease", delay: 0 });
+      const obj = transit("100px", 30);
+      assert.isArray(obj);
+      assert.lengthOf(obj, 1);
+      assert.strictEqual(obj[0], "100px");
+      assert.deepEqual(obj.transitParams, { duration: 30, timing: "ease", delay: 0 });
     });
   });
   describe("resolveTransit()", () => {

@@ -8,22 +8,18 @@ interface TransitionParams {
   delay?: number;
 }
 
-class TransitionConfig {
-  public value: any;
-  public params: TransitionParams;
-
-  constructor(value: any, params: TransitionParams) {
-    this.value = value;
-    this.params = params;
-  }
-}
+interface AugmentedArray extends Array<any> {
+  transitParams: TransitionParams;
+};
 
 export function transit(value: any, duration: number, timing?: string, delay?: number): any {
-  return new TransitionConfig(value, {
+  const ret = [value];
+  (ret as AugmentedArray).transitParams = {
     duration,
     timing: timing || "ease",
     delay: delay !== undefined ? delay : 0,
-  });
+  };
+  return ret;
 }
 
 export function resolveTransit(style: CSSProperties, extraDelay = 0): CSSProperties {
@@ -31,11 +27,11 @@ export function resolveTransit(style: CSSProperties, extraDelay = 0): CSSPropert
   let processedStyle = { ...style };
   for (const property in style) {
     const val = style[property];
-    if (typeof val === "object") {
-      const {value, params: {duration, timing, delay}} = val as TransitionConfig;
+    if (Array.isArray(val) && (val as AugmentedArray).transitParams) {
+      const {duration, timing, delay} = (val as AugmentedArray).transitParams;
       if (transition !== "") { transition += ", "; }
       transition += `${convertToCSSPrefix(property)} ${duration}ms ${timing} ${delay + extraDelay}ms`;
-      processedStyle[property] = value;
+      processedStyle[property] = val[0];
     }
   }
   if (transition) {
