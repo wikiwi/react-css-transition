@@ -1,3 +1,7 @@
+## 0.7.4 (February 17, 2017)
+
+- Support webkit prefix for transitions (inline styles)
+
 ## 0.7.3 (February 14, 2017)
 
 - Added full support for IE and Edge (atm. limited to inline styles)
