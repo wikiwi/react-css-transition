@@ -16,8 +16,8 @@ describe("basic integration test", () => {
     const enterStyle: CSSProperties = { width: transit("100px", 150, "ease", 25) };
     const leaveStyle: CSSProperties = { width: transit("50px", 150, "ease", 25) };
     const transition = "width 150ms ease 25ms";
-    const enterStyleProcessed: CSSProperties = { width: "100px", transition };
-    const leaveStyleProcessed: CSSProperties = { width: "50px", transition };
+    const enterStyleProcessed: CSSProperties = { width: "100px", transition, WebkitTransition: transition };
+    const leaveStyleProcessed: CSSProperties = { width: "50px", transition, WebkitTransition: transition };
     let onTransitionComplete: SinonSpy;
     let getWrapper: (props?: CSSTransitionProps) => ReactWrapper<any, {}>;
     let getWrapperAttached: (props?: CSSTransitionProps) => ReactWrapper<any, {}>;

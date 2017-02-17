@@ -2,6 +2,7 @@ import { assert } from "chai";
 import { CSSProperties } from "react";
 
 import { transit, resolveTransit } from "./transit";
+import pick from "./utils/pick";
 
 describe("transit.ts", () => {
   describe("transit", () => {
@@ -42,6 +43,10 @@ describe("transit.ts", () => {
         assert.strictEqual(result.transition, "width 50ms ease 20ms");
       });
 
+      it("should set WebkitTransition", () => {
+        assert.strictEqual((result as any).WebkitTransition, "width 50ms ease 20ms");
+      });
+
       it("should leave other properties untouched", () => {
         assert.strictEqual(result.height, "25px");
       });
@@ -70,28 +75,53 @@ describe("transit.ts", () => {
           "width 120ms ease 30ms, background 100ms linear 20ms");
       });
 
+      it("should set WebkitTransition", () => {
+        assert.strictEqual((result as any).WebkitTransition,
+          "width 120ms ease 30ms, background 100ms linear 20ms");
+      });
+
       it("should leave other properties untouched", () => {
         assert.strictEqual(result.height, "25px");
       });
     });
 
-    describe("when processing style with single transition and vendor prefix", () => {
+    describe("when processing style with multiple transition and vendor prefixes", () => {
       let style: CSSProperties;
       let result: CSSProperties;
 
       before(() => {
         style = {
-          WebkitTransform: transit("50px", 50, "ease", 20),
+          top: transit("50px", 50),
+          WebkitTransform: transit("scale(1.0)", 50),
+          MozTransform: transit("scale(1.0)", 50),
+          transform: transit("scale(1.0)", 50),
         };
         result = resolveTransit(style);
       });
 
       it("should turn TransitionConfig to value", () => {
-        assert.strictEqual(result["WebkitTransform"], "50px");
+        assert.deepEqual(pick(result, ...Object.keys(style)), {
+          top: "50px",
+          WebkitTransform: "scale(1.0)",
+          MozTransform: "scale(1.0)",
+          transform: "scale(1.0)",
+        });
       });
 
       it("should set transition with css prefix", () => {
-        assert.strictEqual(result.transition, "-webkit-transform 50ms ease 20ms");
+        assert.strictEqual(result.transition,
+          ["top", "-webkit-transform", "-moz-transform", "transform"].
+            map((p) => `${p} 50ms ease 0ms`).
+            join(", "),
+        );
+      });
+
+      it("should set WebkitTransition", () => {
+        assert.strictEqual((result as any).WebkitTransition,
+          ["top", "-webkit-transform"].
+            map((p) => `${p} 50ms ease 0ms`).
+            join(", "),
+        );
       });
     });
 

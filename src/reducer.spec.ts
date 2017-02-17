@@ -1,3 +1,5 @@
+// TODO: decouple resolveTransit from test
+
 import { assert } from "chai";
 
 import { transit } from "./transit";
@@ -56,7 +58,11 @@ describe("reducer.ts", () => {
       transitionNames.forEach((name) => {
         const id = StateID.EnterStarted;
         const style = { top: transit("5px", 120) };
-        const styleProcessed = { top: "5px", transition: "top 120ms ease 0ms" };
+        const styleProcessed = {
+          top: "5px",
+          transition: "top 120ms ease 0ms",
+          WebkitTransition: "top 120ms ease 0ms",
+        };
         const className = "foo";
         assert.deepEqual(
           getState(id, name, { [name + "Style"]: style, [name + "ClassName"]: className }), {
@@ -631,12 +637,20 @@ function testState(id: StateID, styleName: string, state: (props: ActionProps) =
     } else {
       it("should return transition style", () => {
         const style = { top: transit("5px", 120) };
-        const styleProcessed = { top: "5px", transition: "top 120ms ease 0ms" };
+        const styleProcessed = {
+          top: "5px",
+          transition: "top 120ms ease 0ms",
+          WebkitTransition: "top 120ms ease 0ms",
+        };
         assert.deepEqual(state({ ...extraProps, [styleName]: style }).style, styleProcessed);
       });
       it("should return transition style with extra delay", () => {
         const style = { top: transit("5px", 120, "ease", 10) };
-        const styleProcessed = { top: "5px", transition: "top 120ms ease 30ms" };
+        const styleProcessed = {
+          top: "5px",
+          transition: "top 120ms ease 30ms",
+          WebkitTransition: "top 120ms ease 30ms",
+        };
         assert.deepEqual(state({ ...extraProps, [styleName]: style, transitionDelay: 20 }).style, styleProcessed);
       });
     }
