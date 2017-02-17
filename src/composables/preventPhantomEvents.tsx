@@ -6,7 +6,7 @@ import { CSSTransitionProps } from "../csstransition";
 type PropsOut = {
   requestTimeUpdate?: () => void;
   handleTimeUpdateRequest?: () => void;
-  onTransitionEnd?: EventHandler<TransitionEvent>;
+  onTransitionEnd?: EventHandler<TransitionEvent<any>>;
 };
 
 type PropsUnion = CSSTransitionProps & PropsOut;
@@ -31,7 +31,7 @@ export const preventPhantomEvents = isolate(
             timeUpdateRequested = false;
           }
         },
-        onTransitionEnd: ({onTransitionEnd}) => (e: TransitionEvent) => {
+        onTransitionEnd: ({onTransitionEnd}) => (e: TransitionEvent<any>) => {
           if (!onTransitionEnd) { return; }
 
           if (e.target !== e.currentTarget) {

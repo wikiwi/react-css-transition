@@ -7,7 +7,7 @@ import { WithTransitionInfoProps } from "./withTransitionInfo";
 import { WithTransitionObserverProps } from "./withTransitionObserver";
 
 type PropsOut = {
-  workaroundHandler?: EventHandler<TransitionEvent>,
+  workaroundHandler?: EventHandler<TransitionEvent<any>>,
   children?: ReactNode;
 };
 

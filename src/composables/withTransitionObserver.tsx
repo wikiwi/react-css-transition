@@ -7,11 +7,11 @@ import { WithTransitionInfoProps } from "./withTransitionInfo";
 import matchTransitionProperty from "../utils/matchTransitionProperty";
 
 export type WithTransitionObserverProps = {
-  onTransitionStart: EventHandler<TransitionEvent>,
+  onTransitionStart: EventHandler<TransitionEvent<any>>,
 };
 
 type PropsOut = WithTransitionObserverProps & {
-  onTransitionEnd: EventHandler<TransitionEvent>,
+  onTransitionEnd: EventHandler<TransitionEvent<any>>,
 };
 
 type PropsUnion = CSSTransitionInnerProps
@@ -28,7 +28,7 @@ export const withTransitionObserver =
         onTransitionStart,
         onTransitionBegin,
       },
-    ) => (e: TransitionEvent) => {
+    ) => (e: TransitionEvent<any>) => {
       if (onTransitionStart) { onTransitionStart(e); }
       if (!inTransition || e.target !== e.currentTarget ||
         !matchTransitionProperty(e.propertyName, firstProperty)) {
@@ -43,7 +43,7 @@ export const withTransitionObserver =
         onTransitionEnd,
         onTransitionComplete,
       },
-    ) => (e: TransitionEvent) => {
+    ) => (e: TransitionEvent<any>) => {
       if (onTransitionEnd) { onTransitionEnd(e); }
       if (!inTransition || e.target !== e.currentTarget ||
         !matchTransitionProperty(e.propertyName, lastProperty)) {
